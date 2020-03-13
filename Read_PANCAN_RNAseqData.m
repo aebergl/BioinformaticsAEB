@@ -8,7 +8,7 @@ DATA = ReadDataAEB('EBPlusPlusAdjustPANCAN_IlluminaHiSeq_RNASeqV2.geneExp.tsv');
 % Add Info
 
 DATA.Title = 'TCGA RNAseq PanCan';
-DATA.Info.Source = 'TCGA';
+DATA.Info.Source = 'EBPlusPlusAdjustPANCAN_IlluminaHiSeq_RNASeqV2.geneExp.tsv';
 DATA.Info.Type = 'GeneExpression';
 DATA.Info.Platform = 'RNAseqV2';
 

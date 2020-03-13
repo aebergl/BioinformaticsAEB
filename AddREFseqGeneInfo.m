@@ -7,6 +7,8 @@ if isempty(FileName)
     gunzip('Homo_sapiens.gene_info.gz');
     [~,file_name,~] = fileparts('Homo_sapiens.gene_info');
     [FidInputFile,message] = fopen('Homo_sapiens.gene_info','r');
+    DATA.Info.GeneAnnotation = 'ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/Homo_sapiens.gene_info';
+    DATA.Info.GeneAnnotationData = date;
     if  FidInputFile == -1
         disp(InputFile)
         disp(message)
@@ -16,6 +18,9 @@ if isempty(FileName)
 else
     [~,file_name,~] = fileparts(FileName);
     [FidInputFile,message] = fopen(FileName,'r');
+    DATA.Info.GeneAnnotation = 'file_name';
+    DATA.Info.GeneAnnotationData = date;
+    
     if  FidInputFile == -1
         disp(FileName)
         disp(message)
@@ -24,6 +29,7 @@ else
     
     
 end
+
 tline = fgetl(FidInputFile);
 tline =  textscan(tline,'%s','delimiter','\t');
 ColumnIds = tline{1};
@@ -39,21 +45,28 @@ GeneInfo = cat(2,S{GeneColumnsToUse});
 
 [~,indx1,indx2] = intersect(DATA.ColId,GeneId,'Stable');
 
-whos
-
 if length(indx1) < DATA.nCol
-    fprintf('WARNING!!! %u columns are missing annotation\n',DATA.nCol - length(indx1));  
+    fprintf('WARNING!!! %u columns are missing annotation\n',DATA.nCol - length(indx1));
 end
-
 Annotation(indx1,:) = GeneInfo(indx2,:);
 Annotation(cellfun('isempty',Annotation)) = {''};
+Annotation(indx1,:) = GeneInfo(indx2,:);
+
+% get gene ids with no maching annotion
+[MissingIds, indxMissing] = setdiff(DATA.ColId,GeneId,'stable');
+    NewGeneId =  GetReplacedGeneId(MissingIds);
+    [~,indx1,indx2] = intersect(NewGeneId,GeneId,'Stable');
+
+
 switch lower(ReplaceAppend)
     case 'replace'
         DATA.ColAnnotationFields = ColumnIds(GeneColumnsToUse);
         DATA.ColAnnotation = Annotation;
     case 'append'
         DATA.ColAnnotationFields = [DATA.ColAnnotationFields; ColumnIds(GeneColumnsToUse)];
-        DATA.ColAnnotation = [DATA.ColAnnotation Annotation];   
+        DATA.ColAnnotation = [DATA.ColAnnotation Annotation];
+end
+
 end
 
 
