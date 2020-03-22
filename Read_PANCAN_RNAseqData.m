@@ -19,8 +19,8 @@ GeneIdSymbol = cat(1,GeneIdSymbol{:});
 
 DATA.ColId = GeneIdSymbol(:,2);
 DATA = AddREFseqGeneInfo(DATA,[],'Replace');
-DATA.ColAnnotationFields(end+1) = {'Legacy GeneSymbol'};
-DATA.ColAnnotation = [DATA.ColAnnotation  GeneIdSymbol(:,1)];
+DATA.ColAnnotationFields(end+1:end+2) = {'TCGA GeneSymbol','TCGA GeneId'}';
+DATA.ColAnnotation = [DATA.ColAnnotation  GeneIdSymbol];
  
 % Add basic Sample Info based on TCHA sample Id
 [SampleInfo,SampleFields] = ConvertTCGA_IdAEB(DATA.RowId);

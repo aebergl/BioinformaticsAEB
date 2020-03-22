@@ -5,7 +5,6 @@ if isempty(FileName)
     cd(ftpobj,'refseq/H_sapiens/');
     mget(ftpobj,'Homo_sapiens.gene_info.gz');
     gunzip('Homo_sapiens.gene_info.gz');
-    [~,file_name,~] = fileparts('Homo_sapiens.gene_info');
     [FidInputFile,message] = fopen('Homo_sapiens.gene_info','r');
     DATA.Info.GeneAnnotation = 'ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/Homo_sapiens.gene_info';
     DATA.Info.GeneAnnotationData = date;
@@ -16,7 +15,6 @@ if isempty(FileName)
     end
     
 else
-    [~,file_name,~] = fileparts(FileName);
     [FidInputFile,message] = fopen(FileName,'r');
     DATA.Info.GeneAnnotation = 'file_name';
     DATA.Info.GeneAnnotationData = date;
@@ -27,44 +25,82 @@ else
         return
     end
     
-    
 end
+
+%These are the column iDs
+% 1     {'#tax_id'                              }
+% 2     {'GeneID'                               }
+% 3     {'Symbol'                               }
+% 4     {'LocusTag'                             }
+% 5     {'Synonyms'                             }
+% 6     {'dbXrefs'                              }
+% 7     {'chromosome'                           }
+% 8     {'map_location'                         }
+% 9     {'description'                          }
+% 10    {'type_of_gene'                         }
+% 11    {'Symbol_from_nomenclature_authority'   }
+% 12    {'Full_name_from_nomenclature_authority'}
+% 13    {'Nomenclature_status'                  }
+% 14    {'Other_designations'                   }
+% 15    {'Modification_date'                    }
+% 16    {'Feature_type'                         }
+GeneColumnsToUse = [2 3 11 9 5 7 8 10 6];
 
 tline = fgetl(FidInputFile);
 tline =  textscan(tline,'%s','delimiter','\t');
 ColumnIds = tline{1};
 numColumns = numel(ColumnIds);
-Annotation = cell(DATA.nCol,8);
+Annotation = cell(DATA.nCol,length(GeneColumnsToUse));
 Annotation(:) = {'---'};
+ExtraInfo = cell(DATA.nCol,1);
+ExtraInfo(:) = {'---'};
 
 S = textscan(FidInputFile,repmat('%s',1,numColumns),'delimiter','\t');
 
 GeneId = S{2};
-GeneColumnsToUse = [2 3 9 5 7 8 10 6];
+
 GeneInfo = cat(2,S{GeneColumnsToUse});
 
 [~,indx1,indx2] = intersect(DATA.ColId,GeneId,'Stable');
 
-if length(indx1) < DATA.nCol
-    fprintf('WARNING!!! %u columns are missing annotation\n',DATA.nCol - length(indx1));
-end
 Annotation(indx1,:) = GeneInfo(indx2,:);
 Annotation(cellfun('isempty',Annotation)) = {''};
 Annotation(indx1,:) = GeneInfo(indx2,:);
 
 % get gene ids with no maching annotion
 [MissingIds, indxMissing] = setdiff(DATA.ColId,GeneId,'stable');
-    NewGeneId =  GetReplacedGeneId(MissingIds);
-    [~,indx1,indx2] = intersect(NewGeneId,GeneId,'Stable');
+NewGeneId =  GetReplacedGeneId(MissingIds);
 
+for i=1:length(MissingIds)
+    
+    if strcmpi(NewGeneId{i},'withdrawn') % Should not be used
+        Annotation(indxMissing(i),:) = {'Withdrawn'};
+        ExtraInfo{indxMissing(i)} = sprintf('%s is withdrawn',MissingIds{i});
+    elseif isempty(NewGeneId{i})
+        Annotation(indxMissing(i),:) = {'Missing'}; % No annotation was found
+        ExtraInfo{indxMissing(i)} = sprintf('%s could not be find',MissingIds{i});
+    else        
+        indx = strcmp(NewGeneId{i},DATA.ColId); % Check of this gene is already in the dataset
+        if any(indx)
+            Annotation(indxMissing(i),:) = {sprintf('%s has been replaced',MissingIds{i}, NewGeneId{i})};
+            ExtraInfo{indxMissing(i)} = sprintf('%s is replaced with %s and it already exist',MissingIds{i}, NewGeneId{i});
+        else
+            indx_tmp = strcmp(NewGeneId{i},GeneId);
+            Annotation(indxMissing(i),:) = GeneInfo(indx_tmp,:);
+            ExtraInfo{indxMissing(i)} = sprintf('%s replaced with %s',MissingIds{i}, NewGeneId{i});
+        end
+    end
+    
+    
+end
 
 switch lower(ReplaceAppend)
     case 'replace'
-        DATA.ColAnnotationFields = ColumnIds(GeneColumnsToUse);
-        DATA.ColAnnotation = Annotation;
+        DATA.ColAnnotationFields = [ColumnIds(GeneColumnsToUse); {'AnnotationInfo'}];
+        DATA.ColAnnotation = [Annotation, ExtraInfo];
     case 'append'
-        DATA.ColAnnotationFields = [DATA.ColAnnotationFields; ColumnIds(GeneColumnsToUse)];
-        DATA.ColAnnotation = [DATA.ColAnnotation Annotation];
+        DATA.ColAnnotationFields = [DATA.ColAnnotationFields; ColumnIds(GeneColumnsToUse); {'AnnotationInfo'}];
+        DATA.ColAnnotation = [DATA.ColAnnotation Annotation ExtraInfo];
 end
 
 end
