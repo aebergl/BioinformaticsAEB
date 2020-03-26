@@ -1,4 +1,4 @@
-function DATA = ReadDataAEB(InputFile,varargin)
+function DATA = ReadData(InputFile,varargin)
 %DATA = ReadData('GSE19188_tumor_iron_log2.txt','HeaderRows',1,'IdColumns',1)
 %  reads in a text file and creates a microarray data structure
 %  First row and column must be a probe/sample id
@@ -96,7 +96,7 @@ if numRead < numDataRows
     fprintf('WARNING!!! %u lines read but there should have been %u\n',numRead,numDataRows);
 end
 
-DATA = CreateAEBDataStructure(numRead,numXColumns,numIdColumns,numHeaderRows);
+DATA = CreateDataStructure(numRead,numXColumns,numIdColumns,numHeaderRows);
 
 DATA.X = cell2mat(S(numIdColumns+1:end));
 

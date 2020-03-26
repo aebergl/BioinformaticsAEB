@@ -1,4 +1,4 @@
-function [SampleInfo,SampleFields] = ConvertTCGA_IdAEB(IDs)
+function [SampleInfo,SampleFields] = ConvertTCGAId(IDs)
 % Converts TCGA sample ID into info
 % TCGA-A6-2678-01A-01D-0820-05
 % See https://wiki.nci.nih.gov/display/TCGA/TCGA+barcode for more info

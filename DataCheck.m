@@ -1,4 +1,4 @@
-function DATA = DataCheckAEB(DATA,varargin)
+function DATA = DataCheck(DATA,varargin)
 
 NaN_Check = true;
 Zero_Check = true;

@@ -1,4 +1,4 @@
-function DATA = CreateAEBDataStructure(nRow,nCol,numIdColumns,numHeaderRows)
+function DATA = CreateDataStructure(nRow,nCol,numIdColumns,numHeaderRows)
 
 DATA.Title = '';
 DATA.ShortTitle = '';

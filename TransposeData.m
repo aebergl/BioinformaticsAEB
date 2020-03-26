@@ -1,4 +1,4 @@
-function DATA = TransposeDataAEB(DATA)
+function DATA = TransposeData(DATA)
 
 DATA.X      = DATA.X';
 DATA.nRow   = size(DATA.X,1);

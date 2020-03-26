@@ -1,4 +1,4 @@
-function DATA = ConvertDataNew2OldAEB(DATA)
+function DATA = ConvertDataNew2Old(DATA)
 
 
 DATA = renameStructField(DATA, 'nRow', 'NumSamples');

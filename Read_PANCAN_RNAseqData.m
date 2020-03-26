@@ -2,7 +2,7 @@ function [DATA] = Read_PANCAN_RNAseqData
 
 
 %Read 'EBPlusPlusAdjustPANCAN_IlluminaHiSeq_RNASeqV2.geneExp.tsv'
-DATA = ReadDataAEB('EBPlusPlusAdjustPANCAN_IlluminaHiSeq_RNASeqV2.geneExp.tsv');
+DATA = ReadData('EBPlusPlusAdjustPANCAN_IlluminaHiSeq_RNASeqV2.geneExp.tsv');
 
 
 % Add Info
