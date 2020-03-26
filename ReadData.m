@@ -149,7 +149,7 @@ end
 
 % transpose DATA
 if TransposeX
-    DATA = TransposeDataAEB(DATA);  
+    DATA = TransposeData(DATA);  
 end
 
 
