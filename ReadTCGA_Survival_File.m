@@ -1,4 +1,4 @@
-function SURVIVAL= ReadTCGA_Survival_File
+function SURVIVAL = ReadTCGA_Survival_File
 
 % OS: overall survival event, 1 for death from any cause, 0 for alive.
 % OS.time: overall survival time in days, last_contact_days_to or death_days_to, whichever is larger.
@@ -12,6 +12,18 @@ function SURVIVAL= ReadTCGA_Survival_File
 % PFI: progression-free interval event, 1 for patient having new tumor event whether it was a progression of disease, local recurrence, distant metastasis, new primary tumors all sites , or died with the cancer without new tumor event, including cases with a new tumor event whose type is N/A.
 % PFI.time: progression-free interval time in days, for events, either new_tumor_event_dx_days_to or death_days_to,  whichever is applicable; or for censored cases, either last_contact_days_to or death_days_to, whichever is applicable.
 % 
+
+if ~isfile('TCGA-CDR-SupplementalTableS1.xlsx')
+    try
+        fprintf('Could not find TCGA-CDR-SupplementalTableS1.xls in this directory\n')
+        fprintf('Starting to download it now, will probably take a couple of minutes\n')
+        outfilename = websave('TCGA-CDR-SupplementalTableS1.xlsx','https://api.gdc.cancer.gov/data/1b5f413e-a8d1-4d10-92eb-7c4ae739ed81');
+        
+    catch
+        error('Could not load TCGA-CDR-SupplementalTableS1.xlsx from https://api.gdc.cancer.gov/data/1b5f413e-a8d1-4d10-92eb-7c4ae739ed81')
+    end
+end
+fprintf('Reading TCGA-CDR-SupplementalTableS1.xlsx\n')
 C = readcell('TCGA-CDR-SupplementalTableS1.xlsx','Sheet','TCGA-CDR');
 
 %Remove first column with just numbers
@@ -22,9 +34,10 @@ ColumnNames = C(1,:);
 C(1,:) = [];
 
 % Create Survival Structure
-
-SURVIVAL.bcr_patient_barcode = C(:,1);
+SURVIVAL.RowId = C(:,1);
 SURVIVAL.SurvivalTypes = {'OS','PFI','DSS','DFI'};
+SURVIVAL.Units = {'Months','Months','Months','Months'};
+
 % Get the event columns
 [~,EventIndx] = ismember(SURVIVAL.SurvivalTypes,ColumnNames);
 SurvEvent_RAW = C(:,EventIndx);
@@ -32,6 +45,8 @@ SURVIVAL.SurvEvent = cell(size(SurvEvent_RAW));
 SURVIVAL.SurvEvent(:) = {'NA'};
 
 % Convert OS events
+fprintf('Processing survival events\n')
+
 SURVIVAL.SurvEvent(cellfun(@(x) x==1, SurvEvent_RAW(:,1)),1) = {'Dead'};
 SURVIVAL.SurvEvent(cellfun(@(x) x==0, SurvEvent_RAW(:,1)),1) = {'Alive'};
  
@@ -48,10 +63,12 @@ SURVIVAL.SurvEvent(cellfun(@(x) x==1, SurvEvent_RAW(:,4)),4) = {'Relapsed'};
 SURVIVAL.SurvEvent(cellfun(@(x) x==0, SurvEvent_RAW(:,4)),4) = {'NotRelapsed'};
 
 % Get the time columns
+fprintf('Processing survival times\n')
 TimeIndx = EventIndx + 1;
 SURVIVAL.SurvTime = C(:,TimeIndx);
 indx_missing = ~cellfun(@(x) isnumeric(x),SURVIVAL.SurvTime);
 [SURVIVAL.SurvTime{indx_missing}]  = deal(NaN);
 SURVIVAL.SurvTime = cell2mat(SURVIVAL.SurvTime);
+SURVIVAL.SurvTime = SURVIVAL.SurvTime / 365.25 * 12;
 
 

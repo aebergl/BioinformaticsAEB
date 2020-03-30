@@ -48,10 +48,13 @@ DATA.RowAnnotationFields = SampleFields;
 DATA.X(DATA.X < 0) = 0;
 DATA.X = log2(DATA.X+1);
 
-% Add Survival data from TCGA-Clinical Data Resource (CDR) Outcome* -
+% Add Survival data from TCGA-Clinical Data Resource (CDR) Outcome
 % TCGA-CDR-SupplementalTableS1.xlsx 
+% Will add Survival dat for the normal samples
+fprintf('Adding Survival data\n')
+SURVIVAL = ReadTCGA_Survival_File;
 
+DATA = AddSurvivalDATA(DATA,[],SURVIVAL);
 
-fprintf('Donen')
 
 end
