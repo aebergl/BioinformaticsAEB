@@ -34,12 +34,12 @@ DATA.ColAnnotationFields(end+1:end+2) = {'TCGA GeneSymbol','TCGA GeneId'}';
 DATA.ColAnnotation = [DATA.ColAnnotation  GeneIdSymbol];
 
 % Removing samples based on 'Merged Sample Quality Annotations - merged_sample_quality_annotations.tsv'
-IdsToRemove = CheckTCGASampleQuality(DATA.RowId);
+IdsToRemove = CheckTCGASampleQuality(DATA.RowId,[]);
 %DATA  = EditSamplesDATA('DATA',IdsToRemove,'Remove');
 
 
 
-% Add basic Sample info based on TCHA sample Id
+% Add basic Sample info based on TCGA sample Id
 fprintf('Converting TCGA Id to sample info\n')
 
 [SampleInfo,SampleFields] = ConvertTCGAId(DATA.RowId);

@@ -1,46 +1,26 @@
-function IdsToRemove = CheckTCGASampleQuality(InputIds)
+function IdsToRemove = CheckTCGASampleQuality(InputIds,nChar)
 % Identifies all samples listed in Merged Sample Quality Annotations - merged_sample_quality_annotations.tsv
-% and have TRUE in the "Do_not_use" column 
+% and have TRUE in the "Do_not_use" column
 
 % Check if all input Ids are unique
 IdUnique = unique(InputIds);
+
 if length(IdUnique) < length(InputIds)
     fprintf('WARNING! Not all input ID are unique in CheckTCGASampleQuality\n')
 end
-
-% Check number of input characters
-maxNumChar = max(cellfun(@(x) length(x),InputIds,'UniformOutput',true));
-minNumChar = max(cellfun(@(x) length(x),InputIds,'UniformOutput',true));
-if minNumChar < maxNumChar
-    fprintf('WARNING! Not all input ID have the same number of characters\n')
-    fprintf('resulting in a bit slower performance\n')
-end
-
 % Get ID for bad samples
 SampleToRemove  = GetBadSamples;
-minNumCharBadSamples = min(cellfun(@(x) length(x),SampleToRemove,'UniformOutput',true));
-if minNumCharBadSamples < maxNumChar && minNumChar < maxNumChar
-    fprintf('WARNING! input Id has more number of characters than id for BAD samples\n')
-    fprintf('The results will be based on a truncated ID\n')
-    InputIds = cellfun(@(x) x(1:minNumCharBadSamples), InputIds, 'UniformOutput', false);
-    maxNumChar = minNumCharBadSamples;
-    minNumChar = minNumCharBadSamples;
-end
 
-
-if maxNumChar == minNumChar && minNumCharBadSamples > maxNumChar % Best case 
-    SampleToRemove = cellfun(@(x) x(1:minNumChar), SampleToRemove, 'UniformOutput', false);
+if isempty(nChar) || nChar < 1  % Using perfect match, no truncation is done
     indx = ismember(InputIds,SampleToRemove);
-else % Must loop through each input Id
-    indx = false(length(InputIds),1);
-    for i=1:length(InputIds)
-        tmp_id = InputIds{i};
-        if length(tmp_id) > minNumCharBadSamples
-            tmp_id = tmp_id(1:minNumCharBadSamples);
-        end
-        SampleToRemovetmp = cellfun(@(x) x(1:length(tmp_id)), SampleToRemove, 'UniformOutput', false);
-        indx(i) = ismember(tmp_id,SampleToRemovetmp);
-    end
+else
+    % Check number of input characters
+    InputIdsTrunk = InputIds;
+    NumChar = cellfun(@(x) length(x),InputIdsTrunk,'UniformOutput',true);
+    InputIdsTrunk(NumChar>nChar) = cellfun(@(x) x(1:nChar), InputIdsTrunk(NumChar>nChar), 'UniformOutput', false); 
+    NumCharBadSamples = cellfun(@(x) length(x),SampleToRemove,'UniformOutput',true);
+    SampleToRemove(NumCharBadSamples>nChar) = cellfun(@(x) x(1:nChar), SampleToRemove(NumCharBadSamples>nChar), 'UniformOutput', false);    
+    indx = ismember(InputIdsTrunk,SampleToRemove);    
 end
 
 IdsToRemove = InputIds(indx);
