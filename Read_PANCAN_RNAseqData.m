@@ -34,6 +34,8 @@ DATA.ColAnnotationFields(end+1:end+2) = {'TCGA GeneSymbol','TCGA GeneId'}';
 DATA.ColAnnotation = [DATA.ColAnnotation  GeneIdSymbol];
 
 % Removing samples based on 'Merged Sample Quality Annotations - merged_sample_quality_annotations.tsv'
+IdsToRemove = CheckTCGASampleQuality(DATA.RowId);
+%DATA  = EditSamplesDATA('DATA',IdsToRemove,'Remove');
 
 
 
