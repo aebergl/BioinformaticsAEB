@@ -8,42 +8,29 @@ end
 indx = ismember(DATA.RowId,InputIds);
 
 if any(indx)
-    disp(' ')
-    disp('***   Error   ***')
-    disp('No matching ids found')
-    disp(' ')
+    switch lower(KeepRemove)
+        case 'keep'
+            DATA.X = DATA.X(indx,:);
+            DATA.RowId = DATA.RowId(indx);
+            DATA.nRow = size(DATA.X,1);
+            DATA.RowAnnotation = DATA.RowAnnotation(indx,:);
+            if isfield(DATA,'SURVIVAL')
+                DATA.SURVIVAL.RowId =  DATA.SURVIVAL.RowId(indx);
+                DATA.SURVIVAL.SurvEvent =  DATA.SURVIVAL.SurvEvent(indx,:);
+                DATA.SURVIVAL.SurvTime =  DATA.SURVIVAL.SurvTime(indx,:);
+            end
+        case 'remove'
+            %Remove samples
+            DATA.X(indx,:) = [];
+            DATA.RowId(indx) = [];
+            DATA.nRow = size(DATA.X,1);
+            DATA.RowAnnotation(indx,:) = [];
+            if isfield(DATA,'SURVIVAL')
+                DATA.SURVIVAL.RowId(indx) = [];
+                DATA.SURVIVAL.SurvEvent(indx,:) =  [];
+                DATA.SURVIVAL.SurvTime(indx,:) =  [];
+            end
+    end
 end
 
-if strcmpi('Keep',KeepRemove)
-    DATA.X = DATA.X(DATA_indx,:);
-    DATA.SampleId = DATA.SampleId(DATA_indx);
-    DATA.NumSamples = size(DATA.X,1);
-    DATA.SampleAnnotation = DATA.SampleAnnotation(DATA_indx,:);
-    if isfield(DATA,'SURVIVAL')
-        DATA.SURVIVAL.time =  DATA.SURVIVAL.time(DATA_indx,:);
-        DATA.SURVIVAL.Status =  DATA.SURVIVAL.Status(DATA_indx,:);
-    end
-elseif strcmpi('Remove',KeepRemove)
-    %Remove samples
-    DATA.X(DATA_indx,:) = [];
-    DATA.SampleId(DATA_indx) = [];
-    DATA.NumSamples = size(DATA.X,1);
-    DATA.SampleAnnotation(DATA_indx,:) = [];
-    if isfield(DATA,'SURVIVAL')
-        DATA.SURVIVAL.time(DATA_indx,:) =  [];
-        DATA.SURVIVAL.Status(DATA_indx,:) =  [];
-    end
-
-else
-    disp(' ')
-    disp('Second variable needs to be Keep or Remove')
-    disp('exiting!!!')
-    disp(' ')
-    
-    return
-end
-
-
-    
-    
 end
