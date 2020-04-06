@@ -24,7 +24,7 @@ if ~isfile('TCGA-CDR-SupplementalTableS1.xlsx')
     end
 end
 fprintf('Reading TCGA-CDR-SupplementalTableS1.xlsx\n')
-C = readcell('TCGA-CDR-SupplementalTableS1.xlsx','Sheet','TCGA-CDR');
+C = readcell('TCGA-CDR-SupplementalTableS1.xlsx','Sheet','TCGA-CDR','NumHeaderLines',0);
 
 %Remove first column with just numbers
 C(:,1) = [];
