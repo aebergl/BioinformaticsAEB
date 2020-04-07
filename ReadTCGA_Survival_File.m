@@ -15,8 +15,8 @@ function SURVIVAL = ReadTCGA_Survival_File
 
 if ~isfile('TCGA-CDR-SupplementalTableS1.xlsx')
     try
-        fprintf('Could not find TCGA-CDR-SupplementalTableS1.xls in this directory\n')
-        fprintf('Starting to download it now, will probably take a couple of minutes\n')
+        warning('Could not find TCGA-CDR-SupplementalTableS1.xls in this directory')
+        warning('Starting to download it now, will probably take a couple of minutes')
         outfilename = websave('TCGA-CDR-SupplementalTableS1.xlsx','https://api.gdc.cancer.gov/data/1b5f413e-a8d1-4d10-92eb-7c4ae739ed81');
         
     catch

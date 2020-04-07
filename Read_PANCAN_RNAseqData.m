@@ -4,8 +4,8 @@ function [DATA] = Read_PANCAN_RNAseqData
 %Read already downloaded 'EBPlusPlusAdjustPANCAN_IlluminaHiSeq_RNASeqV2.geneExp.tsv'
 if ~isfile('EBPlusPlusAdjustPANCAN_IlluminaHiSeq_RNASeqV2.geneExp.tsv')
     try
-        fprintf('Could not find EBPlusPlusAdjustPANCAN_IlluminaHiSeq_RNASeqV2.geneExp.tsv in this directory\n')
-        fprintf('Starting to download it now, will probably take a couple of minutes\n')
+        warning('Could not find EBPlusPlusAdjustPANCAN_IlluminaHiSeq_RNASeqV2.geneExp.tsv in this directory')
+        warning('Starting to download it now, will probably take a couple of minutes')
         outfilename = websave('EBPlusPlusAdjustPANCAN_IlluminaHiSeq_RNASeqV2.geneExp.tsv','http://api.gdc.cancer.gov/data/3586c0da-64d0-4b74-a449-5ff4d9136611');
         
     catch

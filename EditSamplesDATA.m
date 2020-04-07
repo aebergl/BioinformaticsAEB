@@ -2,7 +2,7 @@ function DATA  = EditSamplesDATA(DATA,InputIds,KeepRemove)
 
 IdUnique = unique(InputIds);
 if length(IdUnique) < length(InputIds)
-    fprintf('WARNING! Not all input IDs are unique in EditSamplesDATA\n')
+    warning('WARNING! Not all input IDs are unique in EditSamplesDATA')
 end
 
 indx = ismember(DATA.RowId,InputIds);

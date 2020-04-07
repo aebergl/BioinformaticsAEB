@@ -6,7 +6,7 @@ function IdsToRemove = CheckTCGASampleQuality(InputIds,nChar)
 IdUnique = unique(InputIds);
 
 if length(IdUnique) < length(InputIds)
-    fprintf('WARNING! Not all input ID are unique in CheckTCGASampleQuality\n')
+    warning('WARNING! Not all input ID are unique in CheckTCGASampleQuality')
 end
 % Get ID for bad samples
 SampleToRemove  = GetBadSamples;

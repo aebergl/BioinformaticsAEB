@@ -68,8 +68,8 @@ numXColumns = numColumns-numIdColumns;
 [~,file_name,~] = fileparts(InputFile);
 [FidInputFile,message] = fopen(InputFile,'r');
 if  FidInputFile == -1
-    disp(InputFile)
-    disp(message)
+    warning(InputFile)
+    warning(message)
     return
 end
 
@@ -93,7 +93,9 @@ fclose(FidInputFile);
 numRead =numel(S{2});
 
 if numRead < numDataRows
-    fprintf('WARNING!!! %u lines read but there should have been %u\n',numRead,numDataRows);
+
+    warning('WARNING!!! %u lines read but there should have been %u',numRead,numDataRows);
+    
 end
 
 DATA = CreateDataStructure(numRead,numXColumns,numIdColumns,numHeaderRows);
