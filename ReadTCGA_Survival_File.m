@@ -17,8 +17,7 @@ if ~isfile('TCGA-CDR-SupplementalTableS1.xlsx')
     try
         warning('Could not find TCGA-CDR-SupplementalTableS1.xls in this directory')
         warning('Starting to download it now, will probably take a couple of minutes')
-        outfilename = websave('TCGA-CDR-SupplementalTableS1.xlsx','https://api.gdc.cancer.gov/data/1b5f413e-a8d1-4d10-92eb-7c4ae739ed81');
-        
+        websave('TCGA-CDR-SupplementalTableS1.xlsx','https://api.gdc.cancer.gov/data/1b5f413e-a8d1-4d10-92eb-7c4ae739ed81');
     catch
         error('Could not load TCGA-CDR-SupplementalTableS1.xlsx from https://api.gdc.cancer.gov/data/1b5f413e-a8d1-4d10-92eb-7c4ae739ed81')
     end
@@ -29,7 +28,7 @@ C = readcell('TCGA-CDR-SupplementalTableS1.xlsx','Sheet','TCGA-CDR','NumHeaderLi
 %Remove first column with just numbers
 C(:,1) = [];
 
-% Collect Column names and remove the first rwo
+% Collect Column names and remove the first row
 ColumnNames = C(1,:);
 C(1,:) = [];
 

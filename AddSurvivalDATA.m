@@ -53,7 +53,7 @@ DATA.SURVIVAL.SurvTime = ones(DATA.nRow,nSURV_Items) * NaN;
 % Find matching Ids
 [indx_DATA, location_SURV]  = ismember(DATAid, SURVid);
 location_SURV = location_SURV(location_SURV>0);
-DATA.SURVIVAL.RowId(indx_DATA) = SURVIVAL.RowId(location_SURV);;
+DATA.SURVIVAL.RowId(indx_DATA) = SURVIVAL.RowId(location_SURV);
 DATA.SURVIVAL.SurvEvent(indx_DATA,:) = SURVIVAL.SurvEvent(location_SURV,:);
 DATA.SURVIVAL.SurvTime(indx_DATA,:) = SURVIVAL.SurvTime(location_SURV,:);
 
