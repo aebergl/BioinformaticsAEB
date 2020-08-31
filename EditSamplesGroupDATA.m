@@ -1,4 +1,4 @@
-function DATA = EditSamplesGroupDATA(DATA,RowAnnotationField,GroupsToRemove,KeepRemove)
+function DATA = EditSamplesGroupDATA(DATA,RowAnnotationField,GroupsToEdit,KeepRemove)
 % USAGE:
 %   DATA = AddSurvivalDATA(DATA,SURVIVAL) Add Survival structure to DATA
 %   structure
@@ -16,8 +16,8 @@ function DATA = EditSamplesGroupDATA(DATA,RowAnnotationField,GroupsToRemove,Keep
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-if ~iscell(GroupsToRemove)
-    GroupsToRemove = {GroupsToRemove};
+if ~iscell(GroupsToEdit)
+    GroupsToEdit = {GroupsToEdit};
 end
 
 indx_Row = strcmpi(RowAnnotationField,DATA.RowAnnotationFields);
@@ -27,17 +27,18 @@ end
 
 SampleIndx = false(DATA.nRow,1);
 
-for i=1:numel(GroupsToRemove)
-    SampleIndx = SampleIndx | strcmp(GroupsToRemove{i},DATA.RowAnnotation(:,indx_Row));
+for i=1:numel(GroupsToEdit)
+    SampleIndx = SampleIndx | strcmp(GroupsToEdit{i},DATA.RowAnnotation(:,indx_Row));
 end
 
 switch lower(KeepRemove)
     case 'keep'
         DATA  = EditSamplesDATA(DATA,DATA.RowId(SampleIndx),'Keep');        
     case 'remove'
-        DATA  = EditSamplesDATA(DATA,DATA.RowId(SampleIndx),'Remove'); 
-        
+        DATA  = EditSamplesDATA(DATA,DATA.RowId(SampleIndx),'Remove');       
 end
+
+
 
 end
 

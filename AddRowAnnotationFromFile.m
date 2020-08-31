@@ -1,12 +1,12 @@
-function DATA = AddRowAnnotationFromFile(DATA,DATAIdToUse,FileName,FileIdToUse,ColumnsToAdd,SheetName)
+function DATA = AddRowAnnotationFromFile(DATA,FileName,varargin)
 % USAGE:
-%   DATA = AddSurvivalDATA(DATA,FileName,ColumnsToUse,Delimiter)
+%   DATA = AddRowAnnotationFromFile(DATA,FileName,ColumnsToUse,Delimiter)
 %   Add row annotation from file to DATA
 %
 % INPUTS:
 % * DATA: DATA structure
 % * IdToUse: Row identifier to use, [], RowId is used
-% * SURVIVAL: SURVIVAL structure 
+% * SURVIVAL: SURVIVAL structure
 %
 % OUTPUTS:
 % * DATA: DATA structure
@@ -16,24 +16,126 @@ function DATA = AddRowAnnotationFromFile(DATA,DATAIdToUse,FileName,FileIdToUse,C
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-[fPath, fName, fExt] = fileparts(FileName);
+SheetName = '';
+DATA_IdName = [];
+File_IdName = [];
+ColumnsToAdd = [];
+Truncate = 0;
+AddReplace = 'Add';
 
-try 
-    opts = detectImportOptions(FileName);   
+% Check Input
+i=0;
+while i<numel(varargin)
+    i = i + 1;
+    if strcmpi(varargin{i},'DATA_Id')
+        i = i + 1;
+        DATA_IdName = varargin{i};
+    elseif strcmpi(varargin{i},'File_Id')
+        i = i + 1;
+        File_IdName = varargin{i};
+    elseif strcmpi(varargin{i},'ColumnsToAdd')
+        i = i + 1;
+        ColumnsToAdd = varargin{i};
+    elseif strcmpi(varargin{i},'SheetName')
+        i = i + 1;
+        SheetName = varargin{i};
+    elseif strcmpi(varargin{i},'Truncate')
+        i = i + 1;
+        Truncate = varargin{i};        
+    elseif strcmpi(varargin{i},'Replace')
+        AddReplace = 'Replace';
+    elseif strcmpi(varargin{i},'Add')
+        AddReplace = 'Add';        
+    end
+end
+
+% Sample Ids to use from the DATA structure
+if isempty(DATA_IdName)
+    DATA_Id = DATA.RowId;
+else
+    indx = strcmp(DATA_IdName,DATA.ColAnnotationFields);
+    if any(indx)
+        DATA_Id = DATA.ColAnnotation(:,indx);
+    else
+        error('Could not find the given Id in the DATA strcuture')
+    end   
+end
+
+% Get info for the annotation file
+try
+    [fPath, fName, fExt] = fileparts(FileName);
+catch
+    error('Could not find file: %s',FileName);
+end
+
+% Get info for annotation file
+try
+    opts = detectImportOptions(FileName,'Sheet',SheetName);
 catch
     opts = detectImportOptions(FileName,'FileType','text');
 end
 
-% find matching columns
-
-indxID = strcmp(FileIdToUse,opts.VariableNames);
-
-
-switch lower(fExt)
-  case '.xls' || '.xlsb' || '.xlsm' || '.xlsx' || '.xltm' || '.xltx'
-    C = readcell(FileName,'Sheet',SheetName,'NumHeaderLines',0);
-  case '.txt'
-    % A Text file
-  otherwise  % Under all circumstances SWITCH gets an OTHERWISE!
-    error('Unexpected file extension: %s', fExt);
+%Select variables to import
+if ~isempty(ColumnsToAdd)
+    [SelectedVariables]  = intersect(opts.VariableNames,ColumnsToAdd,'Stable');
+    opts.SelectedVariableNames = SelectedVariables;
 end
+opts.VariableTypes(:) = {'char'};
+% get File Id to use
+if isempty(File_IdName)
+    File_IdColumn = 1;
+else
+    File_IdColumn = find(strcmp(File_IdName, opts.SelectedVariableNames));  
+end
+opts = setvartype(opts,opts.SelectedVariableNames,'char');
+switch lower(fExt)
+    case {'.xls','.xlsb','.xlsm','.xlsx','.xltm','.xltx'}
+        if isempty(SheetName)
+            C = readcell(FileName,opts);
+        else
+            C = readcell(FileName,opts,'Sheet',SheetName);
+        end
+    case {'.txt','.tsv','.csv'}
+        C = readcell(FileName,opts);
+    otherwise  % Under all circumstances SWITCH gets an OTHERWISE!
+        error('Unexpected file extension: %s', fExt);
+end
+% Fix numeric to str
+indx_numeric = cellfun(@(x) isnumeric(x),C);
+C(indx_numeric)=cellfun(@(x) num2str(x),C(indx_numeric),'UniformOutput',false);
+
+indx_missing = ~cellfun(@(x) ischar(x),C);
+[C{indx_missing}]  = deal('');
+
+File_Id = C(:,File_IdColumn);
+
+if Truncate    
+    File_Id = cellfun(@(x) x(1:Truncate), File_Id, 'UniformOutput', false);
+    DATA_Id = cellfun(@(x) x(1:Truncate), DATA_Id, 'UniformOutput', false);    
+end
+
+%Create Annotation object
+Annotation = cell(DATA.nRow,size(C,2));
+Annotation(:) = {''};
+
+[indx_DATA,indx_File]  = ismember(DATA_Id,File_Id);
+indx_File = indx_File(indx_File>0);
+Annotation(indx_DATA,:) = C(indx_File,:);
+
+switch lower(AddReplace)
+    case 'replace'
+        DATA.RowAnnotation = Annotation;
+        DATA.RowAnnotationFields = opts.SelectedVariableNames;
+    case 'add'
+        DATA.RowAnnotation = [DATA.RowAnnotation Annotation];
+        DATA.RowAnnotationFields = [DATA.RowAnnotationFields; opts.SelectedVariableNames'];
+end
+
+end
+
+
+
+
+
+
+

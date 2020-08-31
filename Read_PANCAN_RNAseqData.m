@@ -37,8 +37,6 @@ DATA.ColAnnotation = [DATA.ColAnnotation  GeneIdSymbol];
 IdsToRemove = CheckTCGASampleQuality(DATA.RowId,[]);
 DATA  = EditSamplesDATA(DATA,IdsToRemove,'Remove');
 
-
-
 % Add basic Sample info based on TCGA sample Id
 fprintf('Converting TCGA Id to sample info\n')
 
@@ -52,11 +50,34 @@ DATA.X = log2(DATA.X+1);
 
 % Add Survival data from TCGA-Clinical Data Resource (CDR) Outcome
 % TCGA-CDR-SupplementalTableS1.xlsx 
-% Will add Survival dat for the normal samples
+% Will add Survival data for the normal samples
 fprintf('Adding Survival data\n')
 SURVIVAL = ReadTCGA_Survival_File;
 
 DATA = AddSurvivalDATA(DATA,[],SURVIVAL);
 
+% Add cinical data from TCGA-Clinical Data Resource (CDR)
+if ~isfile('clinical_PANCAN_patient_with_followup.tsv')
+    try
+        warning('Could not find Tclinical_PANCAN_patient_with_followup.tsv in this directory')
+        warning('Starting to download it now, will probably take a couple of minutes')
+        websave('clinical_PANCAN_patient_with_followup.tsv','http://api.gdc.cancer.gov/data/0fc78496-818b-4896-bd83-52db1f533c5c');
+    catch
+        error('Could not load clinical_PANCAN_patient_with_followup.tsv from http://api.gdc.cancer.gov/data/0fc78496-818b-4896-bd83-52db1f533c5c')
+    end
+end
+% Define what parameters to add
+List = {'bcr_patient_uuid','bcr_patient_barcode','gender','age_at_initial_pathologic_diagnosis',...
+'tumor_tissue_site','new_tumor_event_after_initial_treatment','radiation_therapy',...
+'race','histological_type','pathologic_T','pathologic_M','clinical_M','pathologic_N',...
+'clinical_stage','clinical_T','clinical_N','breast_carcinoma_progesterone_receptor_status',...
+'breast_carcinoma_estrogen_receptor_status','lab_proc_her2_neu_immunohistochemistry_receptor_status',...
+'distant_metastasis_anatomic_site','days_to_first_biochemical_recurrence',...
+'secondary_pattern','primary_pattern','biochemical_recurrence','tumor_tissue_site_1'};
+
 
 end
+
+
+
+
