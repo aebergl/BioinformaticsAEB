@@ -80,14 +80,14 @@ if ~isempty(ColumnsToAdd)
     [SelectedVariables]  = intersect(opts.VariableNames,ColumnsToAdd,'Stable');
     opts.SelectedVariableNames = SelectedVariables;
 end
-opts.VariableTypes(:) = {'char'};
+%opts.VariableTypes(:) = {'char'};
 % get File Id to use
 if isempty(File_IdName)
     File_IdColumn = 1;
 else
     File_IdColumn = find(strcmp(File_IdName, opts.SelectedVariableNames));  
 end
-opts = setvartype(opts,opts.SelectedVariableNames,'char');
+%opts = setvartype(opts,opts.SelectedVariableNames,'char');
 switch lower(fExt)
     case {'.xls','.xlsb','.xlsm','.xlsx','.xltm','.xltx'}
         if isempty(SheetName)
@@ -108,27 +108,31 @@ indx_missing = ~cellfun(@(x) ischar(x),C);
 [C{indx_missing}]  = deal('');
 
 File_Id = C(:,File_IdColumn);
+SelectedVariables(File_IdColumn) = [];
+C(:,File_IdColumn) = [];
+
 
 if Truncate    
     File_Id = cellfun(@(x) x(1:Truncate), File_Id, 'UniformOutput', false);
     DATA_Id = cellfun(@(x) x(1:Truncate), DATA_Id, 'UniformOutput', false);    
 end
+[indx_DATA,indx_File]  = ismember(DATA_Id,File_Id);
+indx_File = indx_File(indx_File>0);
+
 
 %Create Annotation object
 Annotation = cell(DATA.nRow,size(C,2));
 Annotation(:) = {''};
 
-[indx_DATA,indx_File]  = ismember(DATA_Id,File_Id);
-indx_File = indx_File(indx_File>0);
 Annotation(indx_DATA,:) = C(indx_File,:);
 
 switch lower(AddReplace)
     case 'replace'
         DATA.RowAnnotation = Annotation;
-        DATA.RowAnnotationFields = opts.SelectedVariableNames;
+        DATA.RowAnnotationFields = SelectedVariables;
     case 'add'
         DATA.RowAnnotation = [DATA.RowAnnotation Annotation];
-        DATA.RowAnnotationFields = [DATA.RowAnnotationFields; opts.SelectedVariableNames'];
+        DATA.RowAnnotationFields = [DATA.RowAnnotationFields; SelectedVariables'];
 end
 
 end
