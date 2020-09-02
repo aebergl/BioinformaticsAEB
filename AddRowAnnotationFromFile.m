@@ -102,10 +102,10 @@ switch lower(fExt)
 end
 % Fix numeric to str
 indx_numeric = cellfun(@(x) isnumeric(x),C);
-C(indx_numeric)=cellfun(@(x) num2str(x),C(indx_numeric),'UniformOutput',false);
+C(indx_numeric) = cellfun(@(x) num2str(x),C(indx_numeric),'UniformOutput',false);
 
 indx_missing = ~cellfun(@(x) ischar(x),C);
-[C{indx_missing}]  = deal('');
+[C{indx_missing}] = deal('');
 
 File_Id = C(:,File_IdColumn);
 SelectedVariables(File_IdColumn) = [];
