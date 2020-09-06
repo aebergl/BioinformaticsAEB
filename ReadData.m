@@ -35,24 +35,23 @@ while i<numel(varargin)
     if strcmpi(varargin{i},'HeaderRows')
         i = i + 1;
         numHeaderRows = varargin{i};
-    elseif strcmp(varargin{i},'EndRows')
+    elseif strcmpi(varargin{i},'EndRows')
         i = i + 1;
         numEndRows = varargin{i};
-    elseif strcmp(varargin{i},'IdColumns')
+    elseif strcmpi(varargin{i},'IdColumns')
         i = i + 1;
         numIdColumns = varargin{i};
-    elseif strcmp(varargin{i},'Delimiter')
+    elseif strcmpi(varargin{i},'Delimiter')
         i = i + 1;
-        DelimiterType = varargin{i};       
-    elseif strcmp(varargin{i},'T')        
+        DelimiterType = varargin{i};      
+    elseif strcmpi(varargin{i},'T')        
         TransposeX = true;
-   elseif strcmp(varargin{i},'NoT')
+   elseif strcmpi(varargin{i},'NoT')
         TransposeX = false;
-    elseif strcmp(varargin{i},'R')
+    elseif strcmpi(varargin{i},'R')
         R_Input = 1;
     end
 end
-
 % Get info about File
 numRows = GetNumLines(InputFile);
 numColumns = GetNumColumns(InputFile,DelimiterType,min([numRows, 10]));
