@@ -1,11 +1,19 @@
 function DATA  = EditSamplesDATA(DATA,InputIds,KeepRemove)
+Truncate = 15;
+
+DATA_ID = DATA.RowId;
+if Truncate
+    DATA_ID = cellfun(@(x) x(1:Truncate), DATA_ID, 'UniformOutput', false);
+    InputIds = cellfun(@(x) x(1:Truncate), InputIds, 'UniformOutput', false);
+end
 
 IdUnique = unique(InputIds);
 if length(IdUnique) < length(InputIds)
     warning('WARNING! Not all input IDs are unique in EditSamplesDATA')
 end
 
-indx = ismember(DATA.RowId,InputIds);
+
+indx = ismember(DATA_ID,InputIds);
 
 if any(indx)
     switch lower(KeepRemove)
