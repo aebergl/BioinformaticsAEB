@@ -31,12 +31,16 @@ if  fid == -1
     disp(message)
     return
 end
-
+format_str_txt = sprintf('%s%%s',Delimiter);
+format_str_val = sprintf('%s%%g',Delimiter);
 fprintf(fid,'Id');
-if  ~isempty(DATA.RowAnnotationFields)
-    format_str = sprintf('%s%%s',Delimiter);
-    fprintf(fid,format_str,DATA.RowAnnotationFields{:});
+if ~IdsOnly
+    if  ~isempty(DATA.RowAnnotationFields)
+        
+        fprintf(fid,format_str_txt,DATA.RowAnnotationFields{:});
+    end
 end
+fprintf(fid,format_str_txt,DATA.ColId{:});
 % if SampleAnnotationFlag
 %     fprintf(fid,'\t%s',DATA.ColId{ProbeIndx});
 % end
@@ -44,7 +48,10 @@ fprintf(fid,'\n');
 format_str_short = sprintf('%%s');
 for i=1:DATA.nRow
     fprintf(fid,format_str_short,DATA.RowId{i});
-    fprintf(fid,format_str,DATA.RowAnnotation{i,:});
+    if ~IdsOnly
+        fprintf(fid,format_str_txt,DATA.RowAnnotation{i,:});
+    end
+    fprintf(fid,format_str_val,DATA.X(i,:));
     fprintf(fid,'\n');
 end
 fprintf(fid,'\n');
