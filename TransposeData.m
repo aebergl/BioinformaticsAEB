@@ -16,4 +16,8 @@ tmp                         = DATA.RowAnnotation;
 DATA.RowAnnotation          = DATA.ColAnnotation;
 DATA.ColAnnotation          = tmp;
 
+if isfield(DATA,'SURVIVAL')
+   DATA = rmfield(DATA,'SURVIVAL');
+end
+
 

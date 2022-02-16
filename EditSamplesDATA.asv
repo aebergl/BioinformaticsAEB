@@ -37,7 +37,7 @@ if SampleIdentifier
     elseif sum(indx) > 1
         error('Warning. \nMultiple matches for %s found in DATA.RowAnnotationFields',SampleIdentifier);
     else
-        DATA_ID = DATA.RowAnnotation(:,indx);
+        DATA_ID = DATA.RowAnnotationFields(:,indx);
     end
 else
     DATA_ID = DATA.RowId;

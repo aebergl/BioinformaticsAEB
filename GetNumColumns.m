@@ -1,5 +1,12 @@
 function NumColumn = GetNumColumns(FileName,DelimiterType,NumnLinesToRead)
-
+% NumColumn = GetNumColumns(FileName,DelimiterType,NumnLinesToRead)
+%   Get number of coumns in a file
+% Input
+%   FileName:           Name of file
+%   DelimiterType:      Delimiter to use
+%   NumnLinesToRead:    Number of lines to use
+% Output
+%   NumColumns:         Maximum number of column found
 
 [fid,message] = fopen(FileName,'r');
 if  fid == -1

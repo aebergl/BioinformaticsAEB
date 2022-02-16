@@ -14,7 +14,8 @@ function DATA = ReadData(InputFile,varargin)
 %   'HeaderRowsToIgnore'    Number of Header Rows to be ignored (default 0)
 %   'EndRows'               Number of End Rows to be ignored (default 0)
 %   'IdColumns'             Number of Starting Id columns (default 1)
-%   'T'                     Transposes the X matrix [DEFAULT]
+%   'T'                     Transposes the input file [DEFAULT]
+%   'NoT'                   Do not transpose the input file
 %   'Delimiter'             Delimiter type (default '\t')
 %   'R'                     First element is missing in top row
 %

@@ -24,7 +24,6 @@ else
         DATAid = DATA.RowAnnotation(:,indx);
     else
         error('Could not find the given row identifier')
-        
     end   
 end
 

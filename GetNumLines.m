@@ -1,4 +1,6 @@
 function NumLines = GetNumLines(FileName)
+% NumLines = GetNumLines(FileName)
+% Get number of lines in a file
 
 [fid,message] = fopen(FileName,'r');
 if  fid == -1

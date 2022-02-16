@@ -1,6 +1,15 @@
 function IdsToRemove = CheckTCGASampleQuality(InputIds,nChar)
+% IdsToRemove = CheckTCGASampleQuality(InputIds,nChar)
+%
 % Identifies all samples listed in Merged Sample Quality Annotations - merged_sample_quality_annotations.tsv
 % and have TRUE in the "Do_not_use" column
+%
+% Input
+%   InputIds:       List of Ids to check
+%   nChar:          Number of chracters to use for comparison
+%
+% Outpu
+%   IdsToRemove:    List of samples to remove
 
 % Check if all input Ids are unique
 IdUnique = unique(InputIds);

@@ -1,4 +1,9 @@
 function DATA = CreateDataStructure(nRow,nCol,numIdColumns,numHeaderRows)
+% DATA = CreateDataStructure(nRow,nCol,numIdColumns,numHeaderRows)
+%
+%   Initate DATA structure
+%
+
 
 DATA.Title = '';
 DATA.ShortTitle = '';
