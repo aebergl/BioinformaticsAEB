@@ -1,4 +1,4 @@
-function [GeneIdOut, GeneSymbolOut] = GeneSymbol2GeneId(GeneSymbols,RefseqGeneInfoFile)
+function [GeneIdOut, GeneSymbolOut, FullAnnotationOut] = GeneSymbol2GeneId(GeneSymbols,RefseqGeneInfoFile)
 
 if isempty(RefseqGeneInfoFile)
     ftpobj = ftp('ftp.ncbi.nlm.nih.gov');
@@ -48,22 +48,25 @@ GeneColumnsToUse = [2 3 11 9 5 7 8 10 6];
 
 tline = fgetl(FidInputFile);
 tline =  textscan(tline,'%s','delimiter','\t');
-ColumnIds = tline{1};
-numColumns = numel(ColumnIds);
+ColumnIds = tline{1}
+numColumns = numel(ColumnIds)
 
 S = textscan(FidInputFile,repmat('%s',1,numColumns),'delimiter','\t');
 
 GeneId = S{2};
 Symbol = S{3};
 Synonyms = S{5};
+FullAnnotation = cat(2,S{1:numColumns});
 Synonyms_Cell = cellfun(@(x) strsplit(x,'|'), Synonyms, 'UniformOutput', false);
 
 nInput = numel(GeneSymbols);
 
 GeneIdOut =  cell(nInput,1);
 GeneSymbolOut  =  cell(nInput,1);
+FullAnnotationOut = cell(nInput,numColumns);
 GeneIdOut(:) = {'---'};
 GeneSymbolOut(:) = {'---'};
+FullAnnotationOut(:) = {'---'};
 
 [~,indx1,indx2] = intersect(GeneSymbols,Symbol,'Stable');
 
@@ -72,6 +75,9 @@ GeneSymbolOut(cellfun('isempty',GeneSymbolOut)) = {'---'};
     
 GeneIdOut(indx1,:) = GeneId(indx2,:);
 GeneIdOut(cellfun('isempty',GeneIdOut)) = {'---'};
+
+FullAnnotationOut(indx1,:) = FullAnnotation(indx2,:);
+FullAnnotationOut(cellfun('isempty',FullAnnotation)) = {'---'};
 
 
 % get gene ids with no maching annotion
@@ -86,12 +92,15 @@ for i=1:length(MissingIds)
     if sum(indx_tmp) ==  1
             GeneSymbolOut(indxMissing(i)) = Symbol(indx_tmp);
             GeneIdOut(indxMissing(i)) = GeneId(indx_tmp);
-
+            FullAnnotationOut(indxMissing(i),:) = FullAnnotationOut(indx_tmp,:);
+            
     elseif sum(indx_tmp) > 1
         fprintf('Multiple synonyms found for %s\n',MissingIds{i});
         indx_tmp = find(indx_tmp);
         GeneSymbolOut(indxMissing(i)) = Symbol(indx_tmp(1));
         GeneIdOut(indxMissing(i)) = GeneId(indx_tmp(1));
+        FullAnnotationOut(indxMissing(i),:) = FullAnnotationOut(indx_tmp(1),:);
+        
     else
         fprintf('No synonyms found for %s\n',MissingIds{i}) 
     end
