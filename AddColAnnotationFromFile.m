@@ -1,7 +1,7 @@
-function DATA = AddRowAnnotationFromFile(DATA,FileName,varargin)
+function DATA = AddColAnnotationFromFile(DATA,FileName,varargin)
 % USAGE:
-%   DATA = AddRowAnnotationFromFile(DATA,FileName,ColumnsToUse,Delimiter)
-%   Add row annotation from file to DATA
+%   DATA = AddColAnnotationFromFile(DATA,FileName,varargin)
+%   Add column annotation from file to DATA
 %
 % INPUTS:
 % * DATA: DATA structure
@@ -51,11 +51,11 @@ end
 
 % Sample Ids to use from the DATA structure
 if isempty(DATA_IdName)
-    DATA_Id = DATA.RowId;
+    DATA_Id = DATA.ColId;
 else
-    indx = strcmp(DATA_IdName,DATA.RowAnnotationFields);
+    indx = strcmp(DATA_IdName,DATA.ColAnnotationFields);
     if any(indx)
-        DATA_Id = DATA.RowAnnotation(:,indx);
+        DATA_Id = DATA.ColAnnotation(:,indx);
     else
         error('Could not find the given Id in the DATA strcuture')
     end   
@@ -95,11 +95,12 @@ switch lower(fExt)
         else
             C = readcell(FileName,opts,'Sheet',SheetName);
         end
-    case {'.txt','.tsv','.csv'}
+    case {'.txt','.tsv','.csv','.annot'}
         C = readcell(FileName,opts);
     otherwise  % Under all circumstances SWITCH gets an OTHERWISE!
         error('Unexpected file extension: %s', fExt);
 end
+
 % Fix numeric to str
 indx_numeric = cellfun(@(x) isnumeric(x),C);
 C(indx_numeric) = cellfun(@(x) num2str(x),C(indx_numeric),'UniformOutput',false);
@@ -116,23 +117,24 @@ if Truncate
     File_Id = cellfun(@(x) x(1:Truncate), File_Id, 'UniformOutput', false);
     DATA_Id = cellfun(@(x) x(1:Truncate), DATA_Id, 'UniformOutput', false);    
 end
+
+
 [indx_DATA,indx_File]  = ismember(DATA_Id,File_Id);
 indx_File = indx_File(indx_File>0);
 
-
 %Create Annotation object
-Annotation = cell(DATA.nRow,size(C,2));
-Annotation(:) = {''};
+Annotation = cell(DATA.nCol,size(C,2));
+Annotation(:) = {'---'};
 
 Annotation(indx_DATA,:) = C(indx_File,:);
 
 switch lower(AddReplace)
     case 'replace'
-        DATA.RowAnnotation = Annotation;
-        DATA.RowAnnotationFields = opts.SelectedVariableNames ;
+        DATA.ColAnnotation = Annotation;
+        DATA.ColAnnotationFields = opts.SelectedVariableNames ;
     case 'add'
-        DATA.RowAnnotation = [DATA.RowAnnotation Annotation];
-        DATA.RowAnnotationFields = [DATA.RowAnnotationFields; opts.SelectedVariableNames'];
+        DATA.ColAnnotation = [DATA.ColAnnotation Annotation];
+        DATA.ColAnnotationFields = [DATA.ColAnnotationFields; opts.SelectedVariableNames'];
 end
 
 end

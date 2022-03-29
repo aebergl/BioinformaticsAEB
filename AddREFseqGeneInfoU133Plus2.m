@@ -3,7 +3,7 @@ function DATA = AddREFseqGeneInfoU133Plus2(DATA,U133_BA_Path,RefSeqPath,ReplaceA
 
 U133AnnotationFile = fullfile(U133_BA_Path,'HGU133Plus2_Hs_ENTREZG_desc.annot');
 if isfile(U133AnnotationFile)
-    DATA = AddProbeAnnotationMicroarray(DATA,U133AnnotationFile);
+    DATA = AddColAnnotationFromFile(DATA,U133AnnotationFile);
 else
     error('Could not load %s',U133AnnotationFile)
 end
@@ -61,7 +61,7 @@ tline = fgetl(FidInputFile);
 tline =  textscan(tline,'%s','delimiter','\t');
 ColumnIds = tline{1};
 numColumns = numel(ColumnIds);
-Annotation = cell(DATA.NumProbes,length(GeneColumnsToUse));
+Annotation = cell(DATA.nCol,length(GeneColumnsToUse));
 Annotation(:) = {'---'};
 
 S = textscan(FidInputFile,repmat('%s',1,numColumns),'delimiter','\t');
@@ -70,14 +70,14 @@ GeneId = S{2};
 
 GeneInfo = cat(2,S{GeneColumnsToUse});
 
-[~,indx1,indx2] = intersect(DATA.ProbeAnnotation(:,2),GeneId,'Stable');
+[~,indx1,indx2] = intersect(DATA.ColAnnotation(:,2),GeneId,'Stable');
 
 Annotation(indx1,:) = GeneInfo(indx2,:);
 Annotation(cellfun('isempty',Annotation)) = {''};
 Annotation(indx1,:) = GeneInfo(indx2,:);
 
 % get gene ids with no maching annotion
-[MissingIds, indxMissing] = setdiff(DATA.ProbeAnnotation(:,2),GeneId,'stable');
+[MissingIds, indxMissing] = setdiff(DATA.ColAnnotation(:,2),GeneId,'stable');
 length(MissingIds)
 
 % for i=1:length(MissingIds)
@@ -105,11 +105,11 @@ length(MissingIds)
 
 switch lower(ReplaceAppend)
     case 'replace'
-        DATA.ProbeAnnotationFields = [ColumnIds(GeneColumnsToUse)];
-        DATA.ProbeAnnotation = [Annotation];
+        DATA.ColAnnotationFields = [ColumnIds(GeneColumnsToUse)];
+        DATA.ColAnnotation = [Annotation];
     case 'append'
-        DATA.ProbeAnnotationFields = [DATA.ProbeAnnotationFields; ColumnIds(GeneColumnsToUse)];
-        DATA.ProbeAnnotation = [DATA.ProbeAnnotation Annotation];
+        DATA.ColAnnotationFields = [DATA.ColAnnotationFields; ColumnIds(GeneColumnsToUse)];
+        DATA.ColAnnotation = [DATA.ColAnnotation Annotation];
 end
 
 end

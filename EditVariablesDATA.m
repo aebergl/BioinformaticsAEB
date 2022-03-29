@@ -33,9 +33,9 @@ end
 if VariableIdentifier
     indx = strcmpi(VariableIdentifier,DATA.ColAnnotationFields);
     if ~any(indx)
-        error('Error. \n%s not found in DATA.RowAnnotationFields',VariableIdentifier);
+        error('Error. \n%s not found in DATA.ColAnnotationFields',VariableIdentifier);
     elseif sum(indx) > 1
-        error('Warning. \nMultiple matches for %s found in DATA.RowAnnotationFields',VariableIdentifier);
+        error('Warning. \nMultiple matches for %s found in DATA.ColAnnotationFields',VariableIdentifier);
     else
         DATA_ID = DATA.ColAnnotation(:,indx);
     end
@@ -54,7 +54,8 @@ if length(IdUnique) < length(InputIds)
 end
 
 
-indx = ismember(DATA_ID,InputIds);
+[indx] = ismember(DATA_ID,InputIds);
+
 if any(indx)
     switch lower(KeepRemove)
         case 'keep'
