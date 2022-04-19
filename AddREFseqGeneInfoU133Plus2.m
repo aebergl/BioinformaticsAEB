@@ -3,7 +3,7 @@ function DATA = AddREFseqGeneInfoU133Plus2(DATA,U133_BA_Path,RefSeqPath,ReplaceA
 
 U133AnnotationFile = fullfile(U133_BA_Path,'HGU133Plus2_Hs_ENTREZG_desc.annot');
 if isfile(U133AnnotationFile)
-    DATA = AddColAnnotationFromFile(DATA,U133AnnotationFile);
+    DATA = AddColAnnotationFromFile(DATA,U133AnnotationFile,'replace');
 else
     error('Could not load %s',U133AnnotationFile)
 end
@@ -70,15 +70,14 @@ GeneId = S{2};
 
 GeneInfo = cat(2,S{GeneColumnsToUse});
 
-[~,indx1,indx2] = intersect(DATA.ColAnnotation(:,2),GeneId,'Stable');
+[~,indx1,indx2] = intersect(DATA.ColAnnotation(:,1),GeneId,'Stable');
 
 Annotation(indx1,:) = GeneInfo(indx2,:);
 Annotation(cellfun('isempty',Annotation)) = {''};
 Annotation(indx1,:) = GeneInfo(indx2,:);
 
 % get gene ids with no maching annotion
-[MissingIds, indxMissing] = setdiff(DATA.ColAnnotation(:,2),GeneId,'stable');
-length(MissingIds)
+[MissingIds, indxMissing] = setdiff(DATA.ColAnnotation(:,1),GeneId,'stable');
 
 % for i=1:length(MissingIds)
 %     
