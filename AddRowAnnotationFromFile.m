@@ -22,6 +22,7 @@ File_IdName = [];
 ColumnsToAdd = [];
 Truncate = 0;
 AddReplace = 'Add';
+Delimiter = {'\t'};
 
 % Check Input
 i=0;
@@ -36,6 +37,10 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'ColumnsToAdd')
         i = i + 1;
         ColumnsToAdd = varargin{i};
+            elseif strcmpi(varargin{i},'Delimiter')
+        i = i + 1;
+        Delimiter = varargin{i};
+
     elseif strcmpi(varargin{i},'SheetName')
         i = i + 1;
         SheetName = varargin{i};
@@ -45,7 +50,8 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'Replace')
         AddReplace = 'Replace';
     elseif strcmpi(varargin{i},'Add')
-        AddReplace = 'Add';        
+        AddReplace = 'Add';     
+        
     end
 end
 
@@ -72,7 +78,7 @@ end
 try
     opts = detectImportOptions(FileName,'Sheet',SheetName);
 catch
-    opts = detectImportOptions(FileName,'FileType','text');
+    opts = detectImportOptions(FileName,'FileType','text','Delimiter',Delimiter);
 end
 
 %Select variables to import
@@ -91,15 +97,16 @@ end
 switch lower(fExt)
     case {'.xls','.xlsb','.xlsm','.xlsx','.xltm','.xltx'}
         if isempty(SheetName)
-            C = readcell(FileName,opts);
+            C = readcell(FileName,opts,'DatetimeType','text');
         else
-            C = readcell(FileName,opts,'Sheet',SheetName);
+            C = readcell(FileName,opts,'Sheet',SheetName,'DatetimeType','text');
         end
     case {'.txt','.tsv','.csv'}
-        C = readcell(FileName,opts);
+        C = readcell(FileName,opts,'DatetimeType','text');
     otherwise  % Under all circumstances SWITCH gets an OTHERWISE!
         error('Unexpected file extension: %s', fExt);
 end
+
 % Fix numeric to str
 indx_numeric = cellfun(@(x) isnumeric(x),C);
 C(indx_numeric) = cellfun(@(x) num2str(x),C(indx_numeric),'UniformOutput',false);

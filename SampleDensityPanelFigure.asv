@@ -3,10 +3,10 @@ function fh = SampleDensityPanelFigure(DATA,IdColumn,Refsample,nRow,nCol,varargi
 
 PageWidth = 7;
 ShowFigure = true;
-FontSize = 8;
-MarkerSize = 10;
+FontSize = 10;
+ExportPlot = false;
 ExportDir = pwd;
-
+MatchedSamplePairs = [];
 if nargin > 5
     [varargin{:}] = convertStringsToChars(varargin{:});
 end
@@ -14,7 +14,7 @@ end
 
 % Check input
 if nargin > 5
-    ArgsList = {'DisplayFigure', 'ExportPlot','ExportDir'};
+    ArgsList = {'DisplayFigure', 'ExportPlot','ExportDir','MatchedSamplePairs'};
     for j=1:2:numel(varargin)
         ArgType = varargin{j};
         ArgVal = varargin{j+1};
@@ -28,31 +28,35 @@ if nargin > 5
                     ExportPlot = ArgVal;
                 case 'exportdir'
                     ExportDir = ArgVal;
+                case 'matchedsamplepairs'
+                    MatchedSamplePairs = ArgVal;
 
             end
         end
     end
 end
 
-
 if isempty(IdColumn)
-    SampleIds = DATA.RowId
+    SampleIds = DATA.RowId;
 else
     IDColumnIndx = strcmp(IdColumn,DATA.RowAnnotationFields);
     SampleIds = DATA.RowAnnotation(:,IDColumnIndx);
 end
 
-RefSampleIndx = strcmp(Refsample,SampleIds);
-
-OtherSampleIndx = find(~RefSampleIndx);
-
-nArrays=length(OtherSampleIndx);
+if ~isempty(MatchedSamplePairs)
+    nArrays=size(MatchedSamplePairs,1);
+else
+    RefSampleIndx = strcmp(Refsample,SampleIds);
+    OtherSampleIndx = find(~RefSampleIndx);
+    nArrays=length(OtherSampleIndx);
+    x_ref=DATA.X(RefSampleIndx,:);
+end
 nPanes = nRow*nCol;
 nImages = ceil(nArrays / nPanes);
 
 fh = gobjects(nImages,1);
 counter = 0;
-x_ref=DATA.X(RefSampleIndx,:);
+
 minX=min(DATA.X,[],'all')-0.1;
 maxX=max(DATA.X,[],'all')+0.1;
 
@@ -71,11 +75,21 @@ for i = 1:nImages
         counter = counter + 1;
         CurrentPane = CurrentPane + 1;
         ah = nexttile(th);
-        y_sample=DATA.X(OtherSampleIndx(counter),:);
-        DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',5);
-        
-        xlabel(Refsample,'FontSize',FontSize,'Interpreter','none');
-        ylabel(SampleIds(OtherSampleIndx(counter)), 'FontSize',FontSize,'Interpreter','none')
+        if ~isempty(MatchedSamplePairs)
+            RefSampleIndx_x = strcmp(MatchedSamplePairs(counter,1),SampleIds);
+            RefSampleIndx_y = strcmp(MatchedSamplePairs(counter,2),SampleIds);
+            x_ref=DATA.X(RefSampleIndx_x,:);
+            y_sample=DATA.X(RefSampleIndx_y,:);
+            DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',5);
+            xlabel(MatchedSamplePairs(counter,1),'FontSize',FontSize+2,'Interpreter','none');
+            ylabel(MatchedSamplePairs(counter,2), 'FontSize',FontSize+2,'Interpreter','none')
+            
+        else
+            y_sample=DATA.X(OtherSampleIndx(counter),:);
+            DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',5);
+            xlabel(Refsample,'FontSize',FontSize+2,'Interpreter','none');
+            ylabel(SampleIds(OtherSampleIndx(counter)), 'FontSize',FontSize+2,'Interpreter','none')
+        end
         ah.XLim = [minX maxX];
         ah.XTick = ceil(minX):2:floor(maxX);
         ah.YLim = [minX maxX];
@@ -89,16 +103,28 @@ for i = 1:nImages
         nDiff_15 = sum(abs(x_ref-y_sample) > 0.585);
         %Str(1) = {['\itn\rmFC>2=',sprintf('%u',nDiff_2)]};
         %Str(1) = {['\itn\rmFC>2=',sprintf('%u',nDiff_2)]};
-        Str(1) = {['Num > 2-fold: ',sprintf('%u',nDiff_2)]};
-        Str(2) = {['Num > 1.5-fold: ',sprintf('%u',nDiff_15)]};
-        Str(3) = {['r=',sprintf('%.5f',r_corr)]};
+        Str(1) = {['r = ',sprintf('%.5f',r_corr)]};
+        Str(2) = {['Num > 2-fold: ',sprintf('%u',nDiff_2)]};
+        Str(3) = {['Num > 1.5-fold: ',sprintf('%u',nDiff_15)]};
 
-        text(ah.XLim(1)+0.2,ah.YLim(2)-0.2,Str,'FontSize',10,'VerticalAlignment','Top','HorizontalAlignment','Left','Color','k');
+
+        text(ah.XLim(1)+0.2,ah.YLim(2)+0.1,Str,'FontSize',FontSize,'VerticalAlignment','bottom','HorizontalAlignment','Left','Color','k');
 
         line([ah.XLim(1) ah.XLim(2)-1],[ah.YLim(1)+1 ah.YLim(2)],'Linewidth',1,'LineStyle','-.','color','r')
         line([ah.XLim(1)+1 ah.XLim(2)],[ah.YLim(1) ah.YLim(2)-1],'Linewidth',1,'LineStyle','-.','color','r')
 
 
+    end
+    if ExportPlot
+        if nImages > 1
+            [~,name,ext] = fileparts(ExportPlot);
+            tmpName = sprintf('%s_%u%s',name,i,ext);
+            FullFileExport=fullfile(ExportDir,tmpName);
+        else
+            FullFileExport=fullfile(ExportDir,ExportPlot);
+        end
+
+        exportgraphics(th,FullFileExport,'Resolution',200)
     end
 
 
