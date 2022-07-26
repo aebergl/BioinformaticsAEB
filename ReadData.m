@@ -116,10 +116,10 @@ if numHeaderRows > 0
         tmp = [{'SampleId'};tmp];
     end
     DATA.ColId = tmp(numIdColumns+1:end);
-    DATA.ColAnnotationFields(1) = tmp(1,1);
-    DATA.ColAnnotation(:,1) = tmp(numIdColumns+1:end,1);
-    if numIdColumns > 0
-        DATA.RowAnnotationFields = tmp(1:numIdColumns);
+    %DATA.ColAnnotationFields(1) = tmp(1,1);
+    %DATA.ColAnnotation(:,1) = tmp(numIdColumns+1:end,1);
+    if numIdColumns > 1
+        DATA.RowAnnotationFields = tmp(2:numIdColumns);
     end
     for i=2:numHeaderRows
         [tmp,~] = textscan(HeaderData{i},'%q','delimiter',DelimiterType);
@@ -128,8 +128,8 @@ if numHeaderRows > 0
         DATA.ColAnnotation(:,i) = tmp(numIdColumns+1:end,1);
     end
     DATA.RowId  = S{1};
-    if numIdColumns > 0
-        DATA.RowAnnotation  = [S{1:numIdColumns}];
+    if numIdColumns > 1
+        DATA.RowAnnotation  = [S{2:numIdColumns}];
 
     end
 else

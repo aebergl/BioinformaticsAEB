@@ -114,10 +114,12 @@ C(indx_numeric) = cellfun(@(x) num2str(x),C(indx_numeric),'UniformOutput',false)
 indx_missing = ~cellfun(@(x) ischar(x),C);
 [C{indx_missing}] = deal('');
 
-File_Id = C(:,File_IdColumn);
-opts.SelectedVariableNames(File_IdColumn) = [];
-C(:,File_IdColumn) = [];
 
+File_Id = C(:,File_IdColumn);
+if ~isempty(DATA.RowAnnotationFields)
+    opts.SelectedVariableNames(File_IdColumn) = [];
+    C(:,File_IdColumn) = [];
+end
 
 if Truncate    
     File_Id = cellfun(@(x) x(1:Truncate), File_Id, 'UniformOutput', false);

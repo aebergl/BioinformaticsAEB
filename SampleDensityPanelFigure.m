@@ -7,6 +7,7 @@ FontSize = 10;
 ExportPlot = false;
 ExportDir = pwd;
 MatchedSamplePairs = [];
+ALLvsALL = false;
 if nargin > 5
     [varargin{:}] = convertStringsToChars(varargin{:});
 end
@@ -14,7 +15,7 @@ end
 
 % Check input
 if nargin > 5
-    ArgsList = {'DisplayFigure', 'ExportPlot','ExportDir','MatchedSamplePairs'};
+    ArgsList = {'DisplayFigure', 'ExportPlot','ExportDir','MatchedSamplePairs','ALLvsALL'};
     for j=1:2:numel(varargin)
         ArgType = varargin{j};
         ArgVal = varargin{j+1};
@@ -30,6 +31,8 @@ if nargin > 5
                     ExportDir = ArgVal;
                 case 'matchedsamplepairs'
                     MatchedSamplePairs = ArgVal;
+                case 'allvsall'
+                    ALLvsALL = ArgVal;
 
             end
         end
@@ -41,6 +44,19 @@ if isempty(IdColumn)
 else
     IDColumnIndx = strcmp(IdColumn,DATA.RowAnnotationFields);
     SampleIds = DATA.RowAnnotation(:,IDColumnIndx);
+end
+if ALLvsALL
+    n=length(SampleIds);
+    MatchedSamplePairs = cell(n*(n-1)/2,2);
+    counter = 0;
+    for i = 1:n-1
+        for j = i+1:n
+            counter = counter + 1;
+            MatchedSamplePairs(counter,1) = SampleIds(i);
+            MatchedSamplePairs(counter,2) = SampleIds(j);
+        end
+    end
+
 end
 
 if ~isempty(MatchedSamplePairs)
@@ -83,7 +99,7 @@ for i = 1:nImages
             DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',5);
             xlabel(MatchedSamplePairs(counter,1),'FontSize',FontSize+2,'Interpreter','none');
             ylabel(MatchedSamplePairs(counter,2), 'FontSize',FontSize+2,'Interpreter','none')
-            
+
         else
             y_sample=DATA.X(OtherSampleIndx(counter),:);
             DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',5);
