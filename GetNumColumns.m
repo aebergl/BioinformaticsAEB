@@ -23,4 +23,5 @@ for i = 1:NumnLinesToRead
         NumColumnRow(i) = numel(tmp);
     end
 end
+
 NumColumn = max(NumColumnRow);

@@ -23,6 +23,7 @@ ColumnsToAdd = [];
 Truncate = 0;
 AddReplace = 'Add';
 Delimiter = {'\t'};
+VariableNamingRule = 'preserve';
 
 % Check Input
 i=0;
@@ -86,6 +87,9 @@ if ~isempty(ColumnsToAdd)
     [SelectedVariables]  = intersect(opts.VariableNames,ColumnsToAdd,'Stable');
     opts.SelectedVariableNames = SelectedVariables;
 end
+opts.VariableNamingRule=VariableNamingRule;
+
+
 %opts.VariableTypes(:) = {'char'};
 % get File Id to use
 if isempty(File_IdName)
