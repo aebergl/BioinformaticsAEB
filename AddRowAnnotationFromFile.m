@@ -77,9 +77,9 @@ end
 
 % Get info for annotation file
 try
-    opts = detectImportOptions(FileName,'Sheet',SheetName);
+    opts = detectImportOptions(FileName,'Sheet',SheetName,'VariableNamingRule',VariableNamingRule);
 catch
-    opts = detectImportOptions(FileName,'FileType','text','Delimiter',Delimiter);
+    opts = detectImportOptions(FileName,'FileType','text','Delimiter',Delimiter,'VariableNamingRule',VariableNamingRule);
 end
 
 %Select variables to import
@@ -87,8 +87,6 @@ if ~isempty(ColumnsToAdd)
     [SelectedVariables]  = intersect(opts.VariableNames,ColumnsToAdd,'Stable');
     opts.SelectedVariableNames = SelectedVariables;
 end
-opts.VariableNamingRule=VariableNamingRule;
-
 
 %opts.VariableTypes(:) = {'char'};
 % get File Id to use
@@ -115,15 +113,16 @@ end
 indx_numeric = cellfun(@(x) isnumeric(x),C);
 C(indx_numeric) = cellfun(@(x) num2str(x),C(indx_numeric),'UniformOutput',false);
 
-indx_missing = ~cellfun(@(x) ischar(x),C);
-[C{indx_missing}] = deal('');
-
-
 File_Id = C(:,File_IdColumn);
-if ~isempty(DATA.RowAnnotationFields)
-    opts.SelectedVariableNames(File_IdColumn) = [];
-    C(:,File_IdColumn) = [];
-end
+SelectedVariables(File_IdColumn) = [];
+C(:,File_IdColumn) = [];
+
+indx_missing = ~cellfun(@(x) ischar(x),C);
+[C{indx_missing}] = deal('NA');
+
+indx_missing = ~cellfun(@(x) ischar(x),File_Id);
+C(indx_missing,:) = [];
+File_Id(indx_missing,:) = [];
 
 if Truncate    
     File_Id = cellfun(@(x) x(1:Truncate), File_Id, 'UniformOutput', false);
@@ -135,17 +134,17 @@ indx_File = indx_File(indx_File>0);
 
 %Create Annotation object
 Annotation = cell(DATA.nRow,size(C,2));
-Annotation(:) = {''};
+Annotation(:) = {'---'};
 
 Annotation(indx_DATA,:) = C(indx_File,:);
 
 switch lower(AddReplace)
     case 'replace'
         DATA.RowAnnotation = Annotation;
-        DATA.RowAnnotationFields = opts.SelectedVariableNames ;
+        DATA.RowAnnotationFields = SelectedVariables ;
     case 'add'
         DATA.RowAnnotation = [DATA.RowAnnotation Annotation];
-        DATA.RowAnnotationFields = [DATA.RowAnnotationFields; opts.SelectedVariableNames'];
+        DATA.RowAnnotationFields = [DATA.RowAnnotationFields; SelectedVariables'];
 end
 
 end
