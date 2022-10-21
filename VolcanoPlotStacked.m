@@ -5,7 +5,7 @@ max_alpha = 0.4;
 max_size = 200;
 
 fh=figure('Name','Volcano Plot','Color','w','Tag','Volcano Plot figure','Units','centimeters');
-fh.Position(3:4) = [16 12];
+fh.Position(3:4) = [12 10];
 ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','on','Layer','top','FontSize',FontSize);
 ah.LineWidth = 1;
 ah.XGrid= 'on';
@@ -19,7 +19,7 @@ indx_neg = x_data < 0;
 x_data_pos = x_data(indx_pos);
 y_data_pos = y_data(indx_pos);
 
-x_data_neg = x_data(indx_neg);
+x_data_neg = -x_data(indx_neg);
 y_data_neg = y_data(indx_neg);
 
 dist_pos = pdist2([x_data_pos y_data_pos],[0 0],"seuclidean");
