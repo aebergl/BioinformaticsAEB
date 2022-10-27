@@ -10,9 +10,9 @@ end
 [~,Data_indx,Annotation_indx]=intersect(DATA.ColId,ProbeAnnotation.ProbeAnnotation(:,ProbeId_Column),'stable');
 
 DATA.X = DATA.X(:,Data_indx);
-
+DATA.nCol = size(DATA.X,2);
 DATA.ColId = DATA.ColId(Data_indx);
 DATA.ColAnnotation = ProbeAnnotation.ProbeAnnotation(Annotation_indx,:);
 DATA.ColAnnotationFields = ProbeAnnotation.ProbeAnnotationColumns;
-DATA.NumProbes = size(DATA.X,2);
+
 

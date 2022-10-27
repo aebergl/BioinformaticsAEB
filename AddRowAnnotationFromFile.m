@@ -83,7 +83,9 @@ catch
 end
 
 %Select variables to import
-if ~isempty(ColumnsToAdd)
+if isempty(ColumnsToAdd)
+    SelectedVariables = opts.SelectedVariableNames;
+else
     [SelectedVariables]  = intersect(opts.VariableNames,ColumnsToAdd,'Stable');
     opts.SelectedVariableNames = SelectedVariables;
 end

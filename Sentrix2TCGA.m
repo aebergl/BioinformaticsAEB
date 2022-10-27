@@ -9,7 +9,6 @@ nFiles = numel(FileList);
 nVal = length(SentrixId);
 TCGA_ID = cell(nVal,1);
 TCGA_ID(:) = {'---'};
-nFound=0;
 
 for i=1:nFiles
     FileName = FileList{i};
