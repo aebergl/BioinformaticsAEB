@@ -27,9 +27,9 @@ if isfield(DATA,'SURVIVAL')
     RESULTS_DATA.SURVIVAL = DATA.SURVIVAL;
 
 end
-
-DATA.X=B2M(DATA.X);
-DATA_Median.X=B2M(DATA_Median.X);
+% 
+% DATA.X=B2M(DATA.X);
+% DATA_Median.X=B2M(DATA_Median.X);
 
 
 X = bsxfun(@minus, DATA.X(:,indx_ToUse), median(DATA_Median.X(:,indx_ToUse),1,'omitnan'));
