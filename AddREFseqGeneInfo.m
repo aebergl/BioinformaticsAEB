@@ -1,4 +1,14 @@
-function DATA = AddREFseqGeneInfo(DATA,FileName,ReplaceAppend)
+function DATA = AddREFseqGeneInfo(DATA,FileName,ReplaceAppend,varargin)
+
+IdToUse = 'GeneID';
+i=0;
+while i<numel(varargin)
+    i = i + 1;
+    if strcmpi(varargin{i},'IdToUse')
+        i = i + 1;
+        IdToUse = varargin{i};
+    end
+end
 
 if isempty(FileName)
     ftpobj = ftp('ftp.ncbi.nlm.nih.gov');
@@ -57,7 +67,12 @@ ExtraInfo(:) = {'---'};
 
 S = textscan(FidInputFile,repmat('%s',1,numColumns),'delimiter','\t');
 
-GeneId = S{2};
+switch lower(IdToUse)
+    case 'geneid'
+        GeneId = S{2};
+    case 'genesymbol'
+        GeneId = S{3};
+end
 
 GeneInfo = cat(2,S{GeneColumnsToUse});
 

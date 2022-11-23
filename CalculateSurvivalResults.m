@@ -15,13 +15,13 @@ end
 if ~isempty(GroupId)
     GroupIdColumn = (strcmp(GroupId,DATA.RowAnnotationFields));
     GroupIdColumn = GroupIdColumn & (cumsum(GroupIdColumn) == 1); % Picks the first occurence
-    
+
     SampleIndxMatrix = false(DATA.nRow,numel(Group1));
     for i=1:numel(Group1)
         SampleIndxMatrix(:,i) = strcmp(Group1{i},DATA.RowAnnotation(:,GroupIdColumn));
     end
     SampleIndx_x = any(SampleIndxMatrix,2);
-    SampleId_x = DATA.SampleIds(SampleIndx_x);
+    SampleId_x = DATA.RowId(SampleIndx_x);
 else
     SampleIndx_x = true(DATA.nRow,1);
     SampleId_x = DATA.RowId;
@@ -41,11 +41,17 @@ RESULTS_DATA.Info.Group1 = Group1;
 RESULTS_DATA.Info.MinNumSampleSize = MinNumSampleSize;
 RESULTS_DATA.Info.SampleId_x = SampleId_x;
 RESULTS_DATA.Info.numSamples_x = length(SampleId_x);
+RESULTS_DATA.RowId = DATA.ColId;
+RESULTS_DATA.RowAnnotation = DATA.ColAnnotation;
+RESULTS_DATA.RowAnnotationFields = DATA.ColAnnotationFields;
 
 VarNames = {'p logrank','q logrank','HR logrank','p coxreg','q coxreg','HR coxreg'}';
 VarNames = strcat(VarNames,{' '},Surv_Type);
 VarNames = [VarNames; {'Range','Num Values'}'];
 RESULTS_DATA.ColId=VarNames;
+
+RESULTS_DATA.ColAnnotationFields = {'VarId'};
+RESULTS_DATA.ColAnnotation = RESULTS_DATA.ColId;
 
 X_x = DATA.X(SampleIndx_x,:);
 if strcmpi('M-value',DataType)
@@ -94,29 +100,46 @@ HR_coxreg = ones(DATA.nCol,1) * NaN;
 RangeVal  = ones(DATA.nCol,1) * NaN;
 nVal = ones(DATA.nCol,1) * NaN;
 
-parfor i=1:DATA.nCol
-    x = X_x(:,i);
-    nVal(i) = sum(~isnan(x));
-    if nVal(i) > MinNumSampleSize
-       RangeVal(i) = range(x);
-        try
-            [p_logrank(i),fh,stats]= MatSurv(TimeVar,EventVar,x,'CutPoint','median','NoPlot',true,'Print',false,'NoWarnings',true);
-            HR_logrank(i) = stats.HR_logrank;
-        catch
-        end
-        try 
-            [~,~,~,stats_cox] = coxphfit(x,TimeVar,'censoring',~EventVarBin,'Options',coxphopt);
-            p_coxreg(i)=stats_cox.p;
-            HR_coxreg(i) = exp(stats_cox.beta);
-        catch
-            
-        end
 
+if DATA.nCol > 100
+    parfor i=1:DATA.nCol
+        x = X_x(:,i);
+        nVal(i) = sum(~isnan(x));
+        if nVal(i) > MinNumSampleSize
+            RangeVal(i) = range(x);
+            try
+                [p_logrank(i),~,stats]= MatSurv(TimeVar,EventVar,x,'CutPoint','median','NoPlot',true,'Print',false,'NoWarnings',true);
+                HR_logrank(i) = stats.HR_logrank;
+            catch
+            end
+            try
+                [~,~,~,stats_cox] = coxphfit(x,TimeVar,'censoring',~EventVarBin,'Options',coxphopt,'Baseline',0);
+                p_coxreg(i)=stats_cox.p;
+                HR_coxreg(i) = exp(stats_cox.beta);
+            catch
+            end
+        end
     end
-    
-    
+else
+    for i=1:DATA.nCol
+        x = X_x(:,i);
+        nVal(i) = sum(~isnan(x));
+        if nVal(i) > MinNumSampleSize
+            RangeVal(i) = range(x);
+            try
+                [p_logrank(i),~,stats]= MatSurv(TimeVar,EventVar,x,'CutPoint','median','NoPlot',true,'Print',false,'NoWarnings',true);
+                HR_logrank(i) = stats.HR_logrank;
+            catch
+            end
+            try
+                [~,~,~,stats_cox] = coxphfit(x,TimeVar,'censoring',~EventVarBin,'Options',coxphopt,'Baseline',0);
+                p_coxreg(i)=stats_cox.p;
+                HR_coxreg(i) = exp(stats_cox.beta);
+            catch
+            end
+        end
+    end
 end
-
 RESULTS_DATA.X(:,1) = p_logrank;
 RESULTS_DATA.X(:,3) = HR_logrank;
 RESULTS_DATA.X(:,4) = p_coxreg;
@@ -130,6 +153,6 @@ catch
 end
 try
     [~, RESULTS_DATA.X(:,5),~] = mafdr(p_coxreg);
-catch 
+catch
     RESULTS_DATA.X(:,5) = ones(DATA.nCol,1);
 end

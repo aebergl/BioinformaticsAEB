@@ -22,7 +22,8 @@ File_IdName = [];
 ColumnsToAdd = [];
 Truncate = 0;
 AddReplace = 'Add';
-
+Delimiter = {'\t'};
+VariableNamingRule = 'preserve';
 % Check Input
 i=0;
 while i<numel(varargin)
@@ -36,6 +37,10 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'ColumnsToAdd')
         i = i + 1;
         ColumnsToAdd = varargin{i};
+    elseif strcmpi(varargin{i},'Delimiter')
+        i = i + 1;
+        Delimiter = varargin{i};
+
     elseif strcmpi(varargin{i},'SheetName')
         i = i + 1;
         SheetName = varargin{i};
@@ -70,13 +75,15 @@ end
 
 % Get info for annotation file
 try
-    opts = detectImportOptions(FileName,'Sheet',SheetName);
+    opts = detectImportOptions(FileName,'Sheet',SheetName,'VariableNamingRule',VariableNamingRule);
 catch
-    opts = detectImportOptions(FileName,'FileType','text');
+    opts = detectImportOptions(FileName,'FileType','text','Delimiter',Delimiter,'VariableNamingRule',VariableNamingRule);
 end
 
 %Select variables to import
-if ~isempty(ColumnsToAdd)
+if isempty(ColumnsToAdd)
+    SelectedVariables = opts.SelectedVariableNames;
+else
     [SelectedVariables]  = intersect(opts.VariableNames,ColumnsToAdd,'Stable');
     opts.SelectedVariableNames = SelectedVariables;
 end
@@ -105,12 +112,16 @@ end
 indx_numeric = cellfun(@(x) isnumeric(x),C);
 C(indx_numeric) = cellfun(@(x) num2str(x),C(indx_numeric),'UniformOutput',false);
 
-indx_missing = ~cellfun(@(x) ischar(x),C);
-[C{indx_missing}] = deal('');
-
 File_Id = C(:,File_IdColumn);
-opts.SelectedVariableNames(File_IdColumn) = [];
+SelectedVariables(File_IdColumn) = [];
 C(:,File_IdColumn) = [];
+
+indx_missing = ~cellfun(@(x) ischar(x),C);
+[C{indx_missing}] = deal('NA');
+
+indx_missing = ~cellfun(@(x) ischar(x),File_Id);
+C(indx_missing,:) = [];
+File_Id(indx_missing,:) = [];
 
 
 if Truncate    
@@ -131,10 +142,10 @@ Annotation(indx_DATA,:) = C(indx_File,:);
 switch lower(AddReplace)
     case 'replace'
         DATA.ColAnnotation = Annotation;
-        DATA.ColAnnotationFields = opts.SelectedVariableNames ;
+        DATA.ColAnnotationFields = SelectedVariables ;
     case 'add'
         DATA.ColAnnotation = [DATA.ColAnnotation Annotation];
-        DATA.ColAnnotationFields = [DATA.ColAnnotationFields; opts.SelectedVariableNames'];
+        DATA.ColAnnotationFields = [DATA.ColAnnotationFields; SelectedVariables'];
 end
 
 end

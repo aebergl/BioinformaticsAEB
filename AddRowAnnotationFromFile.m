@@ -38,7 +38,7 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'ColumnsToAdd')
         i = i + 1;
         ColumnsToAdd = varargin{i};
-            elseif strcmpi(varargin{i},'Delimiter')
+    elseif strcmpi(varargin{i},'Delimiter')
         i = i + 1;
         Delimiter = varargin{i};
 
