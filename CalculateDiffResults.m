@@ -32,7 +32,7 @@ SampleId_x = DATA.RowId(SampleIndx_x);
 SampleId_y = DATA.RowId(SampleIndx_y);
 
 
-RESULTS_DATA = CreateDataStructure(DATA.nCol,8,[],[]);
+RESULTS_DATA = CreateDataStructure(DATA.nCol,10,[],[]);
 
 % Add Info
 RESULTS_DATA.Title = 'Difference analysis results';
@@ -52,7 +52,7 @@ RESULTS_DATA.RowAnnotationFields = DATA.ColAnnotationFields;
 
 
 
-VarNames = {'p t-test','q t-test','Delta Average','Average x','Average y','p Bartlett','q Bartlett','Min Samples'}';
+VarNames = {'p t-test','q t-test','fdr t-test','Delta Average','Average x','Average y','p Bartlett','q Bartlett','fdr Bartlett','Min Samples'}';
 RESULTS_DATA.ColId=VarNames;
 
 RESULTS_DATA.ColAnnotationFields = {'VarId'};
@@ -93,11 +93,11 @@ end
 
 
 RESULTS_DATA.X(:,1) = p_TT;
-RESULTS_DATA.X(:,3) = DeltaAverage;
-RESULTS_DATA.X(:,4) = Average_x;
-RESULTS_DATA.X(:,5) = Average_y;
-RESULTS_DATA.X(:,6) = p_Bartlett;
-RESULTS_DATA.X(:,8) = MinNum;
+RESULTS_DATA.X(:,4) = DeltaAverage;
+RESULTS_DATA.X(:,5) = Average_x;
+RESULTS_DATA.X(:,6) = Average_y;
+RESULTS_DATA.X(:,7) = p_Bartlett;
+RESULTS_DATA.X(:,10) = MinNum;
 
 try
     [~, RESULTS_DATA.X(:,2),~] = mafdr(p_TT);
@@ -105,9 +105,19 @@ catch
     RESULTS_DATA.X(:,2) = ones(DATA.nCol,1);
 end
 try
-    [~, RESULTS_DATA.X(:,7),~] = mafdr(p_Bartlett);
+    [RESULTS_DATA.X(:,3)] = mafdr(p_TT,'BHFDR',true);
 catch
-    RESULTS_DATA.X(:,7) = ones(DATA.nCol,1);
+    RESULTS_DATA.X(:,3) = ones(DATA.nCol,1);
 end
 
+try
+    [~, RESULTS_DATA.X(:,8),~] = mafdr(p_Bartlett);
+catch
+    RESULTS_DATA.X(:,8) = ones(DATA.nCol,1);
+end
+try
+    [RESULTS_DATA.X(:,9)] = mafdr(p_Bartlett,'BHFDR',true);
+catch
+    RESULTS_DATA.X(:,9) = ones(DATA.nCol,1);
+end
 

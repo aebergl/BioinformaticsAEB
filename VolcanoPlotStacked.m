@@ -1,8 +1,8 @@
 function fh = VolcanoPlotStacked(x_data,y_data,xlabel_txt,ylabel_txt)
 
 PlotType = 'simple';
-x_CutOff = 0.2;
-y_CutOff= 2;
+x_CutOff = 0.1;
+y_CutOff= 3;
 
 FontSize=8;
 min_alpha = 0.01;
