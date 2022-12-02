@@ -1,24 +1,44 @@
-function fh = ChrPlotDiff(DATA,Chr,PlotRange,Y_Type,SizeType,ColorType)
+function fh = ChrPlotDiff(DATA,Chr,PlotRange,Y_Type,SizeType,ColorType,varargin)
 FontSize = 10;
 minSize = 10;
 maxSize = 150;
 printResults=false;
 Delimiter = '\t';
-
-GENES={'MEG3','MEG8','DLK1','MIR376B'};
-
-%ChrUnit = 'bp';
+pCeil = 15;
+ChrUnit = 'bp';
 % ChrUnit = 'kb';
 ChrUnit = 'mb';
-%PlotRange = [];
-%PlotRange = [57000000 59000000];
-pCeil = 15;
-
-
 YLabel = '';
 Colorlabel = '';
 SizeLable= '';
-% 
+CytoBand = false;
+GENES=[];
+REGION = [];
+% Check Input
+i=0;
+while i<numel(varargin)
+    i = i + 1;
+    if strcmpi(varargin{i},'GENES')
+        i = i + 1;
+        GENES = varargin{i};
+    elseif strcmpi(varargin{i},'REGION')
+        i = i + 1;
+        REGION = varargin{i};
+    elseif strcmpi(varargin{i},'Print')
+        i = i + 1;
+        printResults = true;
+    elseif strcmpi(varargin{i},'ChrUnit')
+        i = i + 1;
+        ChrUnit = varargin{i};
+    elseif strcmpi(varargin{i},'CytoBand')
+        i = i + 1;
+        CytoBand = true;
+
+    end
+end
+
+
+%
 % if DATA.NumProbes > 500000
 %     ChipType = 'EPIC';
 %     CytoBandfile = 'cytoBandIdeo_37.txt';
@@ -52,13 +72,17 @@ switch ChrUnit
         UnitTxt = '(bp)';
     case 'kb'
         ChrPos = ChrPos ./ 1000.00;
+        PlotRange = PlotRange ./ 1000.00;
         UnitVal = 2;
         UnitTxt = '(kb)';
     case 'mb'
         ChrPos = ChrPos ./ 1000000.00;
         PlotRange = PlotRange ./ 1000000.00;
+        if ~isempty(REGION)
+        REGION(:,1) = cellfun(@(x) x/1000000 ,REGION(:,1),'UniformOutput',false);
+        end
         UnitVal = 3;
-        UnitTxt = ' (mb)';
+        UnitTxt = '(mb)';
 end
 
 % Select Y value
@@ -66,7 +90,7 @@ indx_Y_Val = strcmpi(Y_Type,DATA.ColId);
 if any(indx_Y_Val)
     Y_Val = DATA.X(indx_Chr,indx_Y_Val);
 else
-    
+
 end
 
 % Select Size value
@@ -74,7 +98,7 @@ indx_SizeVal = strcmpi(SizeType,DATA.ColId);
 if any(indx_SizeVal)
     SizeVal = DATA.X(indx_Chr,indx_SizeVal);
 else
-    
+
 end
 
 % Select Color value
@@ -82,7 +106,7 @@ indx_ColorVal = strcmpi(ColorType,DATA.ColId);
 if any(indx_SizeVal)
     ColorVal = DATA.X(indx_Chr,indx_ColorVal);
 else
-    
+
 end
 
 switch Y_Type
@@ -104,11 +128,11 @@ end
 
 switch ColorType
     case 'q t-test'
-       ColorVal =  -log10(ColorVal);
-       Colorlabel = {'-log_1_0(q-value)'};
+        ColorVal =  -log10(ColorVal);
+        Colorlabel = {'-log_1_0(q-value)'};
     case 'fdr t-test'
-       ColorVal =  -log10(ColorVal);
-       Colorlabel = {'-log_1_0(fdr p-value)'};
+        ColorVal =  -log10(ColorVal);
+        Colorlabel = {'-log_1_0(fdr p-value)'};
 
 
     case 'p t-test'
@@ -120,11 +144,11 @@ switch ColorType
         ColorVal = (DATA.RES(nRES).r_Pearson(indx_Chr)).^2;
     case 'Range'
         ColorVal = DATA.RES(nRES).Range(indx_Chr);
-     case 'p_logrank'
+    case 'p_logrank'
         ColorVal = DATA.RES(nRES).p_logrank(indx_Chr);
-     case 'MeanDiff'
+    case 'MeanDiff'
         ColorVal = (DATA.RES(nRES).MeanDiff(indx_Chr));
-     case 'p_Spearman'
+    case 'p_Spearman'
         ColorVal = (DATA.RES(nRES).p_Spearman(indx_Chr));
 end
 
@@ -140,11 +164,11 @@ switch SizeType
         SizeVal = (DATA.RES(nRES).r_Pearson(indx_Chr)).^2;
     case 'Range'
         SizeVal = DATA.RES(nRES).Range(indx_Chr);
-     case 'p_logrank'
+    case 'p_logrank'
         SizeVal = DATA.RES(nRES).p_logrank(indx_Chr);
     case 'Delta Average'
         SizeVal =  abs(SizeVal);
-     case 'p_Spearman'
+    case 'p_Spearman'
         SizeVal = (DATA.RES(nRES).p_Spearman(indx_Chr));
 end
 
@@ -189,16 +213,17 @@ ah.XAxis.TickDirection ='out';
 ah.XAxis.TickLabelRotation = 0;
 ah.XAxis.TickLength = [0.00500 0.0250];
 
-% try
-% chromosomeplot(CytoBandfile, '14', 'addtoplot', ah,'Orientation','Horizontal','unit', UnitVal);
-% indx=findobj(fh.Children(2),'FontSize',8);
-% [indx.FontSize]=deal(7);
-% ChrTxt = strcat('Chr. ', Chr);
-% text(fh.Children(2),fh.Children(2).XLim(1)-0.005,0.7 ,ChrTxt,'HorizontalAlignment','right','VerticalAlignment','middle','FontSize',FontSize)
-% 
-% catch
-% end
+if CytoBand
+    try
+        chromosomeplot(CytoBandfile, '14', 'addtoplot', ah,'Orientation','Horizontal','unit', UnitVal);
+        indx=findobj(fh.Children(2),'FontSize',8);
+        [indx.FontSize]=deal(7);
+        ChrTxt = strcat('Chr. ', Chr);
+        text(fh.Children(2),fh.Children(2).XLim(1)-0.005,0.7 ,ChrTxt,'HorizontalAlignment','right','VerticalAlignment','middle','FontSize',FontSize)
 
+    catch
+    end
+end
 ylabel(ah,YLabel);
 %title(ah,sprintf('Chromosome %s',Chr),'FontSize',12,'FontWeight','Normal');
 line(ah,ah.XLim,[0 0],'LineWidth',0.75,'Color','k','LineStyle','-');
@@ -213,8 +238,15 @@ for i=1:numel(GENES)
     chr_pos_gene = ChrPos(indx);
     Y_Val_gene = Y_Val(indx);
     y_line_val = max(Y_Val) + nudge_Y;
-    line([min(chr_pos_gene) max(chr_pos_gene)], [y_line_val y_line_val],'LineWidth',0.75,'Color','k','LineStyle','-'); 
+    line([min(chr_pos_gene) max(chr_pos_gene)], [y_line_val y_line_val],'LineWidth',0.75,'Color','k','LineStyle','-');
     text((min(chr_pos_gene)+max(chr_pos_gene))/2,y_line_val ,gene,'HorizontalAlignment','center','VerticalAlignment','bottom','FontSize',FontSize,'FontAngle','italic')
+end
+size(REGION,1)
+
+for i=1:size(REGION,1)
+
+    line([REGION{i,1}(1) REGION{i,1}(2)], [REGION{i,2}(1) REGION{i,2}(1)],'LineWidth',0.75,'Color','k','LineStyle','-');
+    text( (REGION{i,1}(1) + REGION{i,1}(2) )/2,REGION{i,2} ,REGION{i,3},'HorizontalAlignment','center','VerticalAlignment','bottom','FontSize',FontSize,'FontAngle','italic');
 end
 
 
@@ -230,8 +262,6 @@ if printResults
         fprintf(format_str_val,Full_X_Data(i,:));
         fprintf('\n');
     end
-
-
 end
 
 
