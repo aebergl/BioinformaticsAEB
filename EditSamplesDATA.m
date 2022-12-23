@@ -17,6 +17,7 @@ function DATA  = EditSamplesDATA(DATA,InputIds,KeepRemove,varargin)
 
 Truncate = 0;
 SampleIdentifier = false;
+Stable = false;
 
 i=0;
 while i<numel(varargin)
@@ -27,6 +28,8 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'Truncate')
         i = i + 1;
         Truncate = varargin{i};
+    elseif strcmpi(varargin{i},'Stable')
+        Stable = true;
     end
 end
 
@@ -48,40 +51,100 @@ if Truncate
     InputIds = cellfun(@(x) x(1:Truncate), InputIds, 'UniformOutput', false);
 end
 
-IdUnique = unique(InputIds);
+IdUnique = unique(InputIds,'stable');
 if length(IdUnique) < length(InputIds)
     warning('WARNING! Not all input IDs are unique in EditSamplesDATA')
 end
 
+if Stable
 
-indx = ismember(DATA_ID,InputIds);
-if any(indx)
-    switch lower(KeepRemove)
-        case 'keep'
-            DATA.X = DATA.X(indx,:);
-            DATA.RowId = DATA.RowId(indx);
-            DATA.nRow = size(DATA.X,1);
-            DATA.RowAnnotation = DATA.RowAnnotation(indx,:);
-            if isfield(DATA,'SURVIVAL')
-                DATA.SURVIVAL.RowId =  DATA.SURVIVAL.RowId(indx);
-                DATA.SURVIVAL.SurvEvent =  DATA.SURVIVAL.SurvEvent(indx,:);
-                DATA.SURVIVAL.SurvTime =  DATA.SURVIVAL.SurvTime(indx,:);
+    if length(IdUnique) == DATA.nRow && strcmpi('keep',KeepRemove)
+        [~,~,indx] = intersect(InputIds,DATA_ID,'Stable');
+        DATA.X = DATA.X(indx,:);
+        DATA.RowId = DATA.RowId(indx);
+        DATA.nRow = size(DATA.X,1);
+        DATA.RowAnnotation = DATA.RowAnnotation(indx,:);
+        if isfield(DATA,'SURVIVAL')
+            DATA.SURVIVAL.RowId =  DATA.SURVIVAL.RowId(indx);
+            DATA.SURVIVAL.SurvEvent =  DATA.SURVIVAL.SurvEvent(indx,:);
+            DATA.SURVIVAL.SurvTime =  DATA.SURVIVAL.SurvTime(indx,:);
+        end
+    else
+
+        SampleIndx = false(DATA.nRow,length(IdUnique));
+        for i=1:length(IdUnique)
+            SampleIndx(:,i) = ismember(DATA_ID,InputIds(i));
+        end
+        sum_indx = sum(SampleIndx,2);
+        if max(sum_indx) > 1
+            error('Multiple match samples found for differenb IDs')
+        end
+        [indx,~]=find(SampleIndx);
+        if any(indx)
+            switch lower(KeepRemove)
+                case 'keep'
+                    DATA.X = DATA.X(indx,:);
+                    DATA.RowId = DATA.RowId(indx);
+                    DATA.nRow = size(DATA.X,1);
+                    DATA.RowAnnotation = DATA.RowAnnotation(indx,:);
+                    if isfield(DATA,'SURVIVAL')
+                        DATA.SURVIVAL.RowId =  DATA.SURVIVAL.RowId(indx);
+                        DATA.SURVIVAL.SurvEvent =  DATA.SURVIVAL.SurvEvent(indx,:);
+                        DATA.SURVIVAL.SurvTime =  DATA.SURVIVAL.SurvTime(indx,:);
+                    end
+                case 'remove'
+                    %Remove samples
+                    DATA.X(indx,:) = [];
+                    DATA.RowId(indx) = [];
+                    DATA.nRow = size(DATA.X,1);
+                    DATA.RowAnnotation(indx,:) = [];
+                    if isfield(DATA,'SURVIVAL')
+                        DATA.SURVIVAL.RowId(indx) = [];
+                        DATA.SURVIVAL.SurvEvent(indx,:) =  [];
+                        DATA.SURVIVAL.SurvTime(indx,:) =  [];
+                    end
             end
-        case 'remove'
-            %Remove samples
-            DATA.X(indx,:) = [];
-            DATA.RowId(indx) = [];
-            DATA.nRow = size(DATA.X,1);
-            DATA.RowAnnotation(indx,:) = [];
-            if isfield(DATA,'SURVIVAL')
-                DATA.SURVIVAL.RowId(indx) = [];
-                DATA.SURVIVAL.SurvEvent(indx,:) =  [];
-                DATA.SURVIVAL.SurvTime(indx,:) =  [];
-            end
+
+        else
+            warning('WARNING! No matching Ids found, returning original DATA')
+        end
     end
 
 else
-    warning('WARNING! No matching Ids found, returning original DATA')
+    indx = ismember(DATA_ID,InputIds);
+
+    if any(indx)
+        switch lower(KeepRemove)
+            case 'keep'
+                DATA.X = DATA.X(indx,:);
+                DATA.RowId = DATA.RowId(indx);
+                DATA.nRow = size(DATA.X,1);
+                if ~isempty(DATA.RowAnnotation )
+                    DATA.RowAnnotation = DATA.RowAnnotation(indx,:);
+                end
+                if isfield(DATA,'SURVIVAL')
+                    DATA.SURVIVAL.RowId =  DATA.SURVIVAL.RowId(indx);
+                    DATA.SURVIVAL.SurvEvent =  DATA.SURVIVAL.SurvEvent(indx,:);
+                    DATA.SURVIVAL.SurvTime =  DATA.SURVIVAL.SurvTime(indx,:);
+                end
+            case 'remove'
+                %Remove samples
+                DATA.X(indx,:) = [];
+                DATA.RowId(indx) = [];
+                DATA.nRow = size(DATA.X,1);
+                if ~isempty(DATA.RowAnnotation )
+                    DATA.RowAnnotation(indx,:) = [];
+                end
+                if isfield(DATA,'SURVIVAL')
+                    DATA.SURVIVAL.RowId(indx) = [];
+                    DATA.SURVIVAL.SurvEvent(indx,:) =  [];
+                    DATA.SURVIVAL.SurvTime(indx,:) =  [];
+                end
+        end
+
+    else
+        warning('WARNING! No matching Ids found, returning original DATA')
+    end
 end
 
 

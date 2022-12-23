@@ -45,7 +45,7 @@ RESULTS_DATA.RowId = DATA.ColId;
 RESULTS_DATA.RowAnnotation = DATA.ColAnnotation;
 RESULTS_DATA.RowAnnotationFields = DATA.ColAnnotationFields;
 
-VarNames = {'p logrank','q logrank','HR logrank','p coxreg','q coxreg','HR coxreg'}';
+VarNames = {'p logrank','q logrank','fdr logrank','HR logrank','p coxreg','q coxreg','fdr coxreg','HR coxreg'}';
 VarNames = strcat(VarNames,{' '},Surv_Type);
 VarNames = [VarNames; {'Range','Num Values'}'];
 RESULTS_DATA.ColId=VarNames;
@@ -105,7 +105,10 @@ if DATA.nCol > 100
     parfor i=1:DATA.nCol
         x = X_x(:,i);
         nVal(i) = sum(~isnan(x));
-        if nVal(i) > MinNumSampleSize
+        x_tmp = x(isfinite(x));
+        [~,n]=GroupCount(x_tmp);
+
+        if nVal(i) > MinNumSampleSize && nVal(i) - max(n) + 1 > MinNumSampleSize
             RangeVal(i) = range(x);
             try
                 [p_logrank(i),~,stats]= MatSurv(TimeVar,EventVar,x,'CutPoint','median','NoPlot',true,'Print',false,'NoWarnings',true);
@@ -113,7 +116,7 @@ if DATA.nCol > 100
             catch
             end
             try
-                [~,~,~,stats_cox] = coxphfit(x,TimeVar,'censoring',~EventVarBin,'Options',coxphopt,'Baseline',0);
+                [~,~,~,stats_cox] = coxphfit(normalize(x),TimeVar,'censoring',~EventVarBin,'Options',coxphopt,'Baseline',0);
                 p_coxreg(i)=stats_cox.p;
                 HR_coxreg(i) = exp(stats_cox.beta);
             catch
@@ -124,7 +127,10 @@ else
     for i=1:DATA.nCol
         x = X_x(:,i);
         nVal(i) = sum(~isnan(x));
-        if nVal(i) > MinNumSampleSize
+        x_tmp = x(isfinite(x));
+        [~,n]=GroupCount(x_tmp);
+
+        if nVal(i) > MinNumSampleSize && nVal(i) - max(n) + 1 > MinNumSampleSize
             RangeVal(i) = range(x);
             try
                 [p_logrank(i),~,stats]= MatSurv(TimeVar,EventVar,x,'CutPoint','median','NoPlot',true,'Print',false,'NoWarnings',true);
@@ -132,7 +138,7 @@ else
             catch
             end
             try
-                [~,~,~,stats_cox] = coxphfit(x,TimeVar,'censoring',~EventVarBin,'Options',coxphopt,'Baseline',0);
+                [~,~,~,stats_cox] = coxphfit(normalize(x),TimeVar,'censoring',~EventVarBin,'Options',coxphopt,'Baseline',0);
                 p_coxreg(i)=stats_cox.p;
                 HR_coxreg(i) = exp(stats_cox.beta);
             catch
@@ -141,18 +147,32 @@ else
     end
 end
 RESULTS_DATA.X(:,1) = p_logrank;
-RESULTS_DATA.X(:,3) = HR_logrank;
-RESULTS_DATA.X(:,4) = p_coxreg;
-RESULTS_DATA.X(:,6) = HR_coxreg;
-RESULTS_DATA.X(:,7) = RangeVal;
-RESULTS_DATA.X(:,8) = nVal;
+RESULTS_DATA.X(:,4) = HR_logrank;
+RESULTS_DATA.X(:,5) = p_coxreg;
+RESULTS_DATA.X(:,8) = HR_coxreg;
+RESULTS_DATA.X(:,9) = RangeVal;
+RESULTS_DATA.X(:,10) = nVal;
 try
     [~, RESULTS_DATA.X(:,2),~] = mafdr(p_logrank);
 catch
     RESULTS_DATA.X(:,2) = ones(DATA.nCol,1);
 end
+
 try
-    [~, RESULTS_DATA.X(:,5),~] = mafdr(p_coxreg);
+    [RESULTS_DATA.X(:,3)] = mafdr(p_logrank,'BHFDR',true);
 catch
-    RESULTS_DATA.X(:,5) = ones(DATA.nCol,1);
+    RESULTS_DATA.X(:,3) = ones(DATA.nCol,1);
+end
+
+
+try
+    [~, RESULTS_DATA.X(:,6),~] = mafdr(p_coxreg);
+catch
+    RESULTS_DATA.X(:,6) = ones(DATA.nCol,1);
+end
+
+try
+    [RESULTS_DATA.X(:,7)] = mafdr(p_coxreg,'BHFDR',true);
+catch
+    RESULTS_DATA.X(:,7) = ones(DATA.nCol,1);
 end

@@ -1,8 +1,8 @@
 function fh = VolcanoPlotStacked(x_data,y_data,xlabel_txt,ylabel_txt)
-
+printResults=false;
 PlotType = 'simple';
-x_CutOff = 0.1;
-y_CutOff= 3;
+x_CutOff = 1;
+y_CutOff= 2;
 
 FontSize=8;
 min_alpha = 0.01;
@@ -28,8 +28,8 @@ end
 
 MaxVal_X_Significant = max(abs(x_data(y_data > y_CutOff)));
 
-x_data(x_data>MaxVal_X_Significant) = MaxVal_X_Significant;
-x_data(x_data<-MaxVal_X_Significant) = -MaxVal_X_Significant;
+% x_data(x_data>MaxVal_X_Significant) = MaxVal_X_Significant;
+% x_data(x_data<-MaxVal_X_Significant) = -MaxVal_X_Significant;
 
 dist_val = pdist2([x_data y_data],[0 0],"seuclidean");
 dist_alpha = rescale(dist_val.^2,min_alpha,max_alpha);
@@ -104,4 +104,21 @@ switch PlotType
             text(ah,ah.XLim(1)+nudge_x,TickVal,neg_str,'Clipping','off','HorizontalAlignment','right','FontSize',FontSize)
         end
 end
-            ah.Position([1 3]) = [0.15 0.7];
+ah.Position([1 3]) = [0.15 0.7];
+
+
+
+
+if printResults
+    format_str_txt = sprintf('%s%%s',Delimiter);
+    format_str_val = sprintf('%s%%g',Delimiter);
+    format_str_short = sprintf('%%s');
+    fprintf(format_str_txt,DATA.RowAnnotationFields{:});
+    fprintf(format_str_txt,DATA.ColId{:});
+    fprintf('\n');
+    for i=1:size(FullAnnotation_Selected,1)
+        fprintf(format_str_txt,FullAnnotation_Selected{i,:});
+        fprintf(format_str_val,Full_X_Data_Selected(i,:));
+        fprintf('\n');
+    end
+end
