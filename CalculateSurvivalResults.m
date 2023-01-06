@@ -2,6 +2,7 @@ function RESULTS_DATA = CalculateSurvivalResults(DATA,Group1,GroupId,Surv_Type,D
 
 
 MinNumSampleSize = 10;
+NormalizeX = false;
 
 if isempty(DataType)
     DataType = 'Beta-value';
@@ -41,6 +42,7 @@ RESULTS_DATA.Info.Group1 = Group1;
 RESULTS_DATA.Info.MinNumSampleSize = MinNumSampleSize;
 RESULTS_DATA.Info.SampleId_x = SampleId_x;
 RESULTS_DATA.Info.numSamples_x = length(SampleId_x);
+RESULTS_DATA.Info.NormalizeX = NormalizeX;
 RESULTS_DATA.RowId = DATA.ColId;
 RESULTS_DATA.RowAnnotation = DATA.ColAnnotation;
 RESULTS_DATA.RowAnnotationFields = DATA.ColAnnotationFields;
@@ -107,7 +109,9 @@ if DATA.nCol > 100
         nVal(i) = sum(~isnan(x));
         x_tmp = x(isfinite(x));
         [~,n]=GroupCount(x_tmp);
-
+        if NormalizeX
+            x = normalize(x);
+        end
         if nVal(i) > MinNumSampleSize && nVal(i) - max(n) + 1 > MinNumSampleSize
             RangeVal(i) = range(x);
             try
@@ -116,7 +120,7 @@ if DATA.nCol > 100
             catch
             end
             try
-                [~,~,~,stats_cox] = coxphfit(normalize(x),TimeVar,'censoring',~EventVarBin,'Options',coxphopt,'Baseline',0);
+                [~,~,~,stats_cox] = coxphfit(x,TimeVar,'censoring',~EventVarBin,'Options',coxphopt,'Baseline',0);
                 p_coxreg(i)=stats_cox.p;
                 HR_coxreg(i) = exp(stats_cox.beta);
             catch
@@ -132,13 +136,17 @@ else
 
         if nVal(i) > MinNumSampleSize && nVal(i) - max(n) + 1 > MinNumSampleSize
             RangeVal(i) = range(x);
+            if NormalizeX
+                x = normalize(x);
+            end
+
             try
                 [p_logrank(i),~,stats]= MatSurv(TimeVar,EventVar,x,'CutPoint','median','NoPlot',true,'Print',false,'NoWarnings',true);
                 HR_logrank(i) = stats.HR_logrank;
             catch
             end
             try
-                [~,~,~,stats_cox] = coxphfit(normalize(x),TimeVar,'censoring',~EventVarBin,'Options',coxphopt,'Baseline',0);
+                [~,~,~,stats_cox] = coxphfit(x,TimeVar,'censoring',~EventVarBin,'Options',coxphopt,'Baseline',0);
                 p_coxreg(i)=stats_cox.p;
                 HR_coxreg(i) = exp(stats_cox.beta);
             catch
