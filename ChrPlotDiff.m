@@ -1,7 +1,7 @@
 function fh = ChrPlotDiff(DATA,Chr,PlotRange,Y_Type,SizeType,ColorType,varargin)
-FontSize = 10;
+FontSize = 6;
 minSize = 1;
-maxSize = 150;
+maxSize = 120;
 printResults=false;
 MarkSelected=false;
 Delimiter = '\t';
@@ -187,7 +187,7 @@ ChrPos_Selected = ChrPos(indx_selected,:);
 
 
 fh = figure('Name','Chr. plot','Color','w','Tag','Chr. plot','GraphicsSmoothing','on');
-fh.Position(3:4) = [700 250];
+fh.Position(3:4) = [500 200];
 ah = axes(fh,'NextPlot','add','tag','Dot plot','Box','on','FontSize',FontSize,'Linewidth',0.75,'YGrid','on');
 %ah.Position = [0.07 0.17 0.8 0.9];
 cmap = colormap(colorcet('L17'));
@@ -231,7 +231,7 @@ if CytoBand
         chr_txt=strrep(Chr,'chr','');
         chromosomeplot(CytoBandfile, chr_txt, 'addtoplot', ah,'Orientation','Horizontal','unit', UnitVal);
         indx=findobj(fh.Children(2),'FontSize',8);
-        [indx.FontSize]=deal(7);
+        [indx.FontSize]=deal(FontSize);
         ChrTxt = strcat('Chr. ', chr_txt);
         text(fh.Children(2),fh.Children(2).XLim(1)-0.005,0.7 ,ChrTxt,'HorizontalAlignment','right','VerticalAlignment','middle','FontSize',FontSize)
 

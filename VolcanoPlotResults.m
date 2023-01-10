@@ -1,11 +1,11 @@
 function fh = VolcanoPlotResults(DATA,X_Variable,X_CutOff,Y_Variable,Y_CutOff,varargin)
 printResults=false;
-FontSize=8;
+FontSize=6;
 PlotType = 'simple';
 Delimiter = '\t';
 AlphaRange = [0.01 0.5];
 SizeRange = [1 75];
-FigureSize = [2 2];
+FigureSize = [1.8 1.8];
 TopNValues = 0;
 TopPrctile = 0;
 i=0;
