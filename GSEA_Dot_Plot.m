@@ -1,6 +1,6 @@
 function fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal)
 
-FontSize = 8;
+FontSize = 7;
 minSize = 20;
 maxSize = 150;
 LineWidth = 0.5;
@@ -20,9 +20,9 @@ SizeVal = DATA.PATHWAYS.numGenesInOveralap(1:nGroups);
 ColorVal = DATA.PATHWAYS.Ratio(1:nGroups);
 ColorlabelTxt = 'GeneRatio';
 YtickLabelTxt = DATA.PATHWAYS.Description(1:nGroups);
-YtickLabelTxt = DATA.PATHWAYS.Name(1:nGroups);
+%YtickLabelTxt = DATA.PATHWAYS.Name(1:nGroups);
 YtickLabelTxt = strrep(YtickLabelTxt,'_TARGET_GENES','');
-YtickLabelTxt=strcat('\it',YtickLabelTxt);
+%YtickLabelTxt=strcat('\it',YtickLabelTxt);
 
 
 Cmap = colorcet('L08');
@@ -61,15 +61,15 @@ sh = scatter(xVal,1:nGroups,SizeValPlot,ColorVal,'MarkerFaceColor','flat','Marke
 
 YPos = 1:1.5:1.5*length(LegendSizeValPlot);
 
-shl = scatter(ah.XLim(2)+nudgeVal,YPos+1,LegendSizeValPlot,[0 0 0]);
-text(ah.XLim(2)+1.4*nudgeVal,1,'Count','HorizontalAlignment','center','VerticalAlignment','middle','FontSize',FontSize)
+shl = scatter(ah.XLim(2)+nudgeVal*1.3,YPos+1,LegendSizeValPlot,[0 0 0]);
+text(ah.XLim(2)+2.2*nudgeVal,1,'Count','HorizontalAlignment','center','VerticalAlignment','middle','FontSize',FontSize)
 for i = 1:length(LegendSizeValPlot)
-    text(ah.XLim(2)+1.7*nudgeVal,YPos(i)+1,sprintf('%u',LegendSizeVal(i)),'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
+    text(ah.XLim(2)+2.2*nudgeVal,YPos(i)+1,sprintf('%u',LegendSizeVal(i)),'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
 end
 
 ch = colorbar(ah);
 ch.Label.String=ColorlabelTxt;
 ch.Units="inches";
 ch.FontSize=FontSize;
-ch.Position=[ah.OuterPosition(1) + ah.OuterPosition(3)+0.02, ah.Position(2) 0.2, fHight/2.5];
+ch.Position=[ah.OuterPosition(1) + ah.OuterPosition(3)+0.12, ah.Position(2) 0.1, fHight/2.5];
 
