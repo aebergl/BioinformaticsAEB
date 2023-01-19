@@ -1,7 +1,8 @@
 function fh = ChrPlotDiff(DATA,Chr,PlotRange,Y_Type,SizeType,ColorType,varargin)
 FontSize = 6;
+FigSize = [5.5 2.15];
 minSize = 1;
-maxSize = 120;
+maxSize = 80;
 printResults=false;
 MarkSelected=false;
 Delimiter = '\t';
@@ -186,9 +187,9 @@ ChrPos_Selected = ChrPos(indx_selected,:);
 
 
 
-fh = figure('Name','Chr. plot','Color','w','Tag','Chr. plot','GraphicsSmoothing','on');
-fh.Position(3:4) = [500 200];
-ah = axes(fh,'NextPlot','add','tag','Dot plot','Box','on','FontSize',FontSize,'Linewidth',0.75,'YGrid','on');
+fh = figure('Name','Chr. plot','Color','w','Tag','Chr. plot','GraphicsSmoothing','on','Unit','Inches');
+fh.Position(3:4) = FigSize;
+ah = axes(fh,'NextPlot','add','tag','Dot plot','Box','on','FontSize',FontSize,'Linewidth',0.5,'YGrid','on');
 %ah.Position = [0.07 0.17 0.8 0.9];
 cmap = colormap(colorcet('L17'));
 
@@ -200,6 +201,7 @@ sh_sel=scatter(ChrPos_Selected,Y_Val_Selected,SizeValPlot_Selected,[0 0 0]);
 end
 ch = colorbar(ah);
 ch.Label.String=Colorlabel;
+
 nudge_X = range(ah.XLim)/100;
 nudge_Y = range(ah.YLim)/100;
 ah.XLim = [min(ChrPos)-nudge_X max(ChrPos)+nudge_X];
@@ -231,7 +233,7 @@ if CytoBand
         chr_txt=strrep(Chr,'chr','');
         chromosomeplot(CytoBandfile, chr_txt, 'addtoplot', ah,'Orientation','Horizontal','unit', UnitVal);
         indx=findobj(fh.Children(2),'FontSize',8);
-        [indx.FontSize]=deal(FontSize);
+        [indx.FontSize]=deal(FontSize-2);
         ChrTxt = strcat('Chr. ', chr_txt);
         text(fh.Children(2),fh.Children(2).XLim(1)-0.005,0.7 ,ChrTxt,'HorizontalAlignment','right','VerticalAlignment','middle','FontSize',FontSize)
 
@@ -242,7 +244,7 @@ ylabel(ah,YLabel);
 %title(ah,sprintf('Chromosome %s',Chr),'FontSize',12,'FontWeight','Normal');
 line(ah,ah.XLim,[0 0],'LineWidth',0.75,'Color','k','LineStyle','-');
 ah.XAxis.TickLabels = strcat(ah.XAxis.TickLabels, UnitTxt);
-
+fh.Children(3).Position(3)=0.01;
 
 
 if printResults

@@ -2,7 +2,7 @@ function fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal)
 
 FontSize = 7;
 minSize = 20;
-maxSize = 150;
+maxSize = 100;
 LineWidth = 0.5;
 GridLines = 'on';
 % LegendSizeVal = [10 20 30];
