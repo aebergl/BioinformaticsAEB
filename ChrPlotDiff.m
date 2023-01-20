@@ -219,6 +219,7 @@ for i=1:numel(GENES)
     chr_pos_gene = ChrPos(indx);
     Y_Val_gene = Y_Val(indx);
     y_line_val = max(Y_Val) + nudge_Y;
+    y_line_val = max(Y_Val_gene) + nudge_Y;
     line([min(chr_pos_gene) max(chr_pos_gene)], [y_line_val y_line_val],'LineWidth',0.75,'Color','k','LineStyle','-');
     text((min(chr_pos_gene)+max(chr_pos_gene))/2,y_line_val ,gene,'HorizontalAlignment','center','VerticalAlignment','bottom','FontSize',FontSize,'FontAngle','italic')
 end
@@ -244,7 +245,11 @@ ylabel(ah,YLabel);
 %title(ah,sprintf('Chromosome %s',Chr),'FontSize',12,'FontWeight','Normal');
 line(ah,ah.XLim,[0 0],'LineWidth',0.75,'Color','k','LineStyle','-');
 ah.XAxis.TickLabels = strcat(ah.XAxis.TickLabels, UnitTxt);
-fh.Children(3).Position(3)=0.01;
+if CytoBand
+    fh.Children(3).Position(3)=0.01;
+else
+    
+end
 
 
 if printResults
@@ -260,6 +265,5 @@ if printResults
         fprintf('\n');
     end
 end
-
 
 

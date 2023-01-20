@@ -1,4 +1,4 @@
-function fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal)
+function fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal,YtickLabel)
 
 FontSize = 7;
 minSize = 20;
@@ -19,10 +19,14 @@ xValTxt = '-log_1_0(q-value)';
 SizeVal = DATA.PATHWAYS.numGenesInOveralap(1:nGroups);
 ColorVal = DATA.PATHWAYS.Ratio(1:nGroups);
 ColorlabelTxt = 'GeneRatio';
-YtickLabelTxt = DATA.PATHWAYS.Description(1:nGroups);
-%YtickLabelTxt = DATA.PATHWAYS.Name(1:nGroups);
-YtickLabelTxt = strrep(YtickLabelTxt,'_TARGET_GENES','');
-%YtickLabelTxt=strcat('\it',YtickLabelTxt);
+if strcmpi('Description',YtickLabel)
+    YtickLabelTxt = DATA.PATHWAYS.Description(1:nGroups);
+    elseif strcmpi('Name',YtickLabel)
+    YtickLabelTxt = DATA.PATHWAYS.Name(1:nGroups);
+    YtickLabelTxt = strrep(YtickLabelTxt,'_TARGET_GENES','');
+    YtickLabelTxt=strcat('\it',YtickLabelTxt);
+end
+
 
 
 Cmap = colorcet('L08');
