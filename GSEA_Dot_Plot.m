@@ -5,7 +5,8 @@ minSize = 20;
 maxSize = 100;
 LineWidth = 0.5;
 GridLines = 'on';
-% LegendSizeVal = [10 20 30];
+RightMargin = 0.5;
+% LegendSizeVal = [10; 20 30];
 % LegendSizeVal = [10 25 50];
 % fWidth = 7;
 % fHight = 2.5;
@@ -32,7 +33,7 @@ end
 Cmap = colorcet('L08');
 CLim = [0 ceil((max(ColorVal)+0.001)*100)/100];
 Cmap = flipud(Cmap);
-Cmap = colormap('winter');
+
 %colormap(cmap);
 
 SizeValPlot = rescale(SizeVal,minSize,maxSize);
@@ -46,7 +47,9 @@ nudgeVal = rangeVal/20;
 
 fh=figure('Name','GSEA Plot','Color','w','Tag','GSEA Plot figure','Units','inches');
 fh.Position(3:4) = [fWidth fHight];
-ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','on','Layer','top','FontSize',FontSize,'Units','inches','Clipping','off');
+ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','on','Layer','top','FontSize',FontSize,'Units','inches',...
+    'PositionConstraint','outerposition','Clipping','off');
+Cmap = colormap('winter');
 ah.LineWidth = LineWidth;
 ah.XGrid = GridLines;
 ah.YGrid = GridLines;
@@ -57,7 +60,7 @@ ah.YTickLabel = YtickLabelTxt;
 ah.Colormap = Cmap;
 ah.CLim = CLim;
 ah.XLim =[minVal-nudgeVal maxVal+nudgeVal];
-ah.OuterPosition(3:4) = [fWidth-(fWidth/10) fHight];
+ah.OuterPosition(3:4) = [fWidth-RightMargin fHight];
 ah.TickLength=[ 0.05/nGroups    0.0];
 xlabel(ah,xValTxt);
 
@@ -71,9 +74,9 @@ for i = 1:length(LegendSizeValPlot)
     text(ah.XLim(2)+2.2*nudgeVal,YPos(i)+1,sprintf('%u',LegendSizeVal(i)),'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
 end
 
-ch = colorbar(ah);
+ch = colorbar(ah,'Units','inches','FontSize',FontSize,...
+    'Position',[ah.Position(1) + ah.Position(3)+0.1, ah.Position(2) 0.1, fHight/2.5]);
 ch.Label.String=ColorlabelTxt;
-ch.Units="inches";
 ch.FontSize=FontSize;
-ch.Position=[ah.OuterPosition(1) + ah.OuterPosition(3)+0.12, ah.Position(2) 0.1, fHight/2.5];
+%ch.Position=[fWidth-RightMargin-0.4, ah.Position(2) 0.1, fHight/2.5];
 

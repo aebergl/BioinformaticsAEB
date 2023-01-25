@@ -1,8 +1,10 @@
-function fh = ChrPlotDiff(DATA,Chr,PlotRange,Y_Type,SizeType,ColorType,varargin)
+function fh = ChrPlotDiff(DATA,Chr,PlotRange,Y_Type,SizeType,ColorType,FigSize,MinMaxSize,varargin)
 FontSize = 6;
-FigSize = [5.5 2.15];
-minSize = 1;
-maxSize = 80;
+RightMargin = 0.4;
+TopMargin = 0;
+%FigSize = [5.5 2.15];
+% minSize = 1;
+% maxSize = 80;
 printResults=false;
 MarkSelected=false;
 Delimiter = '\t';
@@ -56,8 +58,8 @@ end
 %     CytoBandfile = 'cytoBandIdeo_37.txt';
 % end
 CytoBandfile = 'cytoBandIdeo_38.txt';
-ChrColumn = strcmpi('CHR',DATA.RowAnnotationFields);
-ChrPosColumn = strcmpi('MAPINFO',DATA.RowAnnotationFields);
+% ChrColumn = strcmpi('CHR',DATA.RowAnnotationFields);
+% ChrPosColumn = strcmpi('MAPINFO',DATA.RowAnnotationFields);
 ChrColumn = strcmpi('CpG_chrm',DATA.RowAnnotationFields);
 ChrPosColumn = strcmpi('CpG_beg',DATA.RowAnnotationFields);
 GeneColumn = strcmpi('gene_HGNC',DATA.RowAnnotationFields);
@@ -88,7 +90,7 @@ switch ChrUnit
         ChrPos = ChrPos ./ 1000000.00;
         PlotRange = PlotRange ./ 1000000.00;
         if ~isempty(REGION)
-        REGION(:,1) = cellfun(@(x) x/1000000 ,REGION(:,1),'UniformOutput',false);
+            REGION(:,1) = cellfun(@(x) x/1000000 ,REGION(:,1),'UniformOutput',false);
         end
         UnitVal = 3;
         UnitTxt = '(mb)';
@@ -99,7 +101,7 @@ indx_Y_Val = strcmpi(Y_Type,DATA.ColId);
 if any(indx_Y_Val)
     Y_Val = DATA.X(indx_Chr,indx_Y_Val);
 else
-error('%s not found',Y_Type)
+    error('%s not found',Y_Type)
 end
 
 % Select Size value
@@ -115,7 +117,7 @@ indx_ColorVal = strcmpi(ColorType,DATA.ColId);
 if any(indx_SizeVal)
     ColorVal = DATA.X(indx_Chr,indx_ColorVal);
 else
-error('%s not found',ColorType)
+    error('%s not found',ColorType)
 end
 
 switch Y_Type
@@ -141,7 +143,7 @@ switch ColorType
         Colorlabel = {'-log_1_0(p coxreg DSS)'};
     case 'p coxreg PFI'
         ColorVal =  -log10(ColorVal);
-        Colorlabel = {'-log_1_0(p coxreg PFI)'};        
+        Colorlabel = {'-log_1_0(p coxreg PFI)'};
 end
 
 switch SizeType
@@ -152,7 +154,7 @@ switch SizeType
         SizeVal =  abs(SizeVal);
     case 'HR coxreg DSS'
         SizeVal =  abs(log2(SizeVal));
-      case 'HR coxreg PFI'
+    case 'HR coxreg PFI'
         SizeVal =  abs(log2(SizeVal));
 end
 SizeVal =  abs(SizeVal);
@@ -175,7 +177,7 @@ FullAnnotation = FullAnnotation(sort_indx,:);
 Full_X_Data = Full_X_Data(sort_indx,:);
 
 SizeVal(SizeVal<0) = 0; % make sure there is no negative values
-SizeValPlot = rescale(SizeVal,minSize,maxSize);
+SizeValPlot = rescale(SizeVal,MinMaxSize(1),MinMaxSize(2));
 
 indx_selected = abs(Y_Val) > YValCutOff & ColorVal > ColorValCutOff;
 
@@ -189,21 +191,18 @@ ChrPos_Selected = ChrPos(indx_selected,:);
 
 fh = figure('Name','Chr. plot','Color','w','Tag','Chr. plot','GraphicsSmoothing','on','Unit','Inches');
 fh.Position(3:4) = FigSize;
-ah = axes(fh,'NextPlot','add','tag','Dot plot','Box','on','FontSize',FontSize,'Linewidth',0.5,'YGrid','on');
-%ah.Position = [0.07 0.17 0.8 0.9];
+ah = axes(fh,'NextPlot','add','tag','Dot plot','Box','on','FontSize',FontSize,'Linewidth',0.5,'YGrid','on',...
+    'Units','normalized','PositionConstraint','outerposition','Clipping','off');
 cmap = colormap(colorcet('L17'));
-
-%cmap = flipud(cmap);
 colormap(cmap);
+
 sh=scatter(ChrPos,Y_Val,SizeValPlot,ColorVal,'filled');
 if MarkSelected
-sh_sel=scatter(ChrPos_Selected,Y_Val_Selected,SizeValPlot_Selected,[0 0 0]);
+    sh_sel=scatter(ChrPos_Selected,Y_Val_Selected,SizeValPlot_Selected,[0 0 0]);
 end
-ch = colorbar(ah);
-ch.Label.String=Colorlabel;
 
-nudge_X = range(ah.XLim)/100;
-nudge_Y = range(ah.YLim)/100;
+nudge_X = range(ah.XLim)/50;
+nudge_Y = range(ah.YLim)/50;
 ah.XLim = [min(ChrPos)-nudge_X max(ChrPos)+nudge_X];
 ah.XAxis.TickDirection ='out';
 ah.XAxis.TickLabelRotation = 0;
@@ -218,10 +217,12 @@ for i=1:numel(GENES)
     indx = indx_1 | indx_2 | indx_3;
     chr_pos_gene = ChrPos(indx);
     Y_Val_gene = Y_Val(indx);
+    SizeValPlot_Gene = SizeValPlot(indx);
     y_line_val = max(Y_Val) + nudge_Y;
     y_line_val = max(Y_Val_gene) + nudge_Y;
     line([min(chr_pos_gene) max(chr_pos_gene)], [y_line_val y_line_val],'LineWidth',0.75,'Color','k','LineStyle','-');
-    text((min(chr_pos_gene)+max(chr_pos_gene))/2,y_line_val ,gene,'HorizontalAlignment','center','VerticalAlignment','bottom','FontSize',FontSize,'FontAngle','italic')
+    text((min(chr_pos_gene)+max(chr_pos_gene))/2,y_line_val ,gene,'HorizontalAlignment','left','VerticalAlignment','bottom','FontSize',FontSize-1,'FontAngle','italic')
+    sh_sel=scatter(chr_pos_gene,Y_Val_gene,SizeValPlot_Gene,[0 0 0]);
 end
 
 for i=1:size(REGION,1)
@@ -237,25 +238,30 @@ if CytoBand
         [indx.FontSize]=deal(FontSize-2);
         ChrTxt = strcat('Chr. ', chr_txt);
         text(fh.Children(2),fh.Children(2).XLim(1)-0.005,0.7 ,ChrTxt,'HorizontalAlignment','right','VerticalAlignment','middle','FontSize',FontSize)
-
+        TopMargin = 0.3;
     catch
     end
 end
 ylabel(ah,YLabel);
-%title(ah,sprintf('Chromosome %s',Chr),'FontSize',12,'FontWeight','Normal');
+
 line(ah,ah.XLim,[0 0],'LineWidth',0.75,'Color','k','LineStyle','-');
 ah.XAxis.TickLabels = strcat(ah.XAxis.TickLabels, UnitTxt);
+
+ah.Units='inches';
+ah.OuterPosition(3:4) = [FigSize(1)-RightMargin FigSize(2)-TopMargin];
+
+ch = colorbar(ah,'Units','inches','FontSize',FontSize,...
+    'Position',[ah.Position(1) + ah.Position(3)+0.1, ah.Position(2) 0.1, FigSize(2)/2.5]);
+ch.Label.String=Colorlabel;
+ch.FontSize=FontSize;
 if CytoBand
-    fh.Children(3).Position(3)=0.01;
-else
-    
+fh.Children(2).Units='Inches';
+fh.Children(2).Position(3)=fh.Children(4).Position(3);
 end
-
-
 if printResults
     format_str_txt = sprintf('%s%%s',Delimiter);
     format_str_val = sprintf('%s%%g',Delimiter);
-    format_str_short = sprintf('%%s');
+    %format_str_short = sprintf('%%s');
     fprintf(format_str_txt,DATA.RowAnnotationFields{:});
     fprintf(format_str_txt,DATA.ColId{:});
     fprintf('\n');
