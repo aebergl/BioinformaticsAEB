@@ -130,9 +130,10 @@ if numHeaderRows > 0
     tmp_names=tmp(BetaAvg_Columns);
     for i=1:numel(tmp_names)
         tmp_txt=strsplit(tmp_names{i},BetaValueExt);
-        DATA.ColId{i}=deblank(tmp_txt{1});
+        tmp_txt =   deblank(tmp_txt{1});
+        DATA.ColId(i)=tmp_txt;
     end
-
+    DATA.ColId = string(DATA.ColId);
     %DATA.ColAnnotationFields(1) = tmp(1,1);
     %DATA.ColAnnotation(:,1) = tmp(numIdColumns+1:end,1);
     if numIdColumns > 1

@@ -33,9 +33,9 @@ fgetl(fid);
 fgetl(fid);
 tmp=textscan(fid,'%s %d %s %d %f %f %f',GSEA.INFO.numPathways,'delimiter',{'\t'});
 
-GSEA.PATHWAYS.Name = tmp{1};
+GSEA.PATHWAYS.Name = string(tmp{1});
 GSEA.PATHWAYS.numGenesInSet = tmp{2};
-GSEA.PATHWAYS.Description = tmp{3};
+GSEA.PATHWAYS.Description = string(tmp{3});
 GSEA.PATHWAYS.numGenesInOveralap = tmp{4};
 GSEA.PATHWAYS.Ratio = tmp{5};
 GSEA.PATHWAYS.p = tmp{6};

@@ -1,4 +1,4 @@
-function fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal,YtickLabel)
+function fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal,YTickText)
 
 FontSize = 7;
 minSize = 20;
@@ -20,12 +20,84 @@ xValTxt = '-log_1_0(q-value)';
 SizeVal = DATA.PATHWAYS.numGenesInOveralap(1:nGroups);
 ColorVal = DATA.PATHWAYS.Ratio(1:nGroups);
 ColorlabelTxt = 'GeneRatio';
-if strcmpi('Description',YtickLabel)
-    YtickLabelTxt = DATA.PATHWAYS.Description(1:nGroups);
-    elseif strcmpi('Name',YtickLabel)
+
+switch DATA.Collection{1}
+    case 'H'
+        switch lower(YTickText)
+            case 'name'
+                YtickLabelTxt = DATA.PATHWAYS.Name(1:nGroups);
+                YtickLabelTxt = strrep(YtickLabelTxt,'HALLMARK_','');
+                YtickLabelTxt = strrep(YtickLabelTxt,'_',' ');
+                YtickLabelTxt = lower(YtickLabelTxt);
+                YtickLabelTxt = upper(extractBefore(YtickLabelTxt,2)) + extractAfter(YtickLabelTxt,1);
+            case 'description'
+                YtickLabelTxt = DATA.PATHWAYS.Description(1:nGroups);
+        end
+    case 'CP'
+        switch lower(YTickText)
+            case 'name'
+                YtickLabelTxt = DATA.PATHWAYS.Name(1:nGroups);
+                %YtickLabelTxt = strrep(YtickLabelTxt,'WP_','');
+                YtickLabelTxt = strrep(YtickLabelTxt,'_',' ');
+                YtickLabelTxt = lower(YtickLabelTxt);
+                YtickLabelTxt = upper(extractBefore(YtickLabelTxt,' ')) + " " + extractAfter(YtickLabelTxt,' ');
+            case 'description'
+                YtickLabelTxt = DATA.PATHWAYS.Description(1:nGroups);
+        end
+
+    case 'CP:KEGG'
+        switch lower(YTickText)
+            case 'name'
+                YtickLabelTxt = DATA.PATHWAYS.Name(1:nGroups);
+                YtickLabelTxt = strrep(YtickLabelTxt,'KEGG_','');
+                YtickLabelTxt = strrep(YtickLabelTxt,'_',' ');
+                YtickLabelTxt = lower(YtickLabelTxt);
+                YtickLabelTxt = upper(extractBefore(YtickLabelTxt,2)) + extractAfter(YtickLabelTxt,1);
+            case 'description'
+                YtickLabelTxt = DATA.PATHWAYS.Description(1:nGroups);
+        end
+    case 'CP:PID'
+        switch lower(YTickText)
+            case 'name'
+                YtickLabelTxt = DATA.PATHWAYS.Name(1:nGroups);
+                YtickLabelTxt = strrep(YtickLabelTxt,'PID_','');
+                YtickLabelTxt = strrep(YtickLabelTxt,'_',' ');
+                YtickLabelTxt = lower(YtickLabelTxt);
+                YtickLabelTxt = upper(extractBefore(YtickLabelTxt,2)) + extractAfter(YtickLabelTxt,1);
+            case 'description'
+                YtickLabelTxt = DATA.PATHWAYS.Description(1:nGroups);
+        end
+
+    case 'CP:REACTOME'
+        switch lower(YTickText)
+            case 'name'
+                YtickLabelTxt = DATA.PATHWAYS.Name(1:nGroups);
+                YtickLabelTxt = strrep(YtickLabelTxt,'REACTOME_','');
+                YtickLabelTxt = strrep(YtickLabelTxt,'_',' ');
+                YtickLabelTxt = lower(YtickLabelTxt);
+                YtickLabelTxt = upper(extractBefore(YtickLabelTxt,2)) + extractAfter(YtickLabelTxt,1);
+            case 'description'
+                YtickLabelTxt = DATA.PATHWAYS.Description(1:nGroups);
+        end
+    case 'CP:WIKIPATHWAYS'
+        switch lower(YTickText)
+            case 'name'
+                YtickLabelTxt = DATA.PATHWAYS.Name(1:nGroups);
+                YtickLabelTxt = strrep(YtickLabelTxt,'WP_','');
+                YtickLabelTxt = strrep(YtickLabelTxt,'_',' ');
+                YtickLabelTxt = lower(YtickLabelTxt);
+                YtickLabelTxt = upper(extractBefore(YtickLabelTxt,2)) + extractAfter(YtickLabelTxt,1);
+            case 'description'
+                YtickLabelTxt = DATA.PATHWAYS.Description(1:nGroups);
+        end
+
+
+
+    case 'tft'
     YtickLabelTxt = DATA.PATHWAYS.Name(1:nGroups);
     YtickLabelTxt = strrep(YtickLabelTxt,'_TARGET_GENES','');
     YtickLabelTxt=strcat('\it',YtickLabelTxt);
+    
 end
 
 
