@@ -123,6 +123,10 @@ end
 switch Y_Type
     case 'Delta Average'
         YLabel = {'\Delta \beta-value'};
+    case 'HR coxreg OS'
+        Y_Val =  log2(Y_Val);
+        YLabel = {'log_2(HR OS)'};
+
     case 'HR coxreg DSS'
         Y_Val =  log2(Y_Val);
         YLabel = {'log_2(HR DSS)'};
@@ -141,6 +145,10 @@ switch ColorType
     case 'p coxreg DSS'
         ColorVal =  -log10(ColorVal);
         Colorlabel = {'-log_1_0(p coxreg DSS)'};
+    case 'q coxreg OS'
+        ColorVal =  -log10(ColorVal);
+        Colorlabel = {'-log_1_0(q coxreg OS)'};
+
     case 'p coxreg PFI'
         ColorVal =  -log10(ColorVal);
         Colorlabel = {'-log_1_0(p coxreg PFI)'};
@@ -152,6 +160,9 @@ switch SizeType
         SizeVal(SizeVal>pCeil) = pCeil;
     case 'Delta Average'
         SizeVal =  abs(SizeVal);
+    case 'HR coxreg OS'
+        SizeVal =  abs(log2(SizeVal));
+
     case 'HR coxreg DSS'
         SizeVal =  abs(log2(SizeVal));
     case 'HR coxreg PFI'

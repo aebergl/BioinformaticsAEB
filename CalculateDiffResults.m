@@ -37,7 +37,7 @@ RESULTS_DATA = CreateDataStructure(DATA.nCol,10,[],[]);
 % Add Info
 RESULTS_DATA.Title = 'Difference analysis results';
 RESULTS_DATA.Info.Source = inputname(1);
-RESULTS_DATA.Info.Platform = DataType;
+RESULTS_DATA.Info.DataType = DataType;
 RESULTS_DATA.Info.GroupID = GroupId;
 RESULTS_DATA.Info.Group1 = Group1;
 RESULTS_DATA.Info.Group2 = Group2;

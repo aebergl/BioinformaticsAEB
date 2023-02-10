@@ -47,15 +47,12 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'IdColumns')
         i = i + 1;
         numIdColumns = varargin{i};
-
     elseif strcmpi(varargin{i},'BetaValueExt')
         i = i + 1;
         BetaValueExt = varargin{i};
-
     elseif strcmpi(varargin{i},'DetectionPvalExt')
         i = i + 1;
         DetectionPvalExt = varargin{i};
-
     elseif strcmpi(varargin{i},'Delimiter')
         i = i + 1;
         DelimiterType = varargin{i};      
@@ -133,9 +130,7 @@ if numHeaderRows > 0
         tmp_txt =   deblank(tmp_txt{1});
         DATA.ColId(i)=tmp_txt;
     end
-    DATA.ColId = string(DATA.ColId);
-    %DATA.ColAnnotationFields(1) = tmp(1,1);
-    %DATA.ColAnnotation(:,1) = tmp(numIdColumns+1:end,1);
+    %DATA.ColId = string(DATA.ColId);
     if numIdColumns > 1
         DATA.RowAnnotationFields = tmp(2:numIdColumns);
     end
@@ -145,7 +140,7 @@ if numHeaderRows > 0
         DATA.ColAnnotationFields(i) = tmp(1,1);
         DATA.ColAnnotation(:,i) = tmp(numIdColumns+1:end,1);
     end
-    DATA.RowId  = S{1};
+    DATA.RowId  = string(S{1});
     if numIdColumns > 1
         DATA.RowAnnotation  = [S{2:numIdColumns}];
 

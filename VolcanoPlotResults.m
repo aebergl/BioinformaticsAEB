@@ -127,6 +127,9 @@ switch Y_Variable
     case 'fdr coxreg OS'
         y_data =  -log10(y_data);
         YLabel = {'-log_1_0(fdr coxreg OS)'};
+    case 'p t-test'
+        y_data =  -log10(y_data);
+        YLabel = {'-log_1_0(p t-test)'};
 
 end
 
@@ -152,8 +155,8 @@ if TopPrctile
 end
 MaxVal_X_Significant = max(abs(x_data(y_data >= Y_CutOff)));
 
-% x_data(x_data>MaxVal_X_Significant) = MaxVal_X_Significant;
-% x_data(x_data<-MaxVal_X_Significant) = -MaxVal_X_Significant;
+x_data(x_data>MaxVal_X_Significant) = MaxVal_X_Significant;
+x_data(x_data<-MaxVal_X_Significant) = -MaxVal_X_Significant;
 
 dist_val = pdist2([x_data y_data],[0 0],"seuclidean");
 dist_alpha = rescale(dist_val.^2,AlphaRange(1),AlphaRange(2));
@@ -212,19 +215,21 @@ ah.YAxis.Label.VerticalAlignment='bottom';
 switch PlotType
     case 'simple'
         pos_str=sprintf('n=%u',sum(indx_pos_scatter));
+        text(ah,ah.XLim(2)-nudge_x,ah.YLim(2),pos_str,'Clipping','off','FontSize',FontSize,'HorizontalAlignment','right','VerticalAlignment','top' );
+
         neg_str=sprintf('n=%u',sum(indx_neg_scatter));
-        text(ah,0-nudge_x,ah.YLim(2),neg_str,'Clipping','off','FontSize',FontSize,'HorizontalAlignment','right','VerticalAlignment','top' );
+        text(ah,ah.XLim(1)+nudge_x,ah.YLim(2),neg_str,'Clipping','off','FontSize',FontSize,'HorizontalAlignment','left','VerticalAlignment','top' );
         
-        text(ah,0+nudge_x,ah.YLim(2),pos_str,'Clipping','off','FontSize',FontSize,'HorizontalAlignment','left','VerticalAlignment','top' );
     otherwise
         for i = 2:length(ah.YAxis.TickValues)
             TickVal = ah.YAxis.TickValues(i);
             nPos = sum(y_data_pos>TickVal);
             pos_str=sprintf('n=%u',nPos);
-            text(ah,ah.XLim(2)-nudge_x,TickVal,pos_str,'Clipping','off','FontSize',FontSize )
+            text(ah,ah.XLim(2)-nudge_x,TickVal,pos_str,'Clipping','off','HorizontalAlignment','right','FontSize',FontSize )
+            
             nNeg = sum(y_data_neg>TickVal);
             neg_str=sprintf('n=%u',nNeg);
-            text(ah,ah.XLim(1)+nudge_x,TickVal,neg_str,'Clipping','off','HorizontalAlignment','right','FontSize',FontSize)
+            text(ah,ah.XLim(1)+nudge_x,TickVal,neg_str,'Clipping','off','HorizontalAlignment','left','FontSize',FontSize)
         end
 end
 ah.Position([1 3]) = [0.15 0.7];

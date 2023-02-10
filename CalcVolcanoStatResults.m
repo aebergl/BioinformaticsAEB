@@ -69,14 +69,15 @@ switch Y_Variable
         y_data =  -log10(y_data);
     case 'fdr coxreg OS'
         y_data =  -log10(y_data);
-
+    case 'p t-test'
+        y_data =  -log10(y_data);
 end
 
 indx_pos = x_data > 0;
 indx_neg = x_data < 0;
 
-x_data = normalize(x_data);
-y_data = normalize(y_data);
+x_data = normalize(x_data,'scale');
+y_data = normalize(y_data,'scale');
 
 
 
@@ -84,7 +85,7 @@ TotalSum = sum(sqrt(x_data.^2 + y_data.^2),'omitnan');
 PosSum = sum(sqrt(x_data(indx_pos).^2 + y_data(indx_pos).^2),'omitnan');
 NegSum = sum(sqrt(x_data(indx_neg).^2 + y_data(indx_neg).^2),'omitnan');
 
-PosVal = PosSum/TotalSum;
+PosVal = (PosSum-NegSum)/TotalSum;
 NegVal = NegSum/TotalSum;
 
 
