@@ -14,15 +14,15 @@ IDs = unique(IdInput,'stable');
 numID = zeros(length(IDs),1);
 
 for i = 1:length(IDs)
-    if iscell(IdInput)
+    if iscell(IdInput) || isstring(IdInput)
         numID(i) = sum(strcmp(IDs{i},IdInput));
     else
         numID(i) = sum(IdInput == IDs(i));
     end
 
     if PrintResults
-         if iscell(IdInput)
-        fprintf('%s:\t%u\n',IDs{i},numID(i))
+         if iscell(IdInput) || isstring(IdInput)
+            fprintf('%s:\t%u\n',IDs{i},numID(i))
          else
               fprintf('%i:\t%u\n',IDs(i),numID(i))
          end

@@ -1,7 +1,7 @@
 function RESULTS_DATA = CalculateCorrelationResults(DATA,Y,Group1,GroupId,DataType,varargin)
 
 
-MinNumSampleSize = 7;
+MinNumSampleSize = 5;
 
 if isempty(DataType)
     DataType = 'Beta-value';

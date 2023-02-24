@@ -22,6 +22,11 @@ YValCutOff = 0;
 ColorValCutOff = 0;
 % Check Input
 i=0;
+
+SizeLegendCutOff = [1 0.05 0.01 0.001 0.0001];
+LegendSizeVal = [1 10 20 30 40];
+
+
 while i<numel(varargin)
     i = i + 1;
     if strcmpi(varargin{i},'GENES')
@@ -126,13 +131,14 @@ switch Y_Type
     case 'HR coxreg OS'
         Y_Val =  log2(Y_Val);
         YLabel = {'log_2(HR OS)'};
-
     case 'HR coxreg DSS'
         Y_Val =  log2(Y_Val);
         YLabel = {'log_2(HR DSS)'};
     case 'HR coxreg PFI'
         Y_Val =  log2(Y_Val);
         YLabel = {'log_2(HR PFI)'};
+    case 'r Spearman'
+        YLabel = {'Spearman''s \rho'};
 end
 
 switch ColorType
@@ -152,21 +158,29 @@ switch ColorType
     case 'p coxreg PFI'
         ColorVal =  -log10(ColorVal);
         Colorlabel = {'-log_1_0(p coxreg PFI)'};
+    case 'p Spearman'
+        ColorVal =  -log10(ColorVal);
+        Colorlabel = {'-log_1_0(p Spearman)'};
+    case 'Range'
+        Colorlabel = {'Range'};
+
 end
 
 switch SizeType
     case 'q t-test'
-        SizeVal = -log10(DATA.RES(nRES).pTT(indx_Chr));
+        SizeVal = -log10(SizeVal);
         SizeVal(SizeVal>pCeil) = pCeil;
     case 'Delta Average'
         SizeVal =  abs(SizeVal);
     case 'HR coxreg OS'
         SizeVal =  abs(log2(SizeVal));
-
     case 'HR coxreg DSS'
         SizeVal =  abs(log2(SizeVal));
     case 'HR coxreg PFI'
         SizeVal =  abs(log2(SizeVal));
+    case 'p Spearman'
+        SizeVal = -log10(SizeVal);
+
 end
 SizeVal =  abs(SizeVal);
 if ~isempty(PlotRange)
@@ -178,7 +192,7 @@ if ~isempty(PlotRange)
     FullAnnotation = FullAnnotation(plot_indx,:);
     Full_X_Data = Full_X_Data(plot_indx,:);
 end
-
+nGroups = length(Y_Val);
 [~,sort_indx] = sort(ColorVal,'ascend');
 ChrPos = ChrPos(sort_indx);
 Y_Val = Y_Val(sort_indx);
@@ -189,6 +203,11 @@ Full_X_Data = Full_X_Data(sort_indx,:);
 
 SizeVal(SizeVal<0) = 0; % make sure there is no negative values
 SizeValPlot = rescale(SizeVal,MinMaxSize(1),MinMaxSize(2));
+
+% LegendSizeValMat = sum(repmat(SizeLegendCutOff,nGroups,1) >= repmat(SizeVal,1,length(SizeLegendCutOff)),2);
+% SizeValPlot = LegendSizeVal(LegendSizeValMat);
+
+
 
 indx_selected = abs(Y_Val) > YValCutOff & ColorVal > ColorValCutOff;
 
@@ -262,12 +281,30 @@ ah.Units='inches';
 ah.OuterPosition(3:4) = [FigSize(1)-RightMargin FigSize(2)-TopMargin];
 
 ch = colorbar(ah,'Units','inches','FontSize',FontSize,...
-    'Position',[ah.Position(1) + ah.Position(3)+0.1, ah.Position(2) 0.1, FigSize(2)/2.5]);
+    'Position',[ah.Position(1) + ah.Position(3)+0.1, ah.Position(2) 0.1, FigSize(2)/3]);
 ch.Label.String=Colorlabel;
 ch.FontSize=FontSize;
+
+SizeLegendCutOff = [1 0.05 0.01 0.001];
+LegendSizeVal = [5 10 20 30];
+
+YPos =  [0.25 0.4 0.55 0.7];
+
+shl = scatter(ah,ah.XLim(2)+nudge_X*1.5,YPos,LegendSizeVal,[0 0 0],'filled');
+text(ah,ah.XLim(2)+nudge_X*1.5,0.8,'p-value','HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
+
+for i = 1:length(LegendSizeVal)
+    if i==1
+        txt_str = 'N.S.';
+    else
+        txt_str = num2str(SizeLegendCutOff(i));
+    end
+    text(ah,ah.XLim(2)+nudge_X*2.2,YPos(i),txt_str,'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
+end
+
 if CytoBand
-fh.Children(2).Units='Inches';
-fh.Children(2).Position(3)=fh.Children(4).Position(3);
+    fh.Children(2).Units='Inches';
+    fh.Children(2).Position(3)=fh.Children(4).Position(3);
 end
 if printResults
     format_str_txt = sprintf('%s%%s',Delimiter);

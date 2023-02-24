@@ -1,19 +1,11 @@
 function fh  = Dot_Plot(xVal,SizeVal,SizeCutOffs,LegendSizeVal,ColorType,fWidth,fHight)
 
-FontSize = 5;
+FontSize = 7;
 LineWidth = 0.5;
 GridLines = 'on';
 
-% Get samples to use
-if isempty(Y_Samples)
-    SampleIndx = ones(DATA.nRow,1);
-else
-    SampleIndx = ismember(DATA.RowId,Y_Samples);
-end
-nGroups = length(x);
 
-
-
+nGroups = length(xVal);
 
 % Assign size for each sample
 LegendSizeValMat = sum(repmat(SizeCutOffs,nGroups,1) >= repmat(SizeVal,1,length(SizeCutOffs)),2);
@@ -57,13 +49,13 @@ ah.YGrid = GridLines;
 ah.YDir = 'Reverse';
 ah.YTick = 1:nGroups;
 ah.YLim = [0.5 nGroups+0.5];
-ah.YTickLabel = Y_Samples_txt;
+%ah.YTickLabel = Y_Samples_txt;
 ah.Colormap = Cmap;
 ah.CLim = CLim;
 ah.XLim =[minVal-nudgeVal maxVal+nudgeVal];
 ah.OuterPosition = [0 0 fWidth-0.5 fHight];
 ah.TickLength=[ 0.05/nGroups    0.0];
-xlabel(ah,xValTxt);
+%xlabel(ah,xValTxt);
 
 sh = scatter(ah,xVal,1:nGroups,SizeValPlot,ColorVal,'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
 
@@ -73,7 +65,7 @@ shl = scatter(ah,ah.XLim(2)+nudgeVal,YPos+1,LegendSizeVal,[0 0 0]);
 text(ah.XLim(2)+1.4*nudgeVal,1,'p-value','HorizontalAlignment','center','VerticalAlignment','middle','FontSize',FontSize)
 
 for i = 1:length(LegendSizeVal)
-    if i==1;
+    if i==1
         txt_str = 'N.S.';
     else
         txt_str = num2str(SizeCutOffs(i));
