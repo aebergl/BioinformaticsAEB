@@ -8,7 +8,12 @@ SizeRange = [1 75];
 FigureSize = [1.8 1.8];
 TopNValues = 0;
 TopPrctile = 0;
+RowsToHighligh = [];
 i=0;
+Cmap_UpDn = [1 0 0; 0 0 1];
+XLim=[];
+YLim=[];
+
 
 while i<numel(varargin)
     i = i + 1;
@@ -27,7 +32,18 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'TopPrctile')
         i = i + 1;
         TopPrctile = varargin{i};
-    
+    elseif strcmpi(varargin{i},'RowsToHighligh')
+        i = i + 1;
+        RowsToHighligh = varargin{i};
+    elseif strcmpi(varargin{i},'UpDnColors')
+        i = i + 1;
+        Cmap_UpDn = varargin{i};
+    elseif strcmpi(varargin{i},'XLim')
+        i = i + 1;
+        XLim = varargin{i};
+    elseif strcmpi(varargin{i},'YLim')
+        i = i + 1;
+        YLim = varargin{i};
     elseif strcmpi(varargin{i},'Print')
         printResults = true;
     end
@@ -64,6 +80,8 @@ switch X_Variable
         XLabel = {'log_2(HR OS)'};
     case 'r Spearman'
         XLabel = {'Spearman''s \rho'};
+    case 'log2FoldChange'
+        XLabel = {'Log_2 FC'};
 
 end
 
@@ -135,6 +153,9 @@ switch Y_Variable
     case 'p Spearman'
         y_data =  -log10(y_data);
         YLabel = {'-log_1_0(p Spearman)'};
+    case 'padj'
+        y_data =  -log10(y_data);
+        YLabel = {'-log_1_0(p-adjusted)'};
 
 end
 
@@ -188,17 +209,24 @@ cMap=flipud(cMap);
 cMap = colormap(colorcet('L02','reverse',true));
 
 DensScat(x_data_pos(~indx_pos_scatter),y_data_pos(~indx_pos_scatter),'TargetAxes',ah,'ColorBar',false,'ColorMap',cMap,'mSize',25);
-sh_pos = scatter(ah,x_data_pos(indx_pos_scatter),y_data_pos(indx_pos_scatter),dist_pos_size(indx_pos_scatter),[1 0 0],'filled');
+sh_pos = scatter(ah,x_data_pos(indx_pos_scatter),y_data_pos(indx_pos_scatter),dist_pos_size(indx_pos_scatter),Cmap_UpDn(1,:),'filled');
 sh_pos.AlphaDataMapping = 'none';
 sh_pos.AlphaData = dist_pos_alpha(indx_pos_scatter);
 sh_pos.MarkerFaceAlpha = 'flat';
 
 DensScat(x_data_neg(~indx_neg_scatter),y_data_neg(~indx_neg_scatter),'TargetAxes',ah,'ColorBar',false,'ColorMap',cMap,'mSize',25);
-sh_neg = scatter(ah,x_data_neg(indx_neg_scatter),y_data_neg(indx_neg_scatter),dist_neg_size(indx_neg_scatter),[0 0 1],'filled');
+sh_neg = scatter(ah,x_data_neg(indx_neg_scatter),y_data_neg(indx_neg_scatter),dist_neg_size(indx_neg_scatter),Cmap_UpDn(2,:),'filled');
 sh_neg.AlphaDataMapping = 'none';
 sh_neg.AlphaData = dist_neg_alpha(indx_neg_scatter);
 sh_neg.MarkerFaceAlpha = 'flat';
 
+
+if ~isempty(RowsToHighligh)
+    indx = ismember(DATA.RowId,RowsToHighligh);
+
+    scatter(ah,x_data(indx),y_data(indx),3,[0 0 0],'filled');
+
+end
 
 xlabel(ah,XLabel);
 ylabel(ah,YLabel);
@@ -207,12 +235,22 @@ min_x=min(x_data_neg,[],'all','omitnan');
 max_x=max(x_data_pos,[],'all','omitnan');
 nudge_x = (max_x-min_x)/20;
 
-ah.XLim=[min_x-nudge_x max_x+nudge_x];
 
+if isempty(XLim)
+
+    ah.XLim = [min_x-nudge_x max_x+nudge_x];
+else
+        ah.XLim = XLim;
+end
 min_y=0;
 max_y=max(y_data,[],'all','omitnan');
 nudge_y = (max_y-min_y)/20;
-ah.YLim=[0 max_y+nudge_y];
+
+if isempty(YLim)
+    ah.YLim=[0 max_y+nudge_y];
+else
+    ah.YLim = YLim;
+end
 
 ah.YAxis.Label.HorizontalAlignment='center';
 ah.YAxis.Label.VerticalAlignment='bottom';
@@ -220,10 +258,10 @@ ah.YAxis.Label.VerticalAlignment='bottom';
 switch PlotType
     case 'simple'
         pos_str=sprintf('n=%u',sum(indx_pos_scatter));
-        text(ah,ah.XLim(2)-nudge_x,ah.YLim(2),pos_str,'Clipping','off','FontSize',FontSize,'HorizontalAlignment','right','VerticalAlignment','top' );
+        text(ah,ah.XLim(2),ah.YLim(2),pos_str,'Clipping','off','FontSize',FontSize,'HorizontalAlignment','right','VerticalAlignment','top' );
 
         neg_str=sprintf('n=%u',sum(indx_neg_scatter));
-        text(ah,ah.XLim(1)+nudge_x,ah.YLim(2),neg_str,'Clipping','off','FontSize',FontSize,'HorizontalAlignment','left','VerticalAlignment','top' );
+        text(ah,ah.XLim(1),ah.YLim(2),neg_str,'Clipping','off','FontSize',FontSize,'HorizontalAlignment','left','VerticalAlignment','top' );
         
     otherwise
         for i = 2:length(ah.YAxis.TickValues)
