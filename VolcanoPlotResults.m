@@ -1,6 +1,6 @@
 function fh = VolcanoPlotResults(DATA,X_Variable,X_CutOff,Y_Variable,Y_CutOff,varargin)
 printResults=false;
-FontSize=6;
+FontSize=8;
 PlotType = 'simple';
 Delimiter = '\t';
 AlphaRange = [0.01 0.5];
@@ -60,7 +60,7 @@ end
 switch X_Variable
     case 'Delta Average'
         XLabel = {'\Delta \beta-value'};
-        XLabel = {'\Delta M-value'};
+        %XLabel = {'\Delta M-value'};
     case 'HR logrank DSS'
         x_data =  log2(x_data);
         XLabel = {'log_2(HR DSS)'};

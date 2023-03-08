@@ -1,4 +1,18 @@
-function [PosVal, NegVal] = CalcVolcanoStatResults(DATA,X_Variable,Y_Variable,varargin)
+function [Val] = CalcVolcanoStatResults(DATA,X_Variable,Y_Variable,varargin)
+
+CHR=false;
+i=0;
+while i<numel(varargin)
+    i = i + 1;
+    if strcmpi(varargin{i},'CHR')
+        CHR=true;
+        i = i + 1;
+        CHR_IdCol = varargin{i};
+        i = i + 1;
+        CHR_names = varargin{i};
+    end
+end
+
 
 % Select X value
 indx_X_Val = strcmpi(X_Variable,DATA.ColId);
@@ -9,7 +23,7 @@ else
 end
 switch X_Variable
     case 'Delta Average'
-       % x_data = x_data;
+        % x_data = x_data;
     case 'HR logrank DSS'
         x_data =  log2(x_data);
     case 'HR coxreg DSS'
@@ -71,6 +85,9 @@ switch Y_Variable
         y_data =  -log10(y_data);
     case 'p t-test'
         y_data =  -log10(y_data);
+            case 'q t-test'
+        y_data =  -log10(y_data);
+
 end
 
 indx_pos = x_data > 0;
@@ -79,13 +96,22 @@ indx_neg = x_data < 0;
 x_data = normalize(x_data,'scale');
 y_data = normalize(y_data,'scale');
 
+if CHR
+    Val = ones(length(CHR_names),1) * NaN;
+    indx_CHRrow = strcmpi(CHR_IdCol,DATA.RowAnnotationFields);
+    CHR_column = DATA.RowAnnotation(:,indx_CHRrow);
+    for i=1:length(CHR_names)
+        indx = strcmp(CHR_names{i},CHR_column);
+        TotalSum = sum(sqrt(x_data(indx).^2 + y_data(indx).^2),'omitnan');
+        PosSum = sum(sqrt(x_data(indx_pos & indx).^2 + y_data(indx_pos & indx).^2),'omitnan');
+        NegSum = sum(sqrt(x_data(indx_neg & indx).^2 + y_data(indx_neg & indx).^2),'omitnan');
+        Val(i) = (PosSum-NegSum)/TotalSum;
+    end
 
-
-TotalSum = sum(sqrt(x_data.^2 + y_data.^2),'omitnan');
-PosSum = sum(sqrt(x_data(indx_pos).^2 + y_data(indx_pos).^2),'omitnan');
-NegSum = sum(sqrt(x_data(indx_neg).^2 + y_data(indx_neg).^2),'omitnan');
-
-PosVal = (PosSum-NegSum)/TotalSum;
-NegVal = NegSum/TotalSum;
-
+else
+    TotalSum = sum(sqrt(x_data.^2 + y_data.^2),'omitnan');
+    PosSum = sum(sqrt(x_data(indx_pos).^2 + y_data(indx_pos).^2),'omitnan');
+    NegSum = sum(sqrt(x_data(indx_neg).^2 + y_data(indx_neg).^2),'omitnan');
+    Val = (PosSum-NegSum)/TotalSum;
+end
 

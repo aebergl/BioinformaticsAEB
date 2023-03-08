@@ -70,8 +70,8 @@ fh.Parent.YLim =[0.5 DATA.nRow+0.5];
 fh.Parent.XLim =[0.5 DATA.nRow+0.5];
 fh.Parent.XTick=[];
 fh.Parent.YTick=[];
-fh.Parent.YTick=1:DATA.nRow;
-fh.Parent.YTickLabel = SampleAnnotation;
+% fh.Parent.YTick=1:DATA.nRow;
+% fh.Parent.YTickLabel = SampleAnnotation;
 colorbar
 
 

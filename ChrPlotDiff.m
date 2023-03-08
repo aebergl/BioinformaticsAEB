@@ -285,22 +285,22 @@ ch = colorbar(ah,'Units','inches','FontSize',FontSize,...
 ch.Label.String=Colorlabel;
 ch.FontSize=FontSize;
 
-SizeLegendCutOff = [1 0.05 0.01 0.001];
-LegendSizeVal = [5 10 20 30];
+% SizeLegendCutOff = [1 0.05 0.01 0.001];
+% LegendSizeVal = [5 10 20 30];
+% 
+% YPos =  [0.25 0.4 0.55 0.7];
+% 
+% shl = scatter(ah,ah.XLim(2)+nudge_X*1.5,YPos,LegendSizeVal,[0 0 0],'filled');
+% text(ah,ah.XLim(2)+nudge_X*1.5,0.8,'p-value','HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
 
-YPos =  [0.25 0.4 0.55 0.7];
-
-shl = scatter(ah,ah.XLim(2)+nudge_X*1.5,YPos,LegendSizeVal,[0 0 0],'filled');
-text(ah,ah.XLim(2)+nudge_X*1.5,0.8,'p-value','HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
-
-for i = 1:length(LegendSizeVal)
-    if i==1
-        txt_str = 'N.S.';
-    else
-        txt_str = num2str(SizeLegendCutOff(i));
-    end
-    text(ah,ah.XLim(2)+nudge_X*2.2,YPos(i),txt_str,'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
-end
+% for i = 1:length(LegendSizeVal)
+%     if i==1
+%         txt_str = 'N.S.';
+%     else
+%         txt_str = num2str(SizeLegendCutOff(i));
+%     end
+%     text(ah,ah.XLim(2)+nudge_X*2.2,YPos(i),txt_str,'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
+% end
 
 if CytoBand
     fh.Children(2).Units='Inches';

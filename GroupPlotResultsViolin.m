@@ -1,6 +1,6 @@
 function fh = GroupPlotResultsViolin(DATA,GroupId,Groups,Y_Type,Y_Val_CutOff,p_Val_Type,p_Val_Cutoff,varargin)
 FontSize = 10;
-Plot_ALL=true;
+Plot_ALL=false;
 TopNValues = 0;
 TopPrctile = 0;
 
@@ -14,7 +14,7 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'TopPrctile')
         i = i + 1;
         TopPrctile = varargin{i};
-    
+
 
     end
 end
@@ -168,7 +168,7 @@ for i = 1:nGroups
         Violin({x_Hypo_ALL},i,'ShowData',ShowData,'ViolinColor',{cMAP(i,:)},'ViolinAlpha',{0.5},'Width',Width,'MarkerSize',MarkerSize,'LineWidth', 1,'BoxColor',BoxColor);
     else
         if length(x_Hypo_pS)>0
-        Violin({x_Hypo_pS},i,'ShowData',ShowData,'ViolinColor',{cMAP(i,:)},'ViolinAlpha',{0.5},'Width',Width,'MarkerSize',MarkerSize,'LineWidth', 1,'BoxColor',BoxColor);
+            Violin({x_Hypo_pS},i,'ShowData',ShowData,'ViolinColor',{cMAP(i,:)},'ViolinAlpha',{0.5},'Width',Width,'MarkerSize',MarkerSize,'LineWidth', 1,'BoxColor',BoxColor);
         end
     end
     x_hypo = i * ones(size(x_Hypo_S)) + (rand(size(x_Hypo_S))-0.5)*(2*JitterWidth);
@@ -217,25 +217,25 @@ end
 
 %ah.YTick=ceil((minVal-nudgeVal)*10)/10:0.1:floor((maxVal+nudgeVal)*10)/10;
 
-
+Prct_Hyper = nHyper_S / nHyper * 100;
+Prct_Hypo = nHypo_S / nHypo * 100;
 
 ylabel(ah,YLabel);
-if Y_Val_CutOff
-line(ah.XLim,[ Y_Val_CutOff Y_Val_CutOff],'LineWidth',1,'Color',[1 0 0 ],'LineStyle','--');
-line(ah.XLim,[ -Y_Val_CutOff -Y_Val_CutOff],'LineWidth',1,'Color',[1 0 0 ],'LineStyle','--');
-text(ah.XLim(2)+0.1,Y_Val_CutOff,sprintf('Hyper (%.2f%%)',Prct_Hyper),'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
-text(ah.XLim(2)+0.1,-Y_Val_CutOff,sprintf('Hypo (%.2f%%)',Prct_Hypo),'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
 
-end
 line(ah.XLim,[ 0 0 ],'LineWidth',2,'Color',[0 0 0 ],'LineStyle','-');
 ah.XLim=[0.5 nGroups+0.5];
 ah.XTick=1:nGroups;
 ah.XTickLabel=GroupName;
 ah.XTickLabelRotation=-45;
 ah.XAxis.TickLabelInterpreter='none';
+if Y_Val_CutOff
+    line(ah.XLim,[ Y_Val_CutOff Y_Val_CutOff],'LineWidth',1,'Color',[1 0 0 ],'LineStyle','--');
+    line(ah.XLim,[ -Y_Val_CutOff -Y_Val_CutOff],'LineWidth',1,'Color',[1 0 0 ],'LineStyle','--');
+    text(ah.XLim(2)+0.1,Y_Val_CutOff,sprintf('Hyper (%.2f%%)',Prct_Hyper),'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
+    text(ah.XLim(2)+0.1,-Y_Val_CutOff,sprintf('Hypo (%.2f%%)',Prct_Hypo),'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
 
-Prct_Hyper = nHyper_S / nHyper * 100;
-Prct_Hypo = nHypo_S / nHypo * 100;
+end
+
 
 Str = cell(0,0);
 [~,cutoff_str] = pval2stars(0.00001,[]);
