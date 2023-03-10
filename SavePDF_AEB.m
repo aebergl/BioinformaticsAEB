@@ -9,7 +9,7 @@ set(fh, 'PaperUnits', 'inches');
 set(fh, 'PaperSize', [fh.Position(3), fh.Position(4)]);
 set(fh, 'PaperPosition', [0, 0, fh.Position(3), fh.Position(4)]);
 set(fh, 'PaperPositionMode', 'auto');
-print(fh, FileName, '-dpdf', '-painters');
+print(fh, FileName, '-dpdf', '-painters','-bestfit');
 
 end
 

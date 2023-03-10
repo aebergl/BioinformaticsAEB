@@ -142,7 +142,7 @@ cMAP = cMAP(1:nGroups,:);
 
 fh = figure('Name','Probe Type Plot','Color','w','Tag','Probe Type Plot','Units','centimeters','GraphicsSmoothing','off');
 fWidth = 4+nGroups*1.5;
-fHight = 12;
+fHight = 10;
 fh.Position(3:4) = [fWidth fHight];
 ah = axes(fh,'NextPlot','add','tag','Probe Type Plot','Box','on','FontSize',FontSize,'Linewidth',1,'Units','centimeters');
 
