@@ -1,7 +1,9 @@
 function WriteData(DATA,FileOut,varargin)
 
 Delimiter = '\t';
+DATAFlag = true;
 SampleAnnotationFlag = false;
+SurvivalFlag = false;
 IdsOnly = false;
 SeperateFiles = false;
 RowIds = [];
@@ -12,8 +14,12 @@ while i<numel(varargin)
     if strcmpi(varargin{i},'Delimiter')
         i = i + 1;
         Delimiter = varargin{i};
-    elseif strcmpi(varargin{i},'SampleAnnotation')
+    elseif strcmpi(varargin{i},'SampleAnnotationOnly')
         SampleAnnotationFlag = true;
+        DATAFlag = false;
+    elseif strcmpi(varargin{i},'Survival')
+        SurvivalFlag = true;
+
     elseif strcmpi(varargin{i},'IdsOnly')
         IdsOnly = true;
     elseif strcmpi(varargin{i},'Seperate')
@@ -78,28 +84,48 @@ if SeperateFiles
     end
     fclose(fid_VA);
 
-
-
 end
 
 fprintf(fid,'Id');
-if ~IdsOnly
+if SampleAnnotationFlag
     if  ~isempty(DATA.RowAnnotationFields)
         fprintf(fid,format_str_txt,DATA.RowAnnotationFields{:});
+        fprintf(fid,'\t');
     end
 end
-fprintf(fid,format_str_txt,DATA.ColId{:});
-% if SampleAnnotationFlag
-%     fprintf(fid,'\t%s',DATA.ColId{ProbeIndx});
-% end
+
+if SurvivalFlag
+    if  isfield(DATA,'SURVIVAL')
+        for i=1:length(DATA.SURVIVAL.SurvivalTypes)
+            fprintf(fid,'%s (Event)\t%s Time (%s)\t',DATA.SURVIVAL.SurvivalTypes{i},DATA.SURVIVAL.SurvivalTypes{i},DATA.SURVIVAL.Units{i});
+        end
+    end
+end
+
+
+
+if DATAFlag
+    fprintf(fid,format_str_txt,DATA.ColId{:});
+end
+
 fprintf(fid,'\n');
 
 for i=1:DATA.nRow
     fprintf(fid,format_str_short,DATA.RowId{i});
-    if ~IdsOnly
+    if SampleAnnotationFlag
         fprintf(fid,format_str_txt,DATA.RowAnnotation{i,:});
+         fprintf(fid,'\t');
     end
-    fprintf(fid,format_str_val,DATA.X(i,:));
+    if SurvivalFlag
+        for j=1:length(DATA.SURVIVAL.SurvivalTypes)
+            fprintf(fid,'%s\t%g\t',DATA.SURVIVAL.SurvEvent{i,j},DATA.SURVIVAL.SurvTime(i,j));
+        end
+    end
+
+    if DATAFlag
+
+        fprintf(fid,format_str_val,DATA.X(i,:));
+    end
     fprintf(fid,'\n');
 end
 
