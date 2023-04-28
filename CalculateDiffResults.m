@@ -1,6 +1,6 @@
 function RESULTS_DATA = CalculateDiffResults(DATA,Group1,Group2,GroupId,DataType,varargin)
 
-MinNumSampleSize = 3;
+MinNumSampleSize = 2;
 
 if isempty(DataType)
     DataType = 'Beta-value';

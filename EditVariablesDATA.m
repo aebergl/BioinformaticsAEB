@@ -62,7 +62,9 @@ if any(indx)
             DATA.X = DATA.X(:,indx);
             DATA.ColId = DATA.ColId(indx);
             DATA.nCol = size(DATA.X,2);
-            DATA.ColAnnotation = DATA.ColAnnotation(indx,:);
+            if ~isempty(DATA.ColAnnotation)
+                DATA.ColAnnotation = DATA.ColAnnotation(indx,:);
+            end
         case 'remove'
             %Remove samples
             DATA.X(:,indx) = [];
