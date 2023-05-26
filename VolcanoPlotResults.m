@@ -154,7 +154,9 @@ switch Y_Variable
     case 'q t-test'
         y_data =  -log10(y_data);
         YLabel = {'-log_1_0(q t-test)'};
-
+    case 'fdr t-test'
+        y_data =  -log10(y_data);
+        YLabel = {'-log_1_0(q t-test)'};
     case 'p Spearman'
         y_data =  -log10(y_data);
         YLabel = {'-log_1_0(p Spearman)'};

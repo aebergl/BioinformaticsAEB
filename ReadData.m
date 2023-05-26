@@ -54,7 +54,7 @@ while i<numel(varargin)
     end
 end
 % Get info about File
-numRows = GetNumLines(InputFile);
+numRows = GetNumLines(InputFile)
 numColumns = GetNumColumns(InputFile,DelimiterType,min([numRows, 10]));
 
 if numHeaderRows
