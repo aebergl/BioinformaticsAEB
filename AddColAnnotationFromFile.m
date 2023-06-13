@@ -81,20 +81,20 @@ catch
 end
 
 %Select variables to import
-if isempty(ColumnsToAdd)
-    SelectedVariables = opts.SelectedVariableNames;
-else
-    [SelectedVariables]  = intersect(opts.VariableNames,ColumnsToAdd,'Stable');
-    opts.SelectedVariableNames = SelectedVariables;
-end
-%opts.VariableTypes(:) = {'char'};
+% if isempty(ColumnsToAdd)
+%     SelectedVariables = opts.SelectedVariableNames;
+% else
+%     [SelectedVariables]  = intersect(ColumnsToAdd,opts.VariableNames,'Stable');
+%     opts.SelectedVariableNames = SelectedVariables;
+% end
+
 % get File Id to use
 if isempty(File_IdName)
     File_IdColumn = 1;
 else
-    File_IdColumn = find(strcmp(File_IdName, opts.SelectedVariableNames));  
+    File_IdColumn = find(strcmp(File_IdName, opts.VariableNames));  
 end
-%opts = setvartype(opts,opts.SelectedVariableNames,'char');
+opts = setvartype(opts,opts.VariableNames,'char');
 switch lower(fExt)
     case {'.xls','.xlsb','.xlsm','.xlsx','.xltm','.xltx'}
         if isempty(SheetName)
@@ -103,22 +103,30 @@ switch lower(fExt)
             C = readcell(FileName,opts,'Sheet',SheetName);
         end
     case {'.txt','.tsv','.csv','.annot'}
-        C = readcell(FileName,opts);
+        C = readcell(FileName,opts,'TextType','char');
     otherwise  % Under all circumstances SWITCH gets an OTHERWISE!
         error('Unexpected file extension: %s', fExt);
 end
-
+ 
 % Fix numeric to str
 indx_numeric = cellfun(@(x) isnumeric(x),C);
 C(indx_numeric) = cellfun(@(x) num2str(x),C(indx_numeric),'UniformOutput',false);
 
+% Get File Id column
 File_Id = C(:,File_IdColumn);
-SelectedVariables(File_IdColumn) = [];
-C(:,File_IdColumn) = [];
+
+%SelectedVariables(File_IdColumn) = [];
+%C(:,File_IdColumn) = [];
+
+
+% Extract slected Columns to add
+[SelectedVariables,~,ib]  = intersect(ColumnsToAdd,opts.VariableNames,'Stable');
+C = C(:,ib);
 
 indx_missing = ~cellfun(@(x) ischar(x),C);
 [C{indx_missing}] = deal('NA');
 
+%Remove rows with missing ids for merging
 indx_missing = ~cellfun(@(x) ischar(x),File_Id);
 C(indx_missing,:) = [];
 File_Id(indx_missing,:) = [];
@@ -129,7 +137,6 @@ if Truncate
     DATA_Id = cellfun(@(x) x(1:Truncate), DATA_Id, 'UniformOutput', false);    
 end
 
-
 [indx_DATA,indx_File]  = ismember(DATA_Id,File_Id);
 indx_File = indx_File(indx_File>0);
 
@@ -139,11 +146,21 @@ Annotation(:) = {'---'};
 
 Annotation(indx_DATA,:) = C(indx_File,:);
 
+% Convert everyhting to string arrays
+Annotation = string(Annotation);
+SelectedVariables = string(SelectedVariables);
+
 switch lower(AddReplace)
     case 'replace'
         DATA.ColAnnotation = Annotation;
         DATA.ColAnnotationFields = SelectedVariables ;
     case 'add'
+        if iscellstr(DATA.ColAnnotation)
+            DATA.ColAnnotation = string(DATA.ColAnnotation);
+        end
+       if iscellstr(DATA.ColAnnotationFields)
+            DATA.ColAnnotation = string(DATA.ColAnnotationFields);
+        end
         DATA.ColAnnotation = [DATA.ColAnnotation Annotation];
         DATA.ColAnnotationFields = [DATA.ColAnnotationFields; SelectedVariables'];
 end

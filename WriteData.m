@@ -2,7 +2,7 @@ function WriteData(DATA,FileOut,varargin)
 
 Delimiter = '\t';
 DATAFlag = true;
-SampleAnnotationFlag = false;
+SampleAnnotationFlag = true;
 SurvivalFlag = false;
 IdsOnly = false;
 SeperateFiles = false;
