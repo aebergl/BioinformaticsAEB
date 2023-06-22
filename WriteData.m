@@ -22,6 +22,7 @@ while i<numel(varargin)
 
     elseif strcmpi(varargin{i},'IdsOnly')
         IdsOnly = true;
+        SampleAnnotationFlag = false;
     elseif strcmpi(varargin{i},'Seperate')
         SeperateFiles = true;
     elseif strcmpi(varargin{i},'ProbeId')

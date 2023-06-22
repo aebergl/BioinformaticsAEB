@@ -1,6 +1,6 @@
 function M = B2M(B)
 
-MaxVal = 8;
+MaxVal = 18;
 
 M = log2(B ./ (1-B));
 
