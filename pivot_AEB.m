@@ -7,8 +7,8 @@ if iscell(Group2)
 end
 % Group2 = strrep(Group2,' - ','_');
 % Group2 = strrep(Group2,' ','_');
-Group2 = strrep(Group2,'+','pos');
-Group2 = strrep(Group2,'-','neg');
+% Group2 = strrep(Group2,'+','pos');
+% Group2 = strrep(Group2,'-','neg');
 
 
 row_Ids = unique(Group1);
