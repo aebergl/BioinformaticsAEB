@@ -70,7 +70,9 @@ if any(indx)
             DATA.X(:,indx) = [];
             DATA.ColId(indx) = [];
             DATA.nCol = size(DATA.X,2);
-            DATA.ColAnnotation(indx,:) = [];
+            if ~isempty(DATA.ColAnnotation)
+                DATA.ColAnnotation(indx,:) = [];
+            end
     end
 
 else
