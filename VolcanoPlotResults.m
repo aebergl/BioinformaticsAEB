@@ -188,8 +188,8 @@ if TopPrctile
 end
 MaxVal_X_Significant = max(abs(x_data(y_data >= Y_CutOff)));
 
-% x_data(x_data>MaxVal_X_Significant) = MaxVal_X_Significant;
-% x_data(x_data<-MaxVal_X_Significant) = -MaxVal_X_Significant;
+x_data(x_data>MaxVal_X_Significant) = MaxVal_X_Significant;
+x_data(x_data<-MaxVal_X_Significant) = -MaxVal_X_Significant;
 
 dist_val = pdist2([x_data y_data],[0 0],"seuclidean");
 dist_alpha = rescale(dist_val.^2,AlphaRange(1),AlphaRange(2));

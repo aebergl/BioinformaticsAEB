@@ -136,6 +136,11 @@ else
     
     
 end
+% transpose DATA
+if TransposeX
+    DATA = TransposeData(DATA);  
+end
+
 % Check for unique identifiers
 
 % Start with Row Ids
@@ -149,10 +154,7 @@ if numUniqueColIds < length(DATA.ColId)
     fprintf('WARNING!!! Column Ids are not unique\n');
 end
 
-% transpose DATA
-if TransposeX
-    DATA = TransposeData(DATA);  
-end
+
 
 
 

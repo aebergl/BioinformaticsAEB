@@ -2,7 +2,7 @@ function RESULTS_DATA = CalculateSurvivalResults(DATA,Group1,GroupId,Surv_Type,D
 
 
 MinNumSampleSize = 10;
-NormalizeX = false;;
+NormalizeX = false;
 
 if isempty(DataType)
     DataType = 'Beta-value';
