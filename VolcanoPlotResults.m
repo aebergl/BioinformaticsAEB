@@ -67,6 +67,13 @@ switch X_Variable
     case 'HR coxreg DSS'
         x_data =  log2(x_data);
         XLabel = {'log_2(HR DSS)'};
+    case 'HR logrank PFS'
+        x_data =  log2(x_data);
+        XLabel = {'log_2(HR PFS)'};
+    case 'HR coxreg PFS'
+        x_data =  log2(x_data);
+        XLabel = {'log_2(HR PFS)'};
+
     case 'HR logrank PFI'
         x_data =  log2(x_data);
         XLabel = {'log_2(HR PFI)'};
@@ -94,6 +101,24 @@ else
     error('%s not found',Y_Variable)
 end
 switch Y_Variable
+    case 'p logrank PFS'
+        y_data =  -log10(y_data);
+        YLabel = {'-log_1_0(p logrank PFI)'};
+    case 'q logrank PFS'
+        y_data =  -log10(y_data);
+        YLabel = {'-log_1_0(q logrank PFI)'};
+    case 'fdr logrank PFS'
+        y_data =  -log10(y_data);
+        YLabel = {'-log_1_0(fdr logrank PFI)'};
+    case 'p coxreg PFS'
+        y_data =  -log10(y_data);
+        YLabel = {'-log_1_0(p coxreg PFI)'};
+    case 'q coxreg PFS'
+        y_data =  -log10(y_data);
+        YLabel = {'-log_1_0(q coxreg PFI)'};
+    case 'fdr coxreg PFS'
+        y_data =  -log10(y_data);
+        YLabel = {'-log_1_0(fdr coxreg PFI)'};
     case 'p logrank PFI'
         y_data =  -log10(y_data);
         YLabel = {'-log_1_0(p logrank PFI)'};
@@ -211,22 +236,27 @@ dist_neg_alpha = dist_alpha(indx_neg);
 indx_pos_scatter = x_data_pos > X_CutOff & y_data_pos >= Y_CutOff;
 indx_neg_scatter = x_data_neg < -X_CutOff & y_data_neg >= Y_CutOff;
 
+sum(indx_pos_scatter)
+sum(indx_neg_scatter)
 cMap=colormap('bone');
 cMap=flipud(cMap);
 cMap = colormap(colorcet('L02','reverse',true));
 
+if any(indx_pos_scatter)
 DensScat(x_data_pos(~indx_pos_scatter),y_data_pos(~indx_pos_scatter),'TargetAxes',ah,'ColorBar',false,'ColorMap',cMap,'mSize',25);
 sh_pos = scatter(ah,x_data_pos(indx_pos_scatter),y_data_pos(indx_pos_scatter),dist_pos_size(indx_pos_scatter),Cmap_UpDn(1,:),'filled');
 sh_pos.AlphaDataMapping = 'none';
 sh_pos.AlphaData = dist_pos_alpha(indx_pos_scatter);
 sh_pos.MarkerFaceAlpha = 'flat';
+end
 
+if any(indx_neg_scatter)
 DensScat(x_data_neg(~indx_neg_scatter),y_data_neg(~indx_neg_scatter),'TargetAxes',ah,'ColorBar',false,'ColorMap',cMap,'mSize',25);
 sh_neg = scatter(ah,x_data_neg(indx_neg_scatter),y_data_neg(indx_neg_scatter),dist_neg_size(indx_neg_scatter),Cmap_UpDn(2,:),'filled');
 sh_neg.AlphaDataMapping = 'none';
 sh_neg.AlphaData = dist_neg_alpha(indx_neg_scatter);
 sh_neg.MarkerFaceAlpha = 'flat';
-
+end
 
 if ~isempty(RowsToHighligh)
     indx = ismember(DATA.RowId,RowsToHighligh);
