@@ -6,10 +6,9 @@ AlphaValueMarkerLine = 0.8;
 MarkerEdgeColor = [0.1 0.1 0.1];
 FontSize = 10;
 FigureSize = [3,2.6];
-MarkerTypes = {'o','v'}';
+MarkerTypes = {'o','v','^','<','>','d'}';
 CMap = GetPalette('aeb01');
 AxisType = 'normal';
-AxisType = 'square';
 VariableIdentifier = false;
 
 i=0;
@@ -132,8 +131,8 @@ end
 
 line(ah,ah.XLim,[0 0],'Linewidth',0.5,'Color','k','LineStyle','-')
 line(ah,[0 0],ah.YLim,'Linewidth',0.5,'Color','k','LineStyle','-')
-ah.XLabel.String = 'CSG PC1 (22.6%)';
-ah.YLabel.String = 'ICG PC2 (16.6%)';
+ah.XLabel.String = VariableId_x;
+ah.YLabel.String = VariableId_y;
 
 
 
