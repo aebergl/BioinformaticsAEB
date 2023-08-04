@@ -117,7 +117,7 @@ axis(AxisType)
 
 for i=1:nGroups
     indx = SampleIndxMat(:,i);
-    sh = scatter(ah,x_var(indx),y_var(indx),MarkerSize,CMap(i,:),MarkerTypes{i},'XJitter','density','Linewidth',MarkerEdgeLineWidth,'MarkerFaceColor','flat','MarkerEdgeColor',MarkerEdgeColor);
+    sh = scatter(ah,x_var(indx),y_var(indx),MarkerSize,CMap(i,:),MarkerTypes{i},'Linewidth',MarkerEdgeLineWidth,'MarkerFaceColor','flat','MarkerEdgeColor',MarkerEdgeColor);
     sh.MarkerEdgeAlpha = AlphaValueMarkerLine;
     sh.MarkerFaceAlpha = AlphaValue;
 

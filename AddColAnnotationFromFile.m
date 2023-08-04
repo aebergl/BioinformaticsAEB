@@ -139,7 +139,7 @@ end
 
 [indx_DATA,indx_File]  = ismember(DATA_Id,File_Id);
 indx_File = indx_File(indx_File>0);
-size(indx_File)
+
 %Create Annotation object
 Annotation = cell(DATA.nCol,size(C,2));
 Annotation(:) = {'---'};
