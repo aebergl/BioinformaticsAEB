@@ -61,6 +61,7 @@ switch X_Variable
     case 'Delta Average'
         XLabel = {'\Delta \beta-value'};
         %XLabel = {'\Delta M-value'};
+        XLabel = {'Log_2 FC'};
     case 'HR logrank DSS'
         x_data =  log2(x_data);
         XLabel = {'log_2(HR DSS)'};
@@ -322,10 +323,12 @@ if printResults
     format_str_txt = sprintf('%s%%s',Delimiter);
     format_str_val = sprintf('%s%%g',Delimiter);
     format_str_short = sprintf('%%s');
+    fprintf('Id');
     fprintf(format_str_txt,DATA.RowAnnotationFields{:});
     fprintf(format_str_txt,DATA.ColId{:});
     fprintf('\n');
     for i=1:length(indx)
+        fprintf('%s',DATA.RowId{indx(i)});
         fprintf(format_str_txt,DATA.RowAnnotation{indx(i),:});
         fprintf(format_str_val,DATA.X(indx(i),:));
         fprintf('\n');

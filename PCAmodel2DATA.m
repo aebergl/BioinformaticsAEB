@@ -10,6 +10,9 @@ switch lower(TypeFlag)
         end
         DATA_Out.RowId = string(1:nRow)';
         if ~isempty(DATA) % Merge in DATA
+            if isempty(PCAmodel.row_rem)
+                PCAmodel.row_rem = zeros(nRow,1);
+            end
             if length(PCAmodel.row_rem) == DATA.nRow
                 DATA_Out.RowId = DATA.RowId(~PCAmodel.row_rem);
                 if ~isempty(DATA.RowAnnotationFields)

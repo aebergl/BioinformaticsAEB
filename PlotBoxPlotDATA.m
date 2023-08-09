@@ -12,6 +12,8 @@ BoxWidths = 0.8;
 
 VariableIdentifier = false;
 
+CMap = GetPalette('Lancet',[3 4 5]);
+
 i=0;
 while i<numel(varargin)
     i = i + 1;

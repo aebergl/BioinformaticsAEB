@@ -11,6 +11,8 @@ CMap = GetPalette('aeb01');
 AxisType = 'normal';
 VariableIdentifier = false;
 
+CMap = GetPalette('Lancet',[3 4 5]);
+MarkerTypes = {'o','^','d'};
 i=0;
 while i<numel(varargin)
     i = i + 1;
@@ -117,7 +119,7 @@ axis(AxisType)
 
 for i=1:nGroups
     indx = SampleIndxMat(:,i);
-    sh = scatter(ah,x_var(indx),y_var(indx),MarkerSize,CMap(i,:),MarkerTypes{i},'Linewidth',MarkerEdgeLineWidth,'MarkerFaceColor','flat','MarkerEdgeColor',MarkerEdgeColor);
+    sh = scatter(ah,x_var(indx),y_var(indx),MarkerSize,CMap(i,:),MarkerTypes{i},'XJitter','density','Linewidth',MarkerEdgeLineWidth,'MarkerFaceColor','flat','MarkerEdgeColor',MarkerEdgeColor);
     sh.MarkerEdgeAlpha = AlphaValueMarkerLine;
     sh.MarkerFaceAlpha = AlphaValue;
 
