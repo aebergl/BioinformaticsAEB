@@ -32,7 +32,7 @@ SampleId_x = DATA.RowId(SampleIndx_x);
 SampleId_y = DATA.RowId(SampleIndx_y);
 
 
-RESULTS_DATA = CreateDataStructure(DATA.nCol,10,[],[]);
+RESULTS_DATA = CreateDataStructure(DATA.nCol,11,[],[]);
 
 % Add Info
 RESULTS_DATA.Title = 'Difference analysis results';
@@ -52,14 +52,14 @@ RESULTS_DATA.RowAnnotationFields = DATA.ColAnnotationFields;
 
 
 
-VarNames = {'p t-test','q t-test','fdr t-test','Delta Average','Average x','Average y','p Bartlett','q Bartlett','fdr Bartlett','Min Samples'}';
+VarNames = {'Signal2Noise','p t-test','q t-test','fdr t-test','Delta Average',sprintf('Average %s',Group1{1}),sprintf('Average %s',Group2{1}),'p Bartlett','q Bartlett','fdr Bartlett','Min Samples'}';
 RESULTS_DATA.ColId=VarNames;
 
 RESULTS_DATA.ColAnnotationFields = {'VarId'};
 RESULTS_DATA.ColAnnotation = RESULTS_DATA.ColId;
 
 
-
+S2N = ones(DATA.nCol,1) * NaN;
 p_TT = ones(DATA.nCol,1) * NaN;
 DeltaAverage = zeros(DATA.nCol,1) * NaN;
 Average_x = zeros(DATA.nCol,1) * NaN;
@@ -88,36 +88,38 @@ parfor i=1:DATA.nCol
         Average_y(i) = mean(y,'omitnan');
         p_Bartlett(i)=vartestn([x;y],[ones(size(x));ones(size(y))*2],'Display','off','TestType','Bartlett');
         DeltaAverage(i) = Average_y(i) - Average_x(i);
+        S2N(i) = DeltaAverage(i) /(std(x,'omitnan') + std(y,'omitnan'))
+
     end
 end
 
-
-RESULTS_DATA.X(:,1) = p_TT;
-RESULTS_DATA.X(:,4) = DeltaAverage;
-RESULTS_DATA.X(:,5) = Average_x;
-RESULTS_DATA.X(:,6) = Average_y;
-RESULTS_DATA.X(:,7) = p_Bartlett;
-RESULTS_DATA.X(:,10) = MinNum;
+RESULTS_DATA.X(:,1) = S2N;
+RESULTS_DATA.X(:,2) = p_TT;
+RESULTS_DATA.X(:,5) = DeltaAverage;
+RESULTS_DATA.X(:,6) = Average_x;
+RESULTS_DATA.X(:,7) = Average_y;
+RESULTS_DATA.X(:,8) = p_Bartlett;
+RESULTS_DATA.X(:,11) = MinNum;
 
 try
-    [~, RESULTS_DATA.X(:,2),~] = mafdr(p_TT);
-catch
-    RESULTS_DATA.X(:,2) = ones(DATA.nCol,1);
-end
-try
-    [RESULTS_DATA.X(:,3)] = mafdr(p_TT,'BHFDR',true);
+    [~, RESULTS_DATA.X(:,3),~] = mafdr(p_TT);
 catch
     RESULTS_DATA.X(:,3) = ones(DATA.nCol,1);
 end
+try
+    [RESULTS_DATA.X(:,4)] = mafdr(p_TT,'BHFDR',true);
+catch
+    RESULTS_DATA.X(:,4) = ones(DATA.nCol,1);
+end
 
 try
-    [~, RESULTS_DATA.X(:,8),~] = mafdr(p_Bartlett);
-catch
-    RESULTS_DATA.X(:,8) = ones(DATA.nCol,1);
-end
-try
-    [RESULTS_DATA.X(:,9)] = mafdr(p_Bartlett,'BHFDR',true);
+    [~, RESULTS_DATA.X(:,9),~] = mafdr(p_Bartlett);
 catch
     RESULTS_DATA.X(:,9) = ones(DATA.nCol,1);
+end
+try
+    [RESULTS_DATA.X(:,10)] = mafdr(p_Bartlett,'BHFDR',true);
+catch
+    RESULTS_DATA.X(:,10) = ones(DATA.nCol,1);
 end
 
