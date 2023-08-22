@@ -14,6 +14,9 @@ VariableIdentifier = false;
 
 CMap = GetPalette('Lancet',[3 4 5]);
 
+SortData=false;
+SortData='descend';
+
 i=0;
 while i<numel(varargin)
     i = i + 1;
@@ -91,6 +94,8 @@ y_var(~SampleIndxToUse) = NaN;
 % ColorMap
 CMap = repmat(CMap,ceil(nGroups/size(CMap,1)),1);
 CMap = CMap(1:nGroups,:);
+[CMap, descriptorname, description] = colorcet('D8','N',nGroups,'reverse', true);
+
 
 % Marker Type
 if size(MarkerTypes,1) < size(MarkerTypes,2)
@@ -99,6 +104,23 @@ end
 MarkerTypes = repmat(MarkerTypes,ceil(nGroups/size(MarkerTypes,1)),1);
 MarkerTypes = MarkerTypes(1:nGroups,:);
 
+
+if SortData
+    MedianX = zeros(nGroups,1);
+    for i=1:nGroups
+        indx = SampleIndxMat(:,i);
+        MedianX(i) = median(y_var(indx),'omitnan');
+    end
+    [~,indx] = sort(MedianX,SortData);
+    GroupVariableNumberNew = GroupVariableNumber;
+    for i=1:nGroups
+        GroupVariableNumberNew(GroupVariableNumber == indx(i)) = i;
+    end
+    GroupVariableNumber= GroupVariableNumberNew;
+    %GroupVariableNumber = GroupVariableNumber(indx);
+    SampleIndxMat = SampleIndxMat(:,indx);
+    GroupName = GroupName(indx);
+end
 
 % Create Figure
 fh = figure('Name','Box Plot','Color','w','Tag','Box Plot','Units','inches','Colormap',CMap);
@@ -116,10 +138,13 @@ bh = boxplot(ah,y_var,GroupVariableNumber,'orientation','vertical','color',BoxCo
 s=findobj( ah.Children, 'Tag', 'boxplot' );
 set( findobj( s.Children, 'LineStyle', '--' ),'LineStyle','-')
 set( s.Children,'LineWidth',BoxLineWidth)
-ylabel('\itITGAV\rm Expression');
+
+ylabel(sprintf('\\it %s\\rm expression',VariableId),'FontSize',FontSize)
 ah.XLim = [0.3 nGroups+0.7];
 ah.XTick = 1:nGroups;
+ah.XTickLabelRotation = -45;
 ah.XTickLabel = GroupName;
+
 y_nudge=range(y_var)/20;
 ah.YLim = [min(y_var)-y_nudge max(y_var)+y_nudge*2];
 
