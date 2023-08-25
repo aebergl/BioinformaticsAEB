@@ -1,7 +1,11 @@
 function fh = PlotHistogramDATA(DATA,GroupVariable,GroupsToUse,CMap,LineTypes)
-LineWidth = 1.5;
+LineWidth = 1;
 FontSize = 12;
-nBins = 100;
+nBins = 10;
+BandwidthValue = 0.05;
+nPoints=1000;
+KernalDensity = false;
+AlphaValue  = 0.2;
 
 if isempty(GroupVariable)
     nGroups = 1;
@@ -59,7 +63,7 @@ LineTypes = LineTypes(1:nGroups,:);
 
 fh = figure('Name','Histogram Plot','Color','w','Tag','Histogram Plot','Units','inches','Colormap',CMap);
 
-ah = axes(fh,'NextPlot','add','tag','Gene Sample Plot','Box','on','FontSize',FontSize,'Linewidth',0.5,...
+ah = axes(fh,'NextPlot','add','tag','Histogram Plot','Box','on','FontSize',FontSize,'Linewidth',0.5,...
     'ActivePositionProperty','outerposition','XGrid','on','YGrid','on');
 
 UniqueLineObjects=gobjects(nGroups,1);
@@ -67,9 +71,17 @@ UniqueLineObjects=gobjects(nGroups,1);
 for i = 1:nGroups
     group_indx = find(SampleIndx(:,i));
     for j = 1:length(group_indx)
-        [N,edges] = histcounts(DATA.X(group_indx(j),:),nBins);
-        x = edges(1:end-1) + diff(edges)/2;
-        UniqueLineObjects(i) = line(x,N,'Parent',ah,'LineWidth',LineWidth, 'LineStyle',LineTypes(i),'MarkerEdgeColor',[0 0 0],'Color',CMap(i,:),'MarkerFaceColor',CMap(i,:));
+        if KernalDensity 
+            [N,x] = ksdensity(DATA.X(group_indx(j),:),'npoints',nPoints,'Bandwidth',BandwidthValue);
+
+        else
+            [N,edges] = histcounts(DATA.X(group_indx(j),:),nBins);
+            x = edges(1:end-1) + diff(edges)/2;
+
+
+        end
+
+        UniqueLineObjects(i) = line(x,N,'Parent',ah,'LineWidth',LineWidth,'Color',[CMap(i,:) AlphaValue]);
     end
 end
 if ~isempty(GroupName)
