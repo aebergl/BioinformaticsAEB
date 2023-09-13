@@ -4,7 +4,7 @@ FontSize = 12;
 nBins = 10;
 BandwidthValue = 0.05;
 nPoints=1000;
-KernalDensity = false;
+KernalDensity = true;
 AlphaValue  = 0.2;
 
 if isempty(GroupVariable)

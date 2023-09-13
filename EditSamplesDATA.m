@@ -15,7 +15,7 @@ function DATA  = EditSamplesDATA(DATA,InputIds,KeepRemove,varargin)
 % Anders Berglund
 
 
-Truncate = 0;
+Truncate = false;
 SampleIdentifier = false;
 Stable = false;
 

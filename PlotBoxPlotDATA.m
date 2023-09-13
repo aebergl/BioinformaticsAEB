@@ -12,10 +12,12 @@ BoxWidths = 0.8;
 
 VariableIdentifier = false;
 
-CMap = GetPalette('Lancet',[3 4 5]);
+% CMap = GetPalette('Lancet',[3 4 5]);
+
+CMap = GetPalette('Science');
 
 SortData=false;
-SortData='descend';
+%SortData='descend';
 
 i=0;
 while i<numel(varargin)
@@ -72,8 +74,8 @@ else
         GroupNumber(i) = i;
     end
 end
-SampleIndxToUse = any(SampleIndxMat,2);
 
+SampleIndxToUse = any(SampleIndxMat,2);
 % Selection of Y variable
 if VariableIdentifier
     indx = strcmpi(VariableIdentifier,DATA.ColAnnotationFields);
@@ -91,10 +93,18 @@ indx = ismember(DATA_ID,VariableId);
 y_var = DATA.X(:,indx);
 y_var(~SampleIndxToUse) = NaN;
 
+if size(y_var,2) > 1
+    %y_var = B2M(y_var);
+    %y_var=mean(y_var,2,"omitnan");
+    [PCA_Model] = NIPALS_PCA(y_var,'NumComp',6,'ScaleX',false);
+    y_var = PCA_Model.T(:,1);
+    VariableId = "Average";
+end
+
 % ColorMap
 CMap = repmat(CMap,ceil(nGroups/size(CMap,1)),1);
 CMap = CMap(1:nGroups,:);
-[CMap, descriptorname, description] = colorcet('D8','N',nGroups,'reverse', true);
+%[CMap, descriptorname, description] = colorcet('D8','N',nGroups,'reverse', true);
 
 
 % Marker Type
@@ -139,7 +149,8 @@ s=findobj( ah.Children, 'Tag', 'boxplot' );
 set( findobj( s.Children, 'LineStyle', '--' ),'LineStyle','-')
 set( s.Children,'LineWidth',BoxLineWidth)
 
-ylabel(sprintf('\\it %s\\rm expression',VariableId),'FontSize',FontSize)
+%ylabel(sprintf('\\it %s\\rm value',VariableId{1}),'FontSize',FontSize)
+ylabel(sprintf('Average \\beta-value',VariableId{1}),'FontSize',FontSize)
 ah.XLim = [0.3 nGroups+0.7];
 ah.XTick = 1:nGroups;
 ah.XTickLabelRotation = -45;
@@ -149,8 +160,8 @@ y_nudge=range(y_var)/20;
 ah.YLim = [min(y_var)-y_nudge max(y_var)+y_nudge*2];
 
 % line([1 2],[max(y_var)+y_nudge/1.5 max(y_var)+y_nudge/1.5],'Color',[0 0 0],'Linewidth',0.75)
-% [~,p_tt] = ttest2(y_var(indx_1),y_var(indx_2),0.05,'both','unequal');
-% [p_mw] = ranksum(y_var(indx_1),y_var(indx_2));
+% [~,p_tt] = ttest2(y_var(SampleIndxMat(:,1)),y_var(SampleIndxMat(:,2)),0.05,'both','unequal')
+% [p_mw] = ranksum(y_var(SampleIndxMat(:,1)),y_var(SampleIndxMat(:,2)))
 % txt_p = pval2stars(p_tt,[]);
 % if p_tt > 0.05
 %     FontSize = 6;
@@ -160,8 +171,8 @@ ah.YLim = [min(y_var)-y_nudge max(y_var)+y_nudge*2];
 %     VerticalAlignment = 'middle';
 % end
 %     text(ah,1.5,max(y_var)+y_nudge,txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
-% 
-% 
+
+
 % UniqueLineObjects=gobjects(nGroups,1);
 % for i = 1:nGroups
 %     group_indx = find(SampleIndx(:,i));

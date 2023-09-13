@@ -1,11 +1,12 @@
 function h = MethylationProbeCorrPlot(DATA,probes,varargin);
 
 
-FontSize = 8;
-CorrType='Pearson';
-%CorrType='Spearman';
+FontSize = 7;
+%CorrType='Pearson';
+CorrType='Spearman';
 FigureSize = [5 6];
-AxesSize = [2 2];
+AxesSize = [2.2 2.2];
+AxesSize = [7 7];
 LeftBorderWidth = 1.6;
 BottomeBorderHight = 0.8;
 [CMap, descriptorname, description] = colorcet('D1');
@@ -87,6 +88,7 @@ ah.XLim=[0.5 N+0.5];
 ah.XTick = 1:N;
 ah.XAxisLocation='bottom';
 ah.XTickLabelRotation = 0;
+ylabel(ah,'\beta-value');
 % ah = axes(fh,'NextPlot','add','tag','Gene Sample Plot','Box','on','FontSize',FontSize,'Linewidth',0.5,...
 %     'ActivePositionProperty','outerposition','XGrid','on','YGrid','on');
 % ah.LineWidth = 0.5;
