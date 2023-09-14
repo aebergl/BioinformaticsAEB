@@ -1,15 +1,16 @@
-function fh = PlotBoxPlotDATA(DATA,VariableId,GroupVariableName,GroupsToUse,CMap,MarkerTypes,varargin)
+function fh = PlotBoxPlotDATA(DATA,VariableId,GroupVariableName,GroupsToUse,varargin)
 MarkerSize = 20;
 MarkerLineWidth = 0.5;
 BoxLineWidth = 0.5;
-FontSize = 10;
+FontSize = 8;
 FigureSize = [3,2.6];
 BoxColor = [0 0 0];
 MarkerTypes = {'o'}';
 CMap = GetPalette('aeb01');
 MarkerFaceColor = 'none';
 BoxWidths = 0.8;
-
+YlabelTxt = [];
+TitleTxt = [];
 VariableIdentifier = false;
 
 % CMap = GetPalette('Lancet',[3 4 5]);
@@ -28,7 +29,19 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'Truncate')
         i = i + 1;
         Truncate = varargin{i};
+    elseif strcmpi(varargin{i},'FigureSize')
+        i = i + 1;
+        FigureSize = varargin{i};
+
+elseif strcmpi(varargin{i},'Ylabel')
+        i = i + 1;
+        YlabelTxt = varargin{i};
+elseif strcmpi(varargin{i},'TitleTxt')
+        i = i + 1;
+        TitleTxt = varargin{i};
+
     end
+
 end
 
 
@@ -95,9 +108,9 @@ y_var(~SampleIndxToUse) = NaN;
 
 if size(y_var,2) > 1
     %y_var = B2M(y_var);
-    %y_var=mean(y_var,2,"omitnan");
-    [PCA_Model] = NIPALS_PCA(y_var,'NumComp',6,'ScaleX',false);
-    y_var = PCA_Model.T(:,1);
+    y_var=mean(y_var,2,"omitnan");
+    % [PCA_Model] = NIPALS_PCA(y_var,'NumComp',1,'ScaleX',false);
+    % y_var = PCA_Model.T(:,1);
     VariableId = "Average";
 end
 
@@ -149,8 +162,17 @@ s=findobj( ah.Children, 'Tag', 'boxplot' );
 set( findobj( s.Children, 'LineStyle', '--' ),'LineStyle','-')
 set( s.Children,'LineWidth',BoxLineWidth)
 
-%ylabel(sprintf('\\it %s\\rm value',VariableId{1}),'FontSize',FontSize)
-ylabel(sprintf('Average \\beta-value',VariableId{1}),'FontSize',FontSize)
+if isempty(YlabelTxt)
+    ylabel(sprintf('\\it %s\\rm value',VariableId{1}),'FontSize',FontSize)
+    ylabel(sprintf('Average \\beta-value',VariableId{1}),'FontSize',FontSize)
+else
+    ylabel(YlabelTxt,'FontSize',FontSize)
+end
+
+if ~isempty(TitleTxt)
+    title(ah,TitleTxt,'FontWeight','normal','FontSize',FontSize)
+end
+
 ah.XLim = [0.3 nGroups+0.7];
 ah.XTick = 1:nGroups;
 ah.XTickLabelRotation = -45;
@@ -159,18 +181,18 @@ ah.XTickLabel = GroupName;
 y_nudge=range(y_var)/20;
 ah.YLim = [min(y_var)-y_nudge max(y_var)+y_nudge*2];
 
-% line([1 2],[max(y_var)+y_nudge/1.5 max(y_var)+y_nudge/1.5],'Color',[0 0 0],'Linewidth',0.75)
-% [~,p_tt] = ttest2(y_var(SampleIndxMat(:,1)),y_var(SampleIndxMat(:,2)),0.05,'both','unequal')
-% [p_mw] = ranksum(y_var(SampleIndxMat(:,1)),y_var(SampleIndxMat(:,2)))
-% txt_p = pval2stars(p_tt,[]);
-% if p_tt > 0.05
-%     FontSize = 6;
-%     VerticalAlignment = 'baseline';
-% else
-%     FontSize = 8;
-%     VerticalAlignment = 'middle';
-% end
-%     text(ah,1.5,max(y_var)+y_nudge,txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
+line([1 2],[max(y_var)+y_nudge/1.5 max(y_var)+y_nudge/1.5],'Color',[0 0 0],'Linewidth',0.75)
+[~,p_tt] = ttest2(y_var(SampleIndxMat(:,1)),y_var(SampleIndxMat(:,2)),0.05,'both','unequal')
+[p_mw] = ranksum(y_var(SampleIndxMat(:,1)),y_var(SampleIndxMat(:,2)))
+txt_p = pval2stars(p_tt,[]);
+if p_tt > 0.05
+    FontSize = 6;
+    VerticalAlignment = 'baseline';
+else
+    FontSize = 8;
+    VerticalAlignment = 'middle';
+end
+    text(ah,1.5,max(y_var)+y_nudge,txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
 
 
 % UniqueLineObjects=gobjects(nGroups,1);

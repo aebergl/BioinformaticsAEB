@@ -77,9 +77,9 @@ end
 
 % Get info for annotation file
 try
-    opts = detectImportOptions(FileName,'Sheet',SheetName,'VariableNamingRule',VariableNamingRule);
+    opts = detectImportOptions(FileName,'Sheet',SheetName,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true);
 catch
-    opts = detectImportOptions(FileName,'FileType','text','Delimiter',Delimiter,'VariableNamingRule',VariableNamingRule);
+    opts = detectImportOptions(FileName,'FileType','text','Delimiter',Delimiter,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true);
 end
 
 %Select variables to import
