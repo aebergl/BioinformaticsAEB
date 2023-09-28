@@ -53,6 +53,8 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'Add')
         AddReplace = 'Add';     
         
+    else
+        error('%s not a valid input option',varargin{i})
     end
 end
 

@@ -14,6 +14,7 @@ RightMargin = 0.5;
 
 if isempty(SortingVariable)
     SortIndx = 1:DATA.nRow;
+    indx_SortingVar = 1;
 else
     indx_SortingVar = strcmpi(SortingVariable,DATA.RowAnnotationFields);
     if any(indx_SortingVar)
@@ -25,8 +26,11 @@ end
 
 X_data = DATA.X(SortIndx,:);
 SampleId = DATA.RowId(SortIndx);
-SampleAnnotation = DATA.RowAnnotation(SortIndx,:);
-
+if isempty(SortingVariable)
+    SampleAnnotation = SampleId;
+else
+    SampleAnnotation = DATA.RowAnnotation(SortIndx,:);
+end
 
 
 if size(X_data,2) < 100

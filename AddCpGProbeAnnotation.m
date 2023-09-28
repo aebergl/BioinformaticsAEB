@@ -15,4 +15,6 @@ DATA.ColId = DATA.ColId(Data_indx);
 DATA.ColAnnotation = ProbeAnnotation.ProbeAnnotation(Annotation_indx,:);
 DATA.ColAnnotationFields = ProbeAnnotation.ProbeAnnotationColumns;
 
+DATA.ColAnnotation = string(DATA.ColAnnotation);
+DATA.ColAnnotationFields = string(DATA.ColAnnotationFields);
 

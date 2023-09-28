@@ -61,7 +61,7 @@ switch X_Variable
     case 'Delta Average'
         XLabel = {'\Delta \beta-value'};
         %XLabel = {'\Delta M-value'};
-        XLabel = {'Log_2 FC'};
+        %XLabel = {'Log_2 FC'};
     case 'HR logrank DSS'
         x_data =  log2(x_data);
         XLabel = {'log_2(HR DSS)'};

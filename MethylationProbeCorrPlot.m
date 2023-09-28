@@ -6,7 +6,6 @@ FontSize = 7;
 CorrType='Spearman';
 FigureSize = [5 6];
 AxesSize = [2.2 2.2];
-AxesSize = [7 7];
 LeftBorderWidth = 1.6;
 BottomeBorderHight = 0.8;
 [CMap, descriptorname, description] = colorcet('D1');

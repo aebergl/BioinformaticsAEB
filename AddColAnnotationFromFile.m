@@ -161,8 +161,9 @@ switch lower(AddReplace)
        if iscellstr(DATA.ColAnnotationFields)
             DATA.ColAnnotationFields = string(DATA.ColAnnotationFields);
        end
+   
         DATA.ColAnnotation = [DATA.ColAnnotation Annotation];
-        DATA.ColAnnotationFields = [DATA.ColAnnotationFields'; SelectedVariables'];
+        DATA.ColAnnotationFields = [DATA.ColAnnotationFields; SelectedVariables'];
 end
 
 end
