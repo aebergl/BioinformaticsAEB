@@ -2,7 +2,7 @@ function fh = PlotDensityHistogramDATA(DATA,Type,CMap)
 
 LineWidth = 1;
 FontSize = 12;
-nBins = 10000;
+nBins = 100;
 BandwidthValue = 0.05;
 nPoints=10;
 KernalDensity = false;

@@ -114,8 +114,10 @@ fprintf(fid,'\n');
 for i=1:DATA.nRow
     fprintf(fid,format_str_short,DATA.RowId{i});
     if SampleAnnotationFlag
-        fprintf(fid,format_str_txt,DATA.RowAnnotation{i,:});
-         fprintf(fid,'\t');
+        if  ~isempty(DATA.RowAnnotation)
+            fprintf(fid,format_str_txt,DATA.RowAnnotation{i,:});
+            fprintf(fid,'\t');
+        end
     end
     if SurvivalFlag
         for j=1:length(DATA.SURVIVAL.SurvivalTypes)
