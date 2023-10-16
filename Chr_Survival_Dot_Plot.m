@@ -1,6 +1,6 @@
 function fh  = Chr_Survival_Dot_Plot(DATA,X_Variable,Y_Samples,SizeType,SizeCutOffs,LegendSizeVal,ColorType,fWidth,fHight)
 
-FontSize = 5;
+FontSize = 6;
 LineWidth = 0.5;
 GridLines = 'on';
 
@@ -18,8 +18,11 @@ Y_Samples_txt=strrep(Y_Samples,'Hyper ','');
 % Select X-value
 indx_X_Val = strcmpi(X_Variable,DATA.ColId);
 if any(indx_X_Val)
-    xVal = log2(DATA.X(SampleIndx,indx_X_Val));
-    xValTxt = 'log_2(HR)';
+    % xVal = log2(DATA.X(SampleIndx,indx_X_Val));
+    % xValTxt = 'log_2(HR)';
+
+    xVal = DATA.X(SampleIndx,indx_X_Val);
+    xValTxt = 'log rank HR';
 else
     error('%s not found',X_Variable)
 end
@@ -42,6 +45,8 @@ SizeValPlot = LegendSizeVal(LegendSizeValMat);
 % Get colors to use
 if isempty(ColorType)
     ColorVal = [0.737254901960784   0.235294117647059   0.160784313725490];
+elseif ismatrix(ColorType)
+    ColorVal = ColorType;
 else
     indx_ColorVal = strcmpi(SizeType,DATA.ColId);
     if any(indx_ColorVal)
@@ -76,7 +81,8 @@ ah.YGrid = GridLines;
 ah.YDir = 'Reverse';
 ah.YTick = 1:nGroups;
 ah.YLim = [0.5 nGroups+0.5];
-ah.YTickLabel = Y_Samples_txt;
+
+%ah.YTickLabel = Y_Samples_txt;
 ah.Colormap = Cmap;
 ah.CLim = CLim;
 ah.XLim =[minVal-nudgeVal maxVal+nudgeVal];
@@ -86,7 +92,7 @@ xlabel(ah,xValTxt);
 
 sh = scatter(ah,xVal,1:nGroups,SizeValPlot,ColorVal,'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
 
-YPos = 1:1.5:1.5*length(LegendSizeVal);
+YPos = 2:1.99:1.99*length(LegendSizeVal)+1;
 
 shl = scatter(ah,ah.XLim(2)+nudgeVal,YPos+1,LegendSizeVal,[0 0 0]);
 text(ah.XLim(2)+1.4*nudgeVal,1,'p-value','HorizontalAlignment','center','VerticalAlignment','middle','FontSize',FontSize)
@@ -100,10 +106,10 @@ for i = 1:length(LegendSizeVal)
     text(ah.XLim(2)+1.7*nudgeVal,YPos(i)+1,txt_str,'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
 end
 
-if ~isempty(ColorType)
-ch = colorbar(ah);
-ch.Label.String=ColorlabelTxt;
-ch.Units="inches";
-ch.FontSize=FontSize;
-ch.Position=[fWidth-0.7, ah.Position(2) 0.2, fHight/2.5];
+if ~isempty(ColorType) && ~ismatrix(ColorType)
+    ch = colorbar(ah);
+    ch.Label.String=ColorlabelTxt;
+    ch.Units="inches";
+    ch.FontSize=FontSize;
+    ch.Position=[fWidth-0.7, ah.Position(2) 0.2, fHight/2.5];
 end
