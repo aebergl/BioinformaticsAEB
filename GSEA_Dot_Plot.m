@@ -90,13 +90,16 @@ switch DATA.Collection{1}
             case 'description'
                 YtickLabelTxt = DATA.PATHWAYS.Description(1:nGroups);
         end
+    case 'TFT:GTRD'
+        switch lower(YTickText)
+            case 'name'
+                YtickLabelTxt = DATA.PATHWAYS.Name(1:nGroups);
+                YtickLabelTxt = strrep(YtickLabelTxt,'_TARGET_GENES','');
+                YtickLabelTxt=strcat('\it',YtickLabelTxt);
 
-
-
-    case 'tft'
-    YtickLabelTxt = DATA.PATHWAYS.Name(1:nGroups);
-    YtickLabelTxt = strrep(YtickLabelTxt,'_TARGET_GENES','');
-    YtickLabelTxt=strcat('\it',YtickLabelTxt);
+           case 'description'
+                YtickLabelTxt = DATA.PATHWAYS.Description(1:nGroups);
+        end
     
 end
 

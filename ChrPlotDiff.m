@@ -81,6 +81,7 @@ end
 
 ChrPos = cell2mat(ChrPos);
 ChrPos = double(ChrPos);
+max(ChrPos)
 switch ChrUnit
     case 'bp'
         ChrPos = ChrPos ./ 1.00;
