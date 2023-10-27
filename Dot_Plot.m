@@ -15,6 +15,8 @@ SizeValPlot = LegendSizeVal(LegendSizeValMat);
 % Get colors to use
 if isempty(ColorType)
     ColorVal = [0.737254901960784   0.235294117647059   0.160784313725490];
+elseif ismatrix(ColorType)
+    ColorVal = ColorType;
 else
     indx_ColorVal = strcmpi(SizeType,DATA.ColId);
     if any(indx_ColorVal)
@@ -73,7 +75,7 @@ for i = 1:length(LegendSizeVal)
     text(ah.XLim(2)+1.7*nudgeVal,YPos(i)+1,txt_str,'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
 end
 
-if ~isempty(ColorType)
+if ~isempty(ColorType) && ~ismatrix(ColorType)
 ch = colorbar(ah);
 ch.Label.String=ColorlabelTxt;
 ch.Units="inches";
