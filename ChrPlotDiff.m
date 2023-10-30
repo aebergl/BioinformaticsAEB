@@ -22,9 +22,7 @@ YValCutOff = 0;
 ColorValCutOff = 0;
 % Check Input
 i=0;
-
-SizeLegendCutOff = [1 0.05 0.01 0.001 0.0001];
-LegendSizeVal = [1 10 20 30 40];
+SizeLegend = false;
 
 
 while i<numel(varargin)
@@ -50,6 +48,15 @@ while i<numel(varargin)
         ColorValCutOff = varargin{i};
     elseif strcmpi(varargin{i},'MarkSelected')
         MarkSelected = true;
+    elseif strcmpi(varargin{i},'SizeLegend')
+        i = i + 1;
+        SizeLegendCutOff = varargin{i};
+        i = i + 1;
+        LegendSizeVal = varargin{i};
+        i = i + 1;
+        LegendYPos = varargin{i};
+        i = i + 1;
+        SizeLegend = true;
     end
 end
 
@@ -288,21 +295,21 @@ ch.FontSize=FontSize;
 
 % SizeLegendCutOff = [1 0.05 0.01 0.001];
 % LegendSizeVal = [5 10 20 30];
-% 
 % YPos =  [0.25 0.4 0.55 0.7];
-% 
-% shl = scatter(ah,ah.XLim(2)+nudge_X*1.5,YPos,LegendSizeVal,[0 0 0],'filled');
-% text(ah,ah.XLim(2)+nudge_X*1.5,0.8,'p-value','HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
+if SizeLegend
 
-% for i = 1:length(LegendSizeVal)
-%     if i==1
-%         txt_str = 'N.S.';
-%     else
-%         txt_str = num2str(SizeLegendCutOff(i));
-%     end
-%     text(ah,ah.XLim(2)+nudge_X*2.2,YPos(i),txt_str,'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
-% end
+    shl = scatter(ah,ah.XLim(2)+nudge_X*1.5,LegendYPos,LegendSizeVal,[0 0 0],'filled');
+    text(ah,ah.XLim(2)+nudge_X*1.5,ah.YLim(2),'p-value','HorizontalAlignment','left','VerticalAlignment','bottom','FontSize',FontSize)
 
+    for i = 1:length(LegendSizeVal)
+        if i==1
+            txt_str = 'N.S.';
+        else
+            txt_str = num2str(SizeLegendCutOff(i));
+        end
+        text(ah,ah.XLim(2)+nudge_X*2.3,LegendYPos(i),txt_str,'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
+    end
+end
 if CytoBand
     fh.Children(2).Units='Inches';
     fh.Children(2).Position(3)=fh.Children(4).Position(3);

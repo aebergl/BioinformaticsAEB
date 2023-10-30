@@ -46,6 +46,9 @@ while i<numel(varargin)
         YLim = varargin{i};
     elseif strcmpi(varargin{i},'Print')
         printResults = true;
+    elseif strcmpi(varargin{i},'FontSize')
+        i = i + 1;
+        FontSize = varargin{i};
     end
 end
 
@@ -244,7 +247,7 @@ cMap=flipud(cMap);
 cMap = colormap(colorcet('L02','reverse',true));
 
 if any(indx_pos_scatter)
-DensScat(x_data_pos(~indx_pos_scatter),y_data_pos(~indx_pos_scatter),'TargetAxes',ah,'ColorBar',false,'ColorMap',cMap,'mSize',25);
+DensScat(x_data_pos(~indx_pos_scatter),y_data_pos(~indx_pos_scatter),'TargetAxes',ah,'ColorBar',false,'ColorMap',cMap,'mSize',25,'AxisType','auto');
 sh_pos = scatter(ah,x_data_pos(indx_pos_scatter),y_data_pos(indx_pos_scatter),dist_pos_size(indx_pos_scatter),Cmap_UpDn(1,:),'filled');
 sh_pos.AlphaDataMapping = 'none';
 sh_pos.AlphaData = dist_pos_alpha(indx_pos_scatter);
@@ -252,7 +255,7 @@ sh_pos.MarkerFaceAlpha = 'flat';
 end
 
 if any(indx_neg_scatter)
-DensScat(x_data_neg(~indx_neg_scatter),y_data_neg(~indx_neg_scatter),'TargetAxes',ah,'ColorBar',false,'ColorMap',cMap,'mSize',25);
+DensScat(x_data_neg(~indx_neg_scatter),y_data_neg(~indx_neg_scatter),'TargetAxes',ah,'ColorBar',false,'ColorMap',cMap,'mSize',25,'AxisType','auto');
 sh_neg = scatter(ah,x_data_neg(indx_neg_scatter),y_data_neg(indx_neg_scatter),dist_neg_size(indx_neg_scatter),Cmap_UpDn(2,:),'filled');
 sh_neg.AlphaDataMapping = 'none';
 sh_neg.AlphaData = dist_neg_alpha(indx_neg_scatter);
