@@ -1,6 +1,7 @@
 function fh = VolcanoPlotResults(DATA,X_Variable,X_CutOff,Y_Variable,Y_CutOff,varargin)
 printResults=false;
 FontSize=8;
+EqualXLim = false;
 PlotType = 'simple';
 Delimiter = '\t';
 AlphaRange = [0.01 0.5];
@@ -44,6 +45,8 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'YLim')
         i = i + 1;
         YLim = varargin{i};
+    elseif strcmpi(varargin{i},'EqualXLim')
+        EqualXLim = true;
     elseif strcmpi(varargin{i},'Print')
         printResults = true;
     elseif strcmpi(varargin{i},'FontSize')
@@ -278,11 +281,15 @@ nudge_x = (max_x-min_x)/20;
 
 
 if isempty(XLim)
-
     ah.XLim = [min_x-nudge_x max_x+nudge_x];
 else
-        ah.XLim = XLim;
+    ah.XLim = XLim;
 end
+
+if EqualXLim
+    ah.XLim = [-max(ah.XLim), max(ah.XLim)];
+end
+
 min_y=0;
 max_y=max(y_data,[],'all','omitnan');
 nudge_y = (max_y-min_y)/20;
