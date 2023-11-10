@@ -25,6 +25,8 @@ while i<numel(varargin)
         SampleAnnotationFlag = false;
     elseif strcmpi(varargin{i},'Seperate')
         SeperateFiles = true;
+        IdsOnly = false;
+        SampleAnnotationFlag = false;
     elseif strcmpi(varargin{i},'ProbeId')
         i = i + 1;
         ProbeIds = varargin{i};
@@ -84,6 +86,26 @@ if SeperateFiles
         fprintf(fid_VA,'\n');
     end
     fclose(fid_VA);
+%%%%%%%
+    [fid_SURV,message] = fopen(strcat(name,'_Survival',ext),'w');
+    if  fid_SURV == -1
+        disp(FileOut)
+        disp(message)
+        return
+    end
+    fprintf(fid_SURV,'SampleId');
+    for i=1:length(DATA.SURVIVAL.SurvivalTypes)
+           fprintf(fid_SURV,'\t%s (Event)\t%s Time (%s)',DATA.SURVIVAL.SurvivalTypes{i},DATA.SURVIVAL.SurvivalTypes{i},DATA.SURVIVAL.Units{i});
+    end
+    fprintf(fid_SURV,'\n');
+    for i=1:DATA.nRow
+        fprintf(fid_SURV,format_str_short,DATA.SURVIVAL.RowId{i});
+        for j=1:length(DATA.SURVIVAL.SurvivalTypes)
+            fprintf(fid_SURV,'\t%s\t%g',DATA.SURVIVAL.SurvEvent{i,j},DATA.SURVIVAL.SurvTime(i,j));
+        end
+        fprintf(fid_SURV,'\n');
+    end
+    fclose(fid_SURV);
 
 end
 
@@ -95,7 +117,7 @@ if SampleAnnotationFlag
     end
 end
 
-if SurvivalFlag
+if SurvivalFlag & SampleAnnotationFlag
     if  isfield(DATA,'SURVIVAL')
         for i=1:length(DATA.SURVIVAL.SurvivalTypes)
             fprintf(fid,'%s (Event)\t%s Time (%s)\t',DATA.SURVIVAL.SurvivalTypes{i},DATA.SURVIVAL.SurvivalTypes{i},DATA.SURVIVAL.Units{i});
@@ -119,7 +141,7 @@ for i=1:DATA.nRow
             fprintf(fid,'\t');
         end
     end
-    if SurvivalFlag
+    if SurvivalFlag & SampleAnnotationFlag
         for j=1:length(DATA.SURVIVAL.SurvivalTypes)
             fprintf(fid,'%s\t%g\t',DATA.SURVIVAL.SurvEvent{i,j},DATA.SURVIVAL.SurvTime(i,j));
         end
