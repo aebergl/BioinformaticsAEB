@@ -1,11 +1,11 @@
 function fh = PlotHistogramDATA(DATA,GroupVariable,GroupsToUse,CMap,LineTypes)
 LineWidth = 1;
 FontSize = 12;
-nBins = 1000;
+nBins = 100;
 BandwidthValue = 0.05;
 nPoints=1000;
 KernalDensity = true;
-AlphaValue  = 0.2;
+AlphaValue  = 0.5;
 
 if isempty(GroupVariable)
     nGroups = 1;
@@ -90,7 +90,7 @@ if ~isempty(GroupName)
     lh.Box='off';
 end
 ah.YTickLabel= [];
-% ah.XLim=[0.5 nProbes+0.5];
+ah.XLim=[-0.05 1.05];
 % ah.XTick = 1:nProbes;
 % ah.XTickLabelRotation=-45;
 % text_str = DATA.ColAnnotation(ProbeIndx,2);

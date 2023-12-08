@@ -36,9 +36,8 @@ end
 if size(X_data,2) < 100
     if anynan(X_data)
         x = pdist(X_data,@naneucdist);
-        
     else
-x = pdist(X_data,'euclidean');
+        x = pdist(X_data,'euclidean');
     end
     DataType = "SNP";
 else
@@ -47,7 +46,7 @@ else
     for i=1:DATA.nRow-1
         for j=i+1:DATA.nRow
             counter = counter + 1;
-            x(counter) = sum(abs(X_data(i,:)-X_data(j,:)) > 0.5);
+            x(counter) = sum(abs(X_data(i,:)-X_data(j,:)) > 0.5, "omitnan");
         end
     end
     DataType = "Methylation";
@@ -77,41 +76,45 @@ fh=imagesc(ah,x);
 axis equal
 fh.Parent.YLim =[0.5 DATA.nRow+0.5];
 fh.Parent.XLim =[0.5 DATA.nRow+0.5];
-fh.Parent.XTick=[];
-fh.Parent.YTick=[];
 fh.Parent.YTick=1:DATA.nRow;
+fh.Parent.XTick=1:DATA.nRow;
 fh.Parent.YTickLabel = SampleAnnotation(:,indx_SortingVar);
+fh.Parent.XTickLabel = SampleAnnotation(:,indx_SortingVar);
 fh.Parent.YAxis.TickLabelInterpreter='none';
+fh.Parent.XAxis.TickLabelInterpreter='none';
+
 colorbar
-
-
 
 
 switch DataType
     case "SNP"
         Xmask=ones(size(x))*inf;
-
         Xsim = x+triu(Xmask);
         [ia, ib] = find(Xsim < SimilarityThreshold);
+        indx_single = find(sum((x < SimilarityThreshold),2) == 1);
     case "Methylation"
         Xmask=ones(size(x))*inf;
-
         Xsim = x+triu(Xmask);
         [ia, ib] = find(Xsim < SimilarityThreshold);
 end
 
 numSimilar = length(ia);
-
 [numId,numMatching] = GroupCount([ia;ib],0);
-
+fprintf("Sample with other matching samples\n")
 fprintf("Barcode A\tSample Id A\tnMatching A\tBarcode B\tSample Id B\tnMatching B\tSimilarity Score\n")
 for i=1:numSimilar
-
     numA=numMatching(ia(i)==numId);
     numB=numMatching(ib(i)==numId);
     fprintf('%s\t%s\t%u\t%s\t%s\t%u\t%f\n',SampleId{ia(i)},SampleAnnotation{ia(i),indx_SortingVar},numA,SampleId{ib(i)},SampleAnnotation{ib(i),indx_SortingVar},numB,x(ia(i),ib(i)))
-
 end
+fprintf("\n")
+fprintf("\n")
+fprintf("Sample with NO other matching samples\n")
+fprintf("Barcode A\tSample Id\n")
+for i=1:length(indx_single)
+     fprintf('%s\t%s\n',SampleId{indx_single(i)},SampleAnnotation{indx_single(i),indx_SortingVar})
+end
+
 
 end
 

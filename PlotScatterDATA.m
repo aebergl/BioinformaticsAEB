@@ -11,7 +11,7 @@ CMap = GetPalette('aeb01');
 AxisType = 'normal';
 VariableIdentifier = false;
 
-CMap = GetPalette('Lancet',[3 4 5]);
+%CMap = GetPalette('Lancet',[1 2 3 4 5]);
 MarkerTypes = {'o','^','d'};
 i=0;
 while i<numel(varargin)
@@ -22,6 +22,13 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'Truncate')
         i = i + 1;
         Truncate = varargin{i};
+    elseif strcmpi(varargin{i},'colormap')
+        i = i + 1;
+        CMap = varargin{i};
+    elseif strcmpi(varargin{i},'MarkerTypes')
+        i = i + 1;
+        MarkerTypes = varargin{i};
+
     end
 end
 
@@ -69,6 +76,10 @@ else
     end
 end
 SampleIndxToUse = any(SampleIndxMat,2);
+
+% Select Sample Id
+SampleId = DATA.RowAnnotation(:,1);
+
 
 % Selection of Y variable
 if VariableIdentifier
@@ -120,6 +131,8 @@ axis(AxisType)
 for i=1:nGroups
     indx = SampleIndxMat(:,i);
     sh = scatter(ah,x_var(indx),y_var(indx),MarkerSize,CMap(i,:),MarkerTypes{i},'XJitter','density','Linewidth',MarkerEdgeLineWidth,'MarkerFaceColor','flat','MarkerEdgeColor',MarkerEdgeColor);
+    row = dataTipTextRow('',SampleId(indx));
+    sh.DataTipTemplate.DataTipRows = row;
     sh.MarkerEdgeAlpha = AlphaValueMarkerLine;
     sh.MarkerFaceAlpha = AlphaValue;
 
