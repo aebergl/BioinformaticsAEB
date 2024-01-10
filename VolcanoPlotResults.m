@@ -67,7 +67,7 @@ switch X_Variable
     case 'Delta Average'
         XLabel = {'\Delta \beta-value'};
         %XLabel = {'\Delta M-value'};
-        %XLabel = {'Log_2 FC'};
+        XLabel = {'Log_2 FC'};
     case 'HR logrank DSS'
         x_data =  log2(x_data);
         XLabel = {'log_2(HR DSS)'};
@@ -188,7 +188,7 @@ switch Y_Variable
         YLabel = {'-log_1_0(q t-test)'};
     case 'fdr t-test'
         y_data =  -log10(y_data);
-        YLabel = {'-log_1_0(q t-test)'};
+        YLabel = {'-log_1_0(fdr t-test)'};
     case 'p Spearman'
         y_data =  -log10(y_data);
         YLabel = {'-log_1_0(p Spearman)'};

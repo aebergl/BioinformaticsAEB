@@ -11,8 +11,6 @@ CMap = GetPalette('aeb01');
 AxisType = 'normal';
 VariableIdentifier = false;
 
-%CMap = GetPalette('Lancet',[1 2 3 4 5]);
-MarkerTypes = {'o','^','d'};
 i=0;
 while i<numel(varargin)
     i = i + 1;
@@ -78,7 +76,7 @@ end
 SampleIndxToUse = any(SampleIndxMat,2);
 
 % Select Sample Id
-SampleId = DATA.RowAnnotation(:,1);
+%SampleId = DATA.RowAnnotation(:,1);
 SampleId = DATA.RowId;
 
 % Selection of Y variable

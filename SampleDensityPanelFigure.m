@@ -1,21 +1,24 @@
 function fh = SampleDensityPanelFigure(DATA,IdColumn,Refsample,nRow,nCol,varargin)
 
 
-PageWidth = 7;
+PageWidth = 7.5;
 ShowFigure = true;
-FontSize = 10;
+FontSize = 6;
 ExportPlot = false;
 ExportDir = pwd;
 MatchedSamplePairs = [];
 ALLvsALL = false;
+mSize = 4;
+PointsToExclude = [];
 if nargin > 5
     [varargin{:}] = convertStringsToChars(varargin{:});
 end
-
+ResolutionValue = 600;
+LineWidth = 0.5;
 
 % Check input
 if nargin > 5
-    ArgsList = {'DisplayFigure', 'ExportPlot','ExportDir','MatchedSamplePairs','ALLvsALL'};
+    ArgsList = {'DisplayFigure', 'ExportPlot','ExportDir','MatchedSamplePairs','ALLvsALL','PointsToExclude'};
     for j=1:2:numel(varargin)
         ArgType = varargin{j};
         ArgVal = varargin{j+1};
@@ -33,6 +36,8 @@ if nargin > 5
                     MatchedSamplePairs = ArgVal;
                 case 'allvsall'
                     ALLvsALL = ArgVal;
+                case 'pointstoexclude'
+                    PointsToExclude = ArgVal;
 
             end
         end
@@ -62,26 +67,33 @@ end
 if ~isempty(MatchedSamplePairs)
     nArrays=size(MatchedSamplePairs,1);
 else
-    RefSampleIndx = strcmp(Refsample,SampleIds);
-    OtherSampleIndx = find(~RefSampleIndx);
-    nArrays=length(OtherSampleIndx);
-    x_ref=DATA.X(RefSampleIndx,:);
+    if strcmpi('median',Refsample)
+        x_ref =  median(DATA.X,1,"omitnan");
+        OtherSampleIndx = 1:DATA.nRow;
+        nArrays=DATA.nRow;
+    else
+        RefSampleIndx = strcmp(Refsample,SampleIds);
+        OtherSampleIndx = find(~RefSampleIndx);
+        nArrays=length(OtherSampleIndx);
+        x_ref=DATA.X(RefSampleIndx,:);
+    end
 end
+
 nPanes = nRow*nCol;
 nImages = ceil(nArrays / nPanes);
 
 fh = gobjects(nImages,1);
 counter = 0;
 
-minX=min(DATA.X,[],'all')-0.1;
-maxX=max(DATA.X,[],'all')+0.1;
+minX=min(DATA.X,[],'all')-0.3;
+maxX=max(DATA.X,[],'all')+0.3;
 
 for i = 1:nImages
     fh(i) = figure('Name','Array Image','Color','w','Tag','Array Image',...
         'Visible',ShowFigure,'Units','inches','Colormap',turbo);
     fh(i).Position(3) = PageWidth;
     fh(i).Position(4) = PageWidth*nRow/nCol;
-    th = tiledlayout(fh(i),nRow,nCol,'TileSpacing','tight','padding','compact');
+    th = tiledlayout(fh(i),nRow,nCol,'TileSpacing','tight','padding','tight');
     %th.Title.String = Refsample;
     %th.Title.FontWeight = 'bold';
     %th.Title.Interpreter = 'None';
@@ -96,20 +108,20 @@ for i = 1:nImages
             RefSampleIndx_y = strcmp(MatchedSamplePairs(counter,2),SampleIds);
             x_ref=DATA.X(RefSampleIndx_x,:);
             y_sample=DATA.X(RefSampleIndx_y,:);
-            DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',5);
+            DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',mSize,'PointsToExclude', PointsToExclude);
             xlabel(MatchedSamplePairs(counter,1),'FontSize',FontSize+2,'Interpreter','none');
             ylabel(MatchedSamplePairs(counter,2), 'FontSize',FontSize+2,'Interpreter','none')
 
         else
             y_sample=DATA.X(OtherSampleIndx(counter),:);
-            DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',5);
+            DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',mSize,'PointsToExclude', PointsToExclude);
             xlabel(Refsample,'FontSize',FontSize+2,'Interpreter','none');
             ylabel(SampleIds(OtherSampleIndx(counter)), 'FontSize',FontSize+2,'Interpreter','none')
         end
         ah.XLim = [minX maxX];
-        ah.XTick = ceil(minX):2:floor(maxX);
+        %ah.XTick = ceil(minX):2:floor(maxX);
         ah.YLim = [minX maxX];
-        ah.YTick = ceil(minX):2:floor(maxX);
+        %ah.YTick = ceil(minX):2:floor(maxX);
         ah.XGrid ='on';
         ah.YGrid ='on';
         ah.Box='on';
@@ -126,8 +138,9 @@ for i = 1:nImages
 
         text(ah.XLim(1)+0.2,ah.YLim(2)+0.1,Str,'FontSize',FontSize,'VerticalAlignment','bottom','HorizontalAlignment','Left','Color','k');
 
-        line([ah.XLim(1) ah.XLim(2)-1],[ah.YLim(1)+1 ah.YLim(2)],'Linewidth',1,'LineStyle','-.','color','r')
-        line([ah.XLim(1)+1 ah.XLim(2)],[ah.YLim(1) ah.YLim(2)-1],'Linewidth',1,'LineStyle','-.','color','r')
+        line([ah.XLim(1) ah.XLim(2)],[ah.YLim(1) ah.YLim(2)],'Linewidth',LineWidth,'LineStyle','-','color','k')
+        line([ah.XLim(1) ah.XLim(2)-1],[ah.YLim(1)+1 ah.YLim(2)],'Linewidth',LineWidth,'LineStyle',':','color','k')
+        line([ah.XLim(1)+1 ah.XLim(2)],[ah.YLim(1) ah.YLim(2)-1],'Linewidth',LineWidth,'LineStyle',':','color','k')
 
 
     end
@@ -140,7 +153,7 @@ for i = 1:nImages
             FullFileExport=fullfile(ExportDir,ExportPlot);
         end
 
-        exportgraphics(th,FullFileExport,'Resolution',200)
+        exportgraphics(th,FullFileExport,'Resolution',ResolutionValue)
     end
 
 
