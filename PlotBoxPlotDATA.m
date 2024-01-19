@@ -12,6 +12,7 @@ BoxWidths = 0.8;
 YlabelTxt = [];
 TitleTxt = [];
 VariableIdentifier = false;
+CalcStats = false;
 
 % CMap = GetPalette('Lancet',[3 4 5]);
 
@@ -181,6 +182,8 @@ ah.XTickLabel = GroupName;
 y_nudge=range(y_var)/20;
 ah.YLim = [min(y_var)-y_nudge max(y_var)+y_nudge*2];
 
+
+if CalcStats
 line([1 2],[max(y_var)+y_nudge/1.5 max(y_var)+y_nudge/1.5],'Color',[0 0 0],'Linewidth',0.75)
 [~,p_tt] = ttest2(y_var(SampleIndxMat(:,1)),y_var(SampleIndxMat(:,2)),0.05,'both','unequal')
 [p_mw] = ranksum(y_var(SampleIndxMat(:,1)),y_var(SampleIndxMat(:,2)))
@@ -194,7 +197,7 @@ else
 end
     text(ah,1.5,max(y_var)+y_nudge,txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
 
-
+end
 % UniqueLineObjects=gobjects(nGroups,1);
 % for i = 1:nGroups
 %     group_indx = find(SampleIndx(:,i));

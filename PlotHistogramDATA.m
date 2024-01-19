@@ -90,7 +90,7 @@ if ~isempty(GroupName)
     lh.Box='off';
 end
 ah.YTickLabel= [];
-ah.XLim=[-0.05 1.05];
+%ah.XLim=[-0.05 1.05];
 % ah.XTick = 1:nProbes;
 % ah.XTickLabelRotation=-45;
 % text_str = DATA.ColAnnotation(ProbeIndx,2);
