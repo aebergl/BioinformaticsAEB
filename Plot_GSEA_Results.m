@@ -10,6 +10,9 @@ RightMargin = 0.7;
 NameField = "NAME";
 SizeCutOffs =[1 0.05 0.01 0.001 0.0001];
 LegendSizeVal = [5 20 40 60 80];
+SizeCutOffs =[1 0.15 0.1 0.05 0.01 ];
+LegendSizeVal = [5 20 40 60 80];
+
 FlipNeg = true;
 ColorBy = "Enrichment";
 ColorBy = "Type";

@@ -1,4 +1,4 @@
-function fh = VolcanoPlotResults(DATA,X_Variable,X_CutOff,Y_Variable,Y_CutOff,varargin)
+function [fh, varargout]= VolcanoPlotResults(DATA,X_Variable,X_CutOff,Y_Variable,Y_CutOff,varargin)
 printResults=false;
 FontSize=8;
 EqualXLim = false;
@@ -212,13 +212,13 @@ switch PlotType
 end
 
 if TopNValues
-    Y_CutOff = min(maxk(y_data,TopNValues))
+    Y_CutOff = min(maxk(y_data,TopNValues+1))
 end
 
 if TopPrctile
     Y_CutOff = prctile(y_data,TopPrctile)
 end
-MaxVal_X_Significant = max(abs(x_data(y_data >= Y_CutOff)));
+MaxVal_X_Significant = max(abs(x_data(y_data > Y_CutOff)));
 
 % x_data(x_data>MaxVal_X_Significant) = MaxVal_X_Significant;
 % x_data(x_data<-MaxVal_X_Significant) = -MaxVal_X_Significant;
@@ -240,8 +240,8 @@ y_data_neg = y_data(indx_neg);
 dist_neg_size = dist_size(indx_neg);
 dist_neg_alpha = dist_alpha(indx_neg);
 
-indx_pos_scatter = x_data_pos > X_CutOff & y_data_pos >= Y_CutOff;
-indx_neg_scatter = x_data_neg < -X_CutOff & y_data_neg >= Y_CutOff;
+indx_pos_scatter = x_data_pos > X_CutOff & y_data_pos > Y_CutOff;
+indx_neg_scatter = x_data_neg < -X_CutOff & y_data_neg > Y_CutOff;
 
 sum(indx_pos_scatter)
 sum(indx_neg_scatter)
@@ -249,20 +249,32 @@ cMap=colormap('bone');
 cMap=flipud(cMap);
 cMap = colormap(colorcet('L02','reverse',true));
 
+% Select Sample Id
+SampleId = DATA.RowAnnotation(:,2);
+%SampleId = DATA.RowId;
+SampleId_pos = SampleId(indx_pos);
+SampleId_neg = SampleId(indx_neg);
+
 if any(indx_pos_scatter)
-DensScat(x_data_pos(~indx_pos_scatter),y_data_pos(~indx_pos_scatter),'TargetAxes',ah,'ColorBar',false,'ColorMap',cMap,'mSize',25,'AxisType','auto');
-sh_pos = scatter(ah,x_data_pos(indx_pos_scatter),y_data_pos(indx_pos_scatter),dist_pos_size(indx_pos_scatter),Cmap_UpDn(1,:),'filled');
-sh_pos.AlphaDataMapping = 'none';
-sh_pos.AlphaData = dist_pos_alpha(indx_pos_scatter);
-sh_pos.MarkerFaceAlpha = 'flat';
+    DensScat(x_data_pos(~indx_pos_scatter),y_data_pos(~indx_pos_scatter),'TargetAxes',ah,'ColorBar',false,'ColorMap',cMap,'mSize',25,'AxisType','auto');
+    sh_pos = scatter(ah,x_data_pos(indx_pos_scatter),y_data_pos(indx_pos_scatter),dist_pos_size(indx_pos_scatter),Cmap_UpDn(1,:),'filled');
+    sh_pos.AlphaDataMapping = 'none';
+    sh_pos.AlphaData = dist_pos_alpha(indx_pos_scatter);
+    sh_pos.MarkerFaceAlpha = 'flat';
+    row = dataTipTextRow('',SampleId_pos(indx_pos_scatter));
+    sh_pos.DataTipTemplate.DataTipRows = row;
+
 end
 
 if any(indx_neg_scatter)
-DensScat(x_data_neg(~indx_neg_scatter),y_data_neg(~indx_neg_scatter),'TargetAxes',ah,'ColorBar',false,'ColorMap',cMap,'mSize',25,'AxisType','auto');
-sh_neg = scatter(ah,x_data_neg(indx_neg_scatter),y_data_neg(indx_neg_scatter),dist_neg_size(indx_neg_scatter),Cmap_UpDn(2,:),'filled');
-sh_neg.AlphaDataMapping = 'none';
-sh_neg.AlphaData = dist_neg_alpha(indx_neg_scatter);
-sh_neg.MarkerFaceAlpha = 'flat';
+    DensScat(x_data_neg(~indx_neg_scatter),y_data_neg(~indx_neg_scatter),'TargetAxes',ah,'ColorBar',false,'ColorMap',cMap,'mSize',25,'AxisType','auto');
+    sh_neg = scatter(ah,x_data_neg(indx_neg_scatter),y_data_neg(indx_neg_scatter),dist_neg_size(indx_neg_scatter),Cmap_UpDn(2,:),'filled');
+    sh_neg.AlphaDataMapping = 'none';
+    sh_neg.AlphaData = dist_neg_alpha(indx_neg_scatter);
+    sh_neg.MarkerFaceAlpha = 'flat';
+    row = dataTipTextRow('',SampleId_neg(indx_neg_scatter));
+    sh_neg.DataTipTemplate.DataTipRows = row;
+
 end
 
 if ~isempty(RowsToHighligh)
@@ -310,14 +322,14 @@ switch PlotType
 
         neg_str=sprintf('n=%u',sum(indx_neg_scatter));
         text(ah,ah.XLim(1),ah.YLim(2),neg_str,'Clipping','off','FontSize',FontSize,'HorizontalAlignment','left','VerticalAlignment','top' );
-        
+
     otherwise
         for i = 2:length(ah.YAxis.TickValues)
             TickVal = ah.YAxis.TickValues(i);
             nPos = sum(y_data_pos>TickVal);
             pos_str=sprintf('n=%u',nPos);
             text(ah,ah.XLim(2)-nudge_x,TickVal,pos_str,'Clipping','off','HorizontalAlignment','right','FontSize',FontSize )
-            
+
             nNeg = sum(y_data_neg>TickVal);
             neg_str=sprintf('n=%u',nNeg);
             text(ah,ah.XLim(1)+nudge_x,TickVal,neg_str,'Clipping','off','HorizontalAlignment','left','FontSize',FontSize)
@@ -325,11 +337,14 @@ switch PlotType
 end
 ah.Position([1 3]) = [0.15 0.7];
 
+    indx  = find(abs(x_data) > X_CutOff & y_data > Y_CutOff);
 
+if nargout == 2
+    varargout{1} = DATA.RowId(indx);
 
+end
 
 if printResults
-    indx  = find(abs(x_data) > X_CutOff & y_data > Y_CutOff);
     format_str_txt = sprintf('%s%%s',Delimiter);
     format_str_val = sprintf('%s%%g',Delimiter);
     format_str_short = sprintf('%%s');
