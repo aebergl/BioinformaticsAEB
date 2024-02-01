@@ -73,7 +73,7 @@ for i = 1:nGroups
     for j = 1:length(group_indx)
         if KernalDensity 
             [N,x] = ksdensity(DATA.X(group_indx(j),:),'npoints',nPoints,'Bandwidth',BandwidthValue);
-
+            drawnow
         else
             [N,edges] = histcounts(DATA.X(group_indx(j),:),nBins);
             x = edges(1:end-1) + diff(edges)/2;

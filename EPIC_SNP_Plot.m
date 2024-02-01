@@ -96,6 +96,7 @@ switch DataType
         Xmask=ones(size(x))*inf;
         Xsim = x+triu(Xmask);
         [ia, ib] = find(Xsim < SimilarityThreshold);
+        indx_single = find(sum((x < SimilarityThreshold),2) == 1);
 end
 
 numSimilar = length(ia);
