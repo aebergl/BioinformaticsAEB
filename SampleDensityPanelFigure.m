@@ -16,6 +16,11 @@ end
 ResolutionValue = 600;
 LineWidth = 0.5;
 
+DataType = "GeneExpression";
+if DATA.nCol > 200000
+    DataType = "Methylation";
+end
+
 % Check input
 if nargin > 5
     ArgsList = {'DisplayFigure', 'ExportPlot','ExportDir','MatchedSamplePairs','ALLvsALL','PointsToExclude'};
@@ -84,9 +89,15 @@ nImages = ceil(nArrays / nPanes);
 
 fh = gobjects(nImages,1);
 counter = 0;
+switch DataType
+    case 'GeneExpression'
+        minX=min(DATA.X,[],'all')-0.3;
+        maxX=max(DATA.X,[],'all')+0.3;
+    case 'Methylation'
+        minX=min(DATA.X,[],'all')-0.01;
+        maxX=max(DATA.X,[],'all')+0.01;
 
-minX=min(DATA.X,[],'all')-0.3;
-maxX=max(DATA.X,[],'all')+0.3;
+end
 
 for i = 1:nImages
     fh(i) = figure('Name','Array Image','Color','w','Tag','Array Image',...
@@ -103,6 +114,7 @@ for i = 1:nImages
         counter = counter + 1;
         CurrentPane = CurrentPane + 1;
         ah = nexttile(th);
+        
         if ~isempty(MatchedSamplePairs)
             RefSampleIndx_x = strcmp(MatchedSamplePairs(counter,1),SampleIds);
             RefSampleIndx_y = strcmp(MatchedSamplePairs(counter,2),SampleIds);
@@ -118,6 +130,7 @@ for i = 1:nImages
             xlabel(Refsample,'FontSize',FontSize+2,'Interpreter','none');
             ylabel(SampleIds(OtherSampleIndx(counter)), 'FontSize',FontSize+2,'Interpreter','none')
         end
+        ah.FontSize = FontSize;
         ah.XLim = [minX maxX];
         %ah.XTick = ceil(minX):2:floor(maxX);
         ah.YLim = [minX maxX];
@@ -126,22 +139,33 @@ for i = 1:nImages
         ah.YGrid ='on';
         ah.Box='on';
         r_corr = corr(x_ref',y_sample','rows','pairwise');
-        %r_corr=1.0;
-        nDiff_2 = sum(abs(x_ref-y_sample) > 1);
-        nDiff_15 = sum(abs(x_ref-y_sample) > 0.585);
-        %Str(1) = {['\itn\rmFC>2=',sprintf('%u',nDiff_2)]};
-        %Str(1) = {['\itn\rmFC>2=',sprintf('%u',nDiff_2)]};
-        Str(1) = {['r = ',sprintf('%.5f',r_corr)]};
-        Str(2) = {['Num > 2-fold: ',sprintf('%u',nDiff_2)]};
-        Str(3) = {['Num > 1.5-fold: ',sprintf('%u',nDiff_15)]};
 
+        switch DataType
+            case 'GeneExpression'
 
-        text(ah.XLim(1)+0.2,ah.YLim(2)+0.1,Str,'FontSize',FontSize,'VerticalAlignment','bottom','HorizontalAlignment','Left','Color','k');
+                nDiff_2 = sum(abs(x_ref-y_sample) > 1);
+                nDiff_15 = sum(abs(x_ref-y_sample) > 0.585);
+                Str(1) = {['r = ',sprintf('%.5f',r_corr)]};
+                Str(2) = {['Num > 2-fold: ',sprintf('%u',nDiff_2)]};
+                Str(3) = {['Num > 1.5-fold: ',sprintf('%u',nDiff_15)]};
+                text(ah.XLim(1)+0.2,ah.YLim(2)+0.1,Str,'FontSize',FontSize,'VerticalAlignment','bottom','HorizontalAlignment','Left','Color','k');
+                line([ah.XLim(1) ah.XLim(2)],[ah.YLim(1) ah.YLim(2)],'Linewidth',LineWidth,'LineStyle','-','color','k')
+                line([ah.XLim(1) ah.XLim(2)-1],[ah.YLim(1)+1 ah.YLim(2)],'Linewidth',LineWidth,'LineStyle',':','color','k')
+                line([ah.XLim(1)+1 ah.XLim(2)],[ah.YLim(1) ah.YLim(2)-1],'Linewidth',LineWidth,'LineStyle',':','color','k')
+            case 'Methylation'
+                nDiff_01 = sum(abs(x_ref-y_sample) > 0.1);
+                nDiff_02 = sum(abs(x_ref-y_sample) > 0.2);
+                Str(1) = {['r = ',sprintf('%.5f',r_corr)]};
+                Str(2) = {['Num > 0.1: ',sprintf('%u',nDiff_01)]};
+                Str(3) = {['Num > 0.2: ',sprintf('%u',nDiff_02)]};
+                text(ah.XLim(1)+0.01,ah.YLim(2)+0.01,Str,'FontSize',FontSize,'VerticalAlignment','bottom','HorizontalAlignment','Left','Color','k');
+                line([ah.XLim(1) ah.XLim(2)],[ah.YLim(1) ah.YLim(2)],'Linewidth',LineWidth,'LineStyle','-','color','k')
+                line([ah.XLim(1) ah.XLim(2)-0.1],[ah.YLim(1)+0.1 ah.YLim(2)],'Linewidth',LineWidth,'LineStyle',':','color','k')
+                line([ah.XLim(1)+0.1 ah.XLim(2)],[ah.YLim(1) ah.YLim(2)-0.1],'Linewidth',LineWidth,'LineStyle',':','color','k')
+                line([ah.XLim(1) ah.XLim(2)-0.2],[ah.YLim(1)+0.2 ah.YLim(2)],'Linewidth',LineWidth,'LineStyle','--','color','k')
+                line([ah.XLim(1)+0.2 ah.XLim(2)],[ah.YLim(1) ah.YLim(2)-0.2],'Linewidth',LineWidth,'LineStyle','--','color','k')
 
-        line([ah.XLim(1) ah.XLim(2)],[ah.YLim(1) ah.YLim(2)],'Linewidth',LineWidth,'LineStyle','-','color','k')
-        line([ah.XLim(1) ah.XLim(2)-1],[ah.YLim(1)+1 ah.YLim(2)],'Linewidth',LineWidth,'LineStyle',':','color','k')
-        line([ah.XLim(1)+1 ah.XLim(2)],[ah.YLim(1) ah.YLim(2)-1],'Linewidth',LineWidth,'LineStyle',':','color','k')
-
+        end
 
     end
     if ExportPlot

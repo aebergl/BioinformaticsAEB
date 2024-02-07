@@ -92,7 +92,7 @@ else
     opts.SelectedVariableNames = SelectedVariables;
 end
 
-%opts.VariableTypes(:) = {'char'};
+opts.VariableTypes(:) = {'char'};
 % get File Id to use
 if isempty(File_IdName)
     File_IdColumn = 1;

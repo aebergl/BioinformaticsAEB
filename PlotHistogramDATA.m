@@ -1,11 +1,11 @@
 function fh = PlotHistogramDATA(DATA,GroupVariable,GroupsToUse,CMap,LineTypes)
-LineWidth = 1;
+LineWidth = 2;
 FontSize = 12;
 nBins = 100;
 BandwidthValue = 0.05;
 nPoints=1000;
 KernalDensity = true;
-AlphaValue  = 0.5;
+AlphaValue  = 0.9;
 
 if isempty(GroupVariable)
     nGroups = 1;
@@ -47,7 +47,7 @@ else
 end
 
 if isempty(CMap)
-    CMap = GetPalette('aeb01');
+    CMap = GetPalette('Tab10');
 end
 CMap = repmat(CMap,ceil(nGroups/size(CMap,1)),1);
 CMap = CMap(1:nGroups,:);
