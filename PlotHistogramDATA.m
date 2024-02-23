@@ -1,11 +1,11 @@
 function fh = PlotHistogramDATA(DATA,GroupVariable,GroupsToUse,CMap,LineTypes)
-LineWidth = 2;
+LineWidth = 1;
 FontSize = 12;
 nBins = 100;
 BandwidthValue = 0.05;
 nPoints=1000;
 KernalDensity = true;
-AlphaValue  = 0.9;
+AlphaValue  = 0.6;
 
 if isempty(GroupVariable)
     nGroups = 1;
@@ -72,8 +72,9 @@ for i = 1:nGroups
     group_indx = find(SampleIndx(:,i));
     for j = 1:length(group_indx)
         if KernalDensity 
-            [N,x] = ksdensity(DATA.X(group_indx(j),:),'npoints',nPoints,'Bandwidth',BandwidthValue);
             drawnow
+            [N,x] = ksdensity(DATA.X(group_indx(j),:),'npoints',nPoints,'Bandwidth',BandwidthValue);
+
         else
             [N,edges] = histcounts(DATA.X(group_indx(j),:),nBins);
             x = edges(1:end-1) + diff(edges)/2;
@@ -82,6 +83,10 @@ for i = 1:nGroups
         end
 
         UniqueLineObjects(i) = line(x,N,'Parent',ah,'LineWidth',LineWidth,'Color',[CMap(i,:) AlphaValue]);
+        
+        % row = dataTipTextRow('',DATA.RowAnnotation(group_indx(j),1));
+        % UniqueLineObjects(i).DataTipTemplate.DataTipRows = row;
+        % UniqueLineObjects(i).DataTipTemplate.Interpreter='none';
     end
 end
 if ~isempty(GroupName)

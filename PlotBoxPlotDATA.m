@@ -155,6 +155,7 @@ ah.LineWidth = 0.5;
 ah.Colormap=CMap;
 for i=1:nGroups
     indx = SampleIndxMat(:,i);
+
     scatter(ah,GroupVariableNumber(indx),y_var(indx),MarkerSize,CMap(i,:),MarkerTypes{i},'XJitter','density','Linewidth',MarkerLineWidth,'MarkerFaceColor',MarkerFaceColor);
 end
 

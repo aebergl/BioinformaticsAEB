@@ -53,6 +53,8 @@ else
     x=log10(x+1);
 end
 
+
+
 fh_H=figure('Name','Distance Histogram','Color','w','Tag','Distance Histogram','Units','inches');
 fh_H.Position(3:4) = FigSize;
 ah_H = axes(fh_H,'NextPlot','add','tag','Volcano Plot','box','on','Layer','top','FontSize',FontSize,...
@@ -69,7 +71,7 @@ ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','on','Layer','top','Fon
     'PositionConstraint','outerposition','Clipping','off','YDir','Reverse');
 ah.LineWidth = LineWidth;
 
-
+% x(x>4) = 4;
 x = squareform(x);
 fh=imagesc(ah,x);
 
