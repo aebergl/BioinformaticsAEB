@@ -12,7 +12,7 @@ BoxWidths = 0.8;
 YlabelTxt = [];
 TitleTxt = [];
 VariableIdentifier = false;
-CalcStats = false;
+CalcStats = true;
 
 % CMap = GetPalette('Lancet',[3 4 5]);
 
@@ -166,7 +166,8 @@ set( s.Children,'LineWidth',BoxLineWidth)
 
 if isempty(YlabelTxt)
     ylabel(sprintf('\\it %s\\rm value',VariableId{1}),'FontSize',FontSize)
-    ylabel(sprintf('Average \\beta-value',VariableId{1}),'FontSize',FontSize)
+    ylabel(sprintf('%s \\beta-value',VariableId{1}),'FontSize',FontSize)
+    %ylabel(sprintf('Average \\beta-value',VariableId{1}),'FontSize',FontSize)
 else
     ylabel(YlabelTxt,'FontSize',FontSize)
 end

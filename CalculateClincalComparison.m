@@ -20,8 +20,6 @@ fprintf('\tA(n=%u)\tB(n=%u)\tp-value\n',nA,nB)
 for i=1:numel(ClinicalIds)
     indx = strcmpi(ClinicalIds{i},ClinVar);
     if any(indx)
-
-
         if isvector(ClinicalType{i}) && isnumeric(ClinicalType{i})
             x = Clinical(:,indx);
             x = strrep(x,'[Not Available]','NaN');
@@ -39,9 +37,9 @@ for i=1:numel(ClinicalIds)
             Tmp(~isnan(Y)) = Cat(Y(~isnan(Y)));
             Tmp(isnan(Y)) = {'Missing'};
             fprintf('%s\n',ClinicalIds{i})
-            
+
             [tbl,chi2,p,labels] = crosstab(Tmp,Group);
-            
+
             [lab,sort_indx ]= sort(labels(:,1));
             tbl=tbl(sort_indx,:);
             if length(sort_indx) == 2
@@ -52,9 +50,9 @@ for i=1:numel(ClinicalIds)
             else
                 p_txt = sprintf('%.4f',p);
             end
-            fprintf('%s\t%u\t%u\t%s\n',lab{1},tbl(1,1),tbl(1,2),p_txt)
-            for i=2:length(sort_indx)
-                fprintf('%s\t%u\t%u\n',lab{i},tbl(i,1),tbl(i,2))
+            fprintf('%s\t%u (%.1g%%)\t%u (%.1g%%)\t%s\n',lab{1},tbl(1,1),tbl(1,1)/nA*100,tbl(1,2),tbl(1,2)/nB*100,p_txt)
+            for j=2:length(sort_indx)
+                fprintf('%s\t%u (%.1g%%)\t%u (%.1g%%)\n',lab{j},tbl(j,1),tbl(j,1)/nA*100,tbl(j,2),tbl(j,2)/nB*100)
             end
             fprintf('\n')
 
@@ -83,14 +81,14 @@ for i=1:numel(ClinicalIds)
                 case {'categorical','cat'}
 
                     fprintf('%s\n',ClinicalIds{i})
-                    [tbl,chi2,~,labels] = crosstab(Clinical(:,indx),Group)
+                    [tbl,chi2,~,labels] = crosstab(Clinical(:,indx),Group);
                     % Calc p using only real values
                     TmpClin = Clinical(:,indx);
                     TmpGroup = Group;
                     indx_rem = ismember(Clinical(:,indx),RemVar);
                     TmpClin(indx_rem) = [];
                     TmpGroup(indx_rem) = [];
-                    [~,~,p,~] = crosstab(TmpClin,TmpGroup)
+                    [~,~,p,~] = crosstab(TmpClin,TmpGroup);
 
 
 
@@ -104,9 +102,9 @@ for i=1:numel(ClinicalIds)
                     else
                         p_txt = sprintf('%.4f',p);
                     end
-                    fprintf('%s\t%u\t%u\t%s\n',lab{1},tbl(1,1),tbl(1,2),p_txt)
-                    for i=2:length(sort_indx)
-                        fprintf('%s\t%u\t%u\n',lab{i},tbl(i,1),tbl(i,2))
+                    fprintf('%s\t%u (%.1f%%)\t%u (%.1f%%)\t%s\n',lab{1},tbl(1,1),tbl(1,1)/nA*100,tbl(1,2),tbl(1,2)/nB*100,p_txt)
+                    for j=2:length(sort_indx)
+                        fprintf('%s\t%u (%.1f%%)\t%u (%.1f%%)\n',lab{j},tbl(j,1),tbl(j,1)/nA*100,tbl(j,2),tbl(j,2)/nB*100)
                     end
                     fprintf('\n')
             end

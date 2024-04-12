@@ -67,7 +67,7 @@ switch X_Variable
     case 'Delta Average'
         XLabel = {'\Delta \beta-value'};
         %XLabel = {'\Delta M-value'};
-        XLabel = {'Log_2 FC'};
+        %XLabel = {'Log_2 FC'};
     case 'HR logrank DSS'
         x_data =  log2(x_data);
         XLabel = {'log_2(HR DSS)'};
@@ -250,8 +250,8 @@ cMap=flipud(cMap);
 cMap = colormap(colorcet('L02','reverse',true));
 
 % Select Sample Id
-SampleId = DATA.RowAnnotation(:,2);
-%SampleId = DATA.RowId;
+%SampleId = DATA.RowAnnotation(:,2);
+SampleId = DATA.RowId;
 SampleId_pos = SampleId(indx_pos);
 SampleId_neg = SampleId(indx_neg);
 
