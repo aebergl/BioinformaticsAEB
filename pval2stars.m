@@ -1,6 +1,6 @@
 function [stat_str,cutoff_str] = pval2stars(pval,cut_off)
 
-if isempty(cut_off) || (cut_off ==0)
+if isempty(cut_off)
     cut_off = [0.05 0.01 0.001 0.0001];
 end
 

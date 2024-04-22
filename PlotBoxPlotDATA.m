@@ -9,11 +9,13 @@ MarkerTypes = {'o'}';
 CMap = GetPalette('aeb01');
 MarkerFaceColor = 'none';
 BoxWidths = 0.8;
+XJitterWidth = 0.6;
 YlabelTxt = [];
 TitleTxt = [];
 VariableIdentifier = false;
-CalcStats = true;
-
+CalcStats = false;
+CalcGroup = [];
+CalcGroupAllUnique = true;
 % CMap = GetPalette('Lancet',[3 4 5]);
 
 CMap = GetPalette('Science');
@@ -34,13 +36,22 @@ while i<numel(varargin)
         i = i + 1;
         FigureSize = varargin{i};
 
-elseif strcmpi(varargin{i},'Ylabel')
+    elseif strcmpi(varargin{i},'Ylabel')
         i = i + 1;
         YlabelTxt = varargin{i};
-elseif strcmpi(varargin{i},'TitleTxt')
+    elseif strcmpi(varargin{i},'TitleTxt')
         i = i + 1;
         TitleTxt = varargin{i};
-
+    elseif strcmpi(varargin{i},'ColorMap')
+        i = i + 1;
+        CMap = varargin{i};
+    elseif strcmpi(varargin{i},'MarkerTypes')
+        i = i + 1;
+        MarkerTypes = varargin{i};
+    elseif strcmpi(varargin{i},'CalcStats')
+        i = i + 1;
+        CalcGroup = varargin{i};
+        CalcStats = true;
     end
 
 end
@@ -87,6 +98,20 @@ else
         GroupName(i) = tmp_name(1);
         GroupNumber(i) = i;
     end
+end
+
+if isempty(CalcGroup)
+    CalcGroup = ones(nGroups*(nGroups-1)/2,2);
+    counter = 0;
+    CalcGroupAllUnique = false;
+    for i=1:nGroups - 1
+        for j=i+1:nGroups
+            counter = counter + 1;
+            CalcGroup(counter,:) = [ i j];
+
+        end
+    end
+
 end
 
 SampleIndxToUse = any(SampleIndxMat,2);
@@ -155,8 +180,7 @@ ah.LineWidth = 0.5;
 ah.Colormap=CMap;
 for i=1:nGroups
     indx = SampleIndxMat(:,i);
-
-    scatter(ah,GroupVariableNumber(indx),y_var(indx),MarkerSize,CMap(i,:),MarkerTypes{i},'XJitter','density','Linewidth',MarkerLineWidth,'MarkerFaceColor',MarkerFaceColor);
+    scatter(ah,GroupVariableNumber(indx),y_var(indx),MarkerSize,CMap(i,:),MarkerTypes{i},'XJitter','density','XJitterWidth',XJitterWidth,'Linewidth',MarkerLineWidth,'MarkerFaceColor',MarkerFaceColor);
 end
 
 bh = boxplot(ah,y_var,GroupVariableNumber,'orientation','vertical','color',BoxColor,'Symbol','','Widths',BoxWidths);
@@ -165,8 +189,9 @@ set( findobj( s.Children, 'LineStyle', '--' ),'LineStyle','-')
 set( s.Children,'LineWidth',BoxLineWidth)
 
 if isempty(YlabelTxt)
-    ylabel(sprintf('\\it %s\\rm value',VariableId{1}),'FontSize',FontSize)
-    ylabel(sprintf('%s \\beta-value',VariableId{1}),'FontSize',FontSize)
+    %ylabel(sprintf('\\it %s\\rm value',VariableId{1}),'FontSize',FontSize)
+    ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize)
+    %ylabel(sprintf('%s \\beta-value',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('Average \\beta-value',VariableId{1}),'FontSize',FontSize)
 else
     ylabel(YlabelTxt,'FontSize',FontSize)
@@ -181,25 +206,35 @@ ah.XTick = 1:nGroups;
 ah.XTickLabelRotation = -45;
 ah.XTickLabel = GroupName;
 
-y_nudge=range(y_var)/20;
-ah.YLim = [min(y_var)-y_nudge max(y_var)+y_nudge*2];
+y_nudge=range(y_var)/10;
+%ah.YLim = [min(y_var)-y_nudge max(y_var)+y_nudge*2];
 
 
+MAX_Y = max(y_var);
+Y_pos = MAX_Y;
 if CalcStats
-line([1 2],[max(y_var)+y_nudge/1.5 max(y_var)+y_nudge/1.5],'Color',[0 0 0],'Linewidth',0.75)
-[~,p_tt] = ttest2(y_var(SampleIndxMat(:,1)),y_var(SampleIndxMat(:,2)),0.05,'both','unequal')
-[p_mw] = ranksum(y_var(SampleIndxMat(:,1)),y_var(SampleIndxMat(:,2)))
-txt_p = pval2stars(p_tt,[]);
-if p_tt > 0.05
-    FontSize = 6;
-    VerticalAlignment = 'baseline';
-else
-    FontSize = 8;
-    VerticalAlignment = 'middle';
+    for i=1:size(CalcGroup,1)
+        if CalcGroupAllUnique && diff(CalcGroup(i,:)) == 1
+            max_y = max([y_var(SampleIndxMat(:,CalcGroup(i,1))); y_var(SampleIndxMat(:,CalcGroup(i,2)))]);
+            Y_pos = max_y+y_nudge/1.5;
+        else
+            Y_pos = Y_pos+y_nudge;
+        end
+        line(CalcGroup(i,:),[Y_pos Y_pos],'Color',[0 0 0],'Linewidth',0.75)
+        [~,p_tt] = ttest2(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),0.05,'both','unequal');
+        [p_mw] = ranksum(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))));
+        txt_p = pval2stars(p_tt,[]);
+        if p_tt > 0.05
+            FontSize = 6;
+            VerticalAlignment = 'bottom';
+        else
+            FontSize = 12;
+            VerticalAlignment = 'top';
+        end
+        text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
+    end
 end
-    text(ah,1.5,max(y_var)+y_nudge,txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
-
-end
+ah.YLim = [min(y_var)-y_nudge max([Y_pos,MAX_Y]) + y_nudge*2];
 % UniqueLineObjects=gobjects(nGroups,1);
 % for i = 1:nGroups
 %     group_indx = find(SampleIndx(:,i));
