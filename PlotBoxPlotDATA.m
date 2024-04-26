@@ -229,7 +229,7 @@ if CalcStats
             VerticalAlignment = 'bottom';
         else
             FontSize = 12;
-            VerticalAlignment = 'top';
+            VerticalAlignment = 'middle';
         end
         text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
     end
