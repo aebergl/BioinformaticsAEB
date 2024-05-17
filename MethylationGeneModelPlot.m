@@ -4,7 +4,7 @@ FontSize = 7;
 %CorrType='Pearson';
 CorrType='Spearman';
 FigureSize = [5 6];
-AxesSize = [2.5 2.5];
+AxesSize = [4 4];
 LeftBorderWidth = 1.6;
 BottomBorderHight = 1;
 

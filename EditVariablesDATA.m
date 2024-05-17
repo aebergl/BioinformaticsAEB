@@ -1,7 +1,7 @@
 function DATA  = EditVariablesDATA(DATA,InputIds,KeepRemove,varargin)
-%DATA  = EditSamplesDATA(DATA,InputIds,KeepRemove,varargin)
+%DATA  = EditVariablesDATA(DATA,InputIds,KeepRemove,varargin)
 %
-%   Remove/Keeps samples from DATA
+%   Remove/Keeps variables from DATA
 %
 % INPUT
 %   DATA                DATA structure
@@ -12,11 +12,13 @@ function DATA  = EditVariablesDATA(DATA,InputIds,KeepRemove,varargin)
 %
 %   'VariableIdentifier'    Sampleidentifier to be used, default DATA.SampleId
 %   'Truncate'              Number of characters to use for matching, defualt all
+%   'Stable'                Returns the data in the order of InputIds
 % Anders Berglund
 
 
 Truncate = 0;
 VariableIdentifier = false;
+Stable = false;
 
 i=0;
 while i<numel(varargin)
@@ -27,6 +29,8 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'Truncate')
         i = i + 1;
         Truncate = varargin{i};
+    elseif strcmpi(varargin{i},'Stable')
+        Stable = true;
     end
 end
 
@@ -54,30 +58,75 @@ if length(IdUnique) < length(InputIds)
 end
 
 
-[indx] = ismember(DATA_ID,InputIds);
+if Stable
+    if length(IdUnique) == DATA.nCol && strcmpi('keep',KeepRemove) % Simple if there is unique list of IDs
+        [~,~,indx] = intersect(InputIds,DATA_ID,'Stable');
+        DATA.X = DATA.X(:,indx);
+        DATA.RowId = DATA.ColId(indx);
+        DATA.nRow = size(DATA.X,2);
+        if ~isempty(DATA.ColAnnotation)
+            DATA.ColAnnotation = DATA.ColAnnotation(indx,:);
+        end
+    else
 
-if any(indx)
-    switch lower(KeepRemove)
-        case 'keep'
-            DATA.X = DATA.X(:,indx);
-            DATA.ColId = DATA.ColId(indx);
-            DATA.nCol = size(DATA.X,2);
-            if ~isempty(DATA.ColAnnotation)
-                DATA.ColAnnotation = DATA.ColAnnotation(indx,:);
+        SampleIndx = false(DATA.nCol,length(IdUnique));
+        for i=1:length(IdUnique)
+            SampleIndx(:,i) = ismember(DATA_ID,InputIds(i)); % Find samples for each ID
+        end
+        sum_indx = sum(SampleIndx,2);
+        if max(sum_indx) > 1
+            error('Multiple samples found for differenb IDs')
+        end
+        [indx,~]=find(SampleIndx);
+        if any(indx)
+            switch lower(KeepRemove)
+                case 'keep'
+                    DATA.X = DATA.X(:,indx);
+                    DATA.ColId = DATA.ColId(indx);
+                    DATA.nCol = size(DATA.X,2);
+                    if ~isempty(DATA.ColAnnotation)
+                        DATA.ColAnnotation = DATA.ColAnnotation(indx,:);
+                    end
+                case 'remove'
+                    %Remove samples
+                    DATA.X(:,indx) = [];
+                    DATA.ColId(indx) = [];
+                    DATA.nCol = size(DATA.X,2);
+                    if ~isempty(DATA.ColAnnotation)
+                        DATA.ColAnnotation(indx,:) = [];
+                    end
             end
-        case 'remove'
-            %Remove samples
-            DATA.X(:,indx) = [];
-            DATA.ColId(indx) = [];
-            DATA.nCol = size(DATA.X,2);
-            if ~isempty(DATA.ColAnnotation)
-                DATA.ColAnnotation(indx,:) = [];
-            end
+
+        else
+            warning('WARNING! No matching Ids found, returning original DATA')
+        end
     end
 
-else
-    warning('WARNING! No matching Ids found, returning original DATA')
-end
 
+else
+    [indx] = ismember(DATA_ID,InputIds);
+    if any(indx)
+        switch lower(KeepRemove)
+            case 'keep'
+                DATA.X = DATA.X(:,indx);
+                DATA.ColId = DATA.ColId(indx);
+                DATA.nCol = size(DATA.X,2);
+                if ~isempty(DATA.ColAnnotation)
+                    DATA.ColAnnotation = DATA.ColAnnotation(indx,:);
+                end
+            case 'remove'
+                %Remove samples
+                DATA.X(:,indx) = [];
+                DATA.ColId(indx) = [];
+                DATA.nCol = size(DATA.X,2);
+                if ~isempty(DATA.ColAnnotation)
+                    DATA.ColAnnotation(indx,:) = [];
+                end
+        end
+
+    else
+        warning('WARNING! No matching Ids found, returning original DATA')
+    end
+end
 
 end

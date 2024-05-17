@@ -12,6 +12,7 @@ function DATA  = EditSamplesDATA(DATA,InputIds,KeepRemove,varargin)
 %
 %   'SampleIdentifier'      Sampleidentifier to be used, default DATA.SampleId
 %   'Truncate'              Number of characters to use for matching, defualt all
+%   'Stable'                Returns the data in the order of InputIds
 % Anders Berglund
 
 
@@ -58,7 +59,7 @@ end
 
 if Stable
 
-    if length(IdUnique) == DATA.nRow && strcmpi('keep',KeepRemove)
+    if length(IdUnique) == DATA.nRow && strcmpi('keep',KeepRemove) % Simple if there is unique list of IDs
         [~,~,indx] = intersect(InputIds,DATA_ID,'Stable');
         DATA.X = DATA.X(indx,:);
         DATA.RowId = DATA.RowId(indx);
@@ -73,11 +74,11 @@ if Stable
 
         SampleIndx = false(DATA.nRow,length(IdUnique));
         for i=1:length(IdUnique)
-            SampleIndx(:,i) = ismember(DATA_ID,InputIds(i));
+            SampleIndx(:,i) = ismember(DATA_ID,InputIds(i)); % Find samples for each ID
         end
         sum_indx = sum(SampleIndx,2);
         if max(sum_indx) > 1
-            error('Multiple match samples found for differenb IDs')
+            error('Multiple samples found for differenb IDs')
         end
         [indx,~]=find(SampleIndx);
         if any(indx)

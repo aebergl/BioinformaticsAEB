@@ -1,5 +1,5 @@
 function DATA = AddREFseqGeneInfo(DATA,FileName,ReplaceAppend,varargin)
-
+DATA_IdName = [];
 IdToUse = 'GeneID';
 i=0;
 while i<numel(varargin)
@@ -7,8 +7,26 @@ while i<numel(varargin)
     if strcmpi(varargin{i},'IdToUse')
         i = i + 1;
         IdToUse = varargin{i};
+
+    elseif strcmpi(varargin{i},'DATA_Id')
+        i = i + 1;
+        DATA_IdName = varargin{i};
+
     end
 end
+
+% Sample Ids to use from the DATA structure
+if isempty(DATA_IdName)
+    DATA_Id = DATA.ColId;
+else
+    indx = strcmp(DATA_IdName,DATA.ColAnnotationFields);
+    if any(indx)
+        DATA_Id = DATA.ColAnnotation(:,indx);
+    else
+        error('Could not find the given Id in the DATA strcuture')
+    end   
+end
+
 
 if isempty(FileName)
     ftpobj = ftp('ftp.ncbi.nlm.nih.gov');
@@ -76,14 +94,14 @@ end
 
 GeneInfo = cat(2,S{GeneColumnsToUse});
 
-[~,indx1,indx2] = intersect(DATA.ColId,GeneId,'Stable');
+[~,indx1,indx2] = intersect(DATA_Id,GeneId,'Stable');
 
 Annotation(indx1,:) = GeneInfo(indx2,:);
 Annotation(cellfun('isempty',Annotation)) = {''};
 Annotation(indx1,:) = GeneInfo(indx2,:);
 
 % get gene ids with no maching annotion
-[MissingIds, indxMissing] = setdiff(DATA.ColId,GeneId,'stable');
+[MissingIds, indxMissing] = setdiff(DATA_Id,GeneId,'stable');
 NewGeneId =  GetReplacedGeneId(MissingIds);
 
 for i=1:length(MissingIds)
