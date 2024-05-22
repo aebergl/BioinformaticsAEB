@@ -250,8 +250,8 @@ cMap=flipud(cMap);
 cMap = colormap(colorcet('L02','reverse',true));
 
 % Select Sample Id
-%SampleId = DATA.RowAnnotation(:,2);
-SampleId = DATA.RowId;
+SampleId = DATA.RowAnnotation(:,18);
+%SampleId = DATA.RowId;
 SampleId_pos = SampleId(indx_pos);
 SampleId_neg = SampleId(indx_neg);
 

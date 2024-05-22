@@ -134,9 +134,9 @@ y_var(~SampleIndxToUse) = NaN;
 
 if size(y_var,2) > 1
     %y_var = B2M(y_var);
-    y_var=mean(y_var,2,"omitnan");
-    % [PCA_Model] = NIPALS_PCA(y_var,'NumComp',1,'ScaleX',false);
-    % y_var = PCA_Model.T(:,1);
+    %y_var=mean(y_var,2,"omitnan");
+     [PCA_Model] = NIPALS_PCA(y_var,'NumComp',1,'ScaleX',false);
+     y_var = PCA_Model.T(:,1);
     VariableId = "Average";
 end
 
@@ -178,9 +178,16 @@ ah = axes(fh,'NextPlot','add','tag','Gene Sample Plot','Box','on','FontSize',Fon
     'ActivePositionProperty','outerposition','XGrid','on','YGrid','on');
 ah.LineWidth = 0.5;
 ah.Colormap=CMap;
+
+% Select Sample Id
+%SampleId = DATA.RowAnnotation(:,18);
+SampleId = DATA.RowId;
 for i=1:nGroups
     indx = SampleIndxMat(:,i);
-    scatter(ah,GroupVariableNumber(indx),y_var(indx),MarkerSize,CMap(i,:),MarkerTypes{i},'XJitter','density','XJitterWidth',XJitterWidth,'Linewidth',MarkerLineWidth,'MarkerFaceColor',MarkerFaceColor);
+    sh = scatter(ah,GroupVariableNumber(indx),y_var(indx),MarkerSize,CMap(i,:),MarkerTypes{i},'XJitter','density','XJitterWidth',XJitterWidth,'Linewidth',MarkerLineWidth,'MarkerFaceColor',MarkerFaceColor);
+    row = dataTipTextRow('',SampleId(indx));
+    sh.DataTipTemplate.DataTipRows = row;
+
 end
 
 bh = boxplot(ah,y_var,GroupVariableNumber,'orientation','vertical','color',BoxColor,'Symbol','','Widths',BoxWidths);
