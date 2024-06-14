@@ -16,7 +16,7 @@ if isempty(DATA_Median)
     VarNames = {'Average beta value'}';
 
 else
-    RESULTS_DATA = CreateDataStructure(DATA.nRow,27,[],[]);
+    RESULTS_DATA = CreateDataStructure(DATA.nRow,5+22+22,[],[]);
     VarNames = {'Average beta value','Hyper methylation','Hypo methylation','Average Hyper methylation','Average Hypo methylation'}';
 
 end
@@ -44,6 +44,7 @@ else
     median_x = median(DATA_Median.X(:,indx_ToUse),1,'omitnan');
 end
 
+% Calculate X matrix with median removed
 X = bsxfun(@minus, DATA.X(:,indx_ToUse),median_x );
 
 Chr = DATA.ColAnnotation(indx_ToUse,ChrCol);
@@ -51,31 +52,38 @@ Chr = DATA.ColAnnotation(indx_ToUse,ChrCol);
 X_pos = ones(size(X)) * NaN;
 X_neg = ones(size(X)) * NaN;
 
+% Find index for hype and hypo methylayted CpG-probes
 indx_pos = X > CutOff_Val;
 indx_neg = X < -CutOff_Val;
 
+% Put values into matrix
 X_pos(indx_pos) = X(indx_pos);
 X_neg(indx_neg) = X(indx_neg);
 
 
-% Fin max Hyper and min Hypo
+% Fin max Hyper and min Hypo using a samples with all ones or zeros
+% these wil be used to normalise the final values
 
-X_Lim = [ones(1,size(X,2));zeros(1,size(X,2))];
+% Two extreme samples
+X_Lim = [ones(1,size(X,2));zeros(1,size(X,2))]; 
+
+% Remove median
 X_Lim = bsxfun(@minus, X_Lim, median_x);
 
-X_Lim_pos = ones(size(X_Lim)) * NaN;
-X_Lim_neg = ones(size(X_Lim)) * NaN;
+% Generate results matrix with all NaNs
+X_Lim_val = ones(size(X_Lim)) * NaN;
 
-indx_pos_max = X_Lim > CutOff_Val;
-indx_neg_min = X_Lim < -CutOff_Val;
+% Find values above and below cut off
+indx_pos_max = X_Lim(1,:) > CutOff_Val;
+indx_neg_min = X_Lim(2,:) < -CutOff_Val;
 
+% Put values into matrix
+X_Lim_val(1,indx_pos_max) = X_Lim(1,indx_pos_max);
+X_Lim_val(2,indx_neg_min) = X_Lim(2,indx_neg_min);
 
-X_Lim_pos(indx_pos_max) = X_Lim(indx_pos_max);
-X_Lim_neg(indx_neg_min) = X_Lim(indx_neg_min);
-
-
-x_max = sum(X_Lim_pos(1,:),2,'omitnan');
-x_min = sum(X_Lim_neg(2,:),2,'omitnan');
+% Fin the maximum hyper and minimum hypo values
+x_max = sum(X_Lim_val(1,:),2,'omitnan');
+x_min = sum(X_Lim_val(2,:),2,'omitnan');
 
 RESULTS_DATA.X(:,1) = mean(DATA.X(:,indx_ToUse),2,'omitnan');
 ChrTxt = {'1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22'};
@@ -94,11 +102,13 @@ else
     RESULTS_DATA.X(:,5) = mean(X_neg,2,'omitnan');
     for i = 1:length(ChrTxt)
         indx = strcmp(ChrTxt(i),Chr);
-        RESULTS_DATA.X(:,i+5) = sum(X_pos(:,indx),2,'omitnan') ./ sum(X_Lim_pos(1,indx),2,'omitnan');
+        RESULTS_DATA.X(:,i+5) = sum(X_pos(:,indx),2,'omitnan') ./ sum(X_Lim_val(1,indx),2,'omitnan');
+        RESULTS_DATA.X(:,i+5+22) = sum(X_neg(:,indx),2,'omitnan') ./ sum(X_Lim_val(2,indx),2,'omitnan');
     end
     ChrTxt = {'Chr.01','Chr.02','Chr.03','Chr.04','Chr.05','Chr.06','Chr.07','Chr.08','Chr.09','Chr.10','Chr.11','Chr.12','Chr.13','Chr.14','Chr.15','Chr.16','Chr.17','Chr.18','Chr.19','Chr.20','Chr.21','Chr.22'}';
-    ChrTxt=strcat({'Hyper '},ChrTxt);
+    ChrTxtHyper=strcat({'Hyper '},ChrTxt);
+    ChrTxtHypo=strcat({'Hypo '},ChrTxt);
 end
 
 
-RESULTS_DATA.ColId = [RESULTS_DATA.ColId; ChrTxt];
+RESULTS_DATA.ColId = [RESULTS_DATA.ColId; ChrTxtHyper; ChrTxtHypo];

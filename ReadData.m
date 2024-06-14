@@ -100,6 +100,7 @@ end
 
 DATA = CreateDataStructure(numRead,numXColumns,numIdColumns,numHeaderRows);
 
+
 DATA.X = cell2mat(S(numIdColumns+1:end));
 
 

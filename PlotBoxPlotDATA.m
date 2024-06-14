@@ -1,6 +1,6 @@
 function fh = PlotBoxPlotDATA(DATA,VariableId,GroupVariableName,GroupsToUse,varargin)
-MarkerSize = 20;
-MarkerLineWidth = 0.5;
+MarkerSize = 30;
+MarkerLineWidth = 1;
 BoxLineWidth = 0.5;
 FontSize = 8;
 FigureSize = [3,2.6];
@@ -16,6 +16,7 @@ VariableIdentifier = false;
 CalcStats = false;
 CalcGroup = [];
 CalcGroupAllUnique = true;
+PlotStars = false;
 % CMap = GetPalette('Lancet',[3 4 5]);
 
 CMap = GetPalette('Science');
@@ -135,8 +136,8 @@ y_var(~SampleIndxToUse) = NaN;
 if size(y_var,2) > 1
     %y_var = B2M(y_var);
     %y_var=mean(y_var,2,"omitnan");
-     [PCA_Model] = NIPALS_PCA(y_var,'NumComp',1,'ScaleX',false);
-     y_var = PCA_Model.T(:,1);
+    [PCA_Model] = NIPALS_PCA(y_var,'NumComp',1,'ScaleX',false);
+    y_var = PCA_Model.T(:,1);
     VariableId = "Average";
 end
 
@@ -231,14 +232,24 @@ if CalcStats
         [~,p_tt] = ttest2(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),0.05,'both','unequal');
         [p_mw] = ranksum(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))));
         txt_p = pval2stars(p_tt,[]);
-        if p_tt > 0.05
+        if PlotStars
+            if p_tt > 0.05
+                FontSize = 6;
+                VerticalAlignment = 'bottom';
+            else
+                FontSize = 12;
+                VerticalAlignment = 'middle';
+            end
+            text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
+        else
+
             FontSize = 6;
             VerticalAlignment = 'bottom';
-        else
-            FontSize = 12;
-            VerticalAlignment = 'middle';
+            txt_p = num2str(p_tt,2);
+            text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
         end
-        text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
+
+
     end
 end
 ah.YLim = [min(y_var)-y_nudge max([Y_pos,MAX_Y]) + y_nudge*2];
