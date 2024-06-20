@@ -17,7 +17,7 @@ if length(SampleIndx_x) ~= length(SampleIndx_y)
 end
 
 
-RESULTS_DATA = CreateDataStructure(DATA.nCol,7,[],[]);
+RESULTS_DATA = CreateDataStructure(DATA.nCol,13,[],[]);
 
 % Add Info
 RESULTS_DATA.Title = 'Paired Difference analysis results';
@@ -35,7 +35,7 @@ RESULTS_DATA.RowAnnotationFields = DATA.ColAnnotationFields;
 
 
 
-VarNames = {'p t-test','q t-test','fdr t-test','Delta Average','Average A','Average B','Min Samples'}';
+VarNames = {'p t-test','q t-test','fdr t-test','Delta Average','Average A','Average B','p signrank-test','q signrank-test','fdr signrank-test','Delta median','Median A','Median B','Min Samples'}';
 RESULTS_DATA.ColId=VarNames;
 
 RESULTS_DATA.ColAnnotationFields = {'VarId'};
@@ -46,6 +46,12 @@ p_TT = ones(DATA.nCol,1) * NaN;
 DeltaAverage = zeros(DATA.nCol,1) * NaN;
 Average_x = zeros(DATA.nCol,1) * NaN;
 Average_y = zeros(DATA.nCol,1) * NaN;
+p_signrank = ones(DATA.nCol,1) * NaN;
+DeltaMedian = zeros(DATA.nCol,1) * NaN;
+Median_x = zeros(DATA.nCol,1) * NaN;
+Median_y = zeros(DATA.nCol,1) * NaN;
+
+
 MinNum = zeros(DATA.nCol,1) * NaN;
 
 %for i=1:1000%DATA.NumProbes
@@ -66,8 +72,12 @@ parfor i=1:DATA.nCol
         [~,p_TT(i)] = ttest2(x,y,0.05,'both');
         Average_x(i) = mean(x,'omitnan');
         Average_y(i) = mean(y,'omitnan');
-        %DeltaAverage(i) = Average_y(i) - Average_x(i);
         DeltaAverage(i) = mean(y - x);
+        p_signrank(i) = signrank(x,y,'method','exact');
+        Median_x(i) = median(x,'omitnan');
+        Median_y(i) = median(y,'omitnan');
+        DeltaMedian(i) = median(y - x);
+
     end
 end
 
@@ -75,7 +85,14 @@ RESULTS_DATA.X(:,1) = p_TT;
 RESULTS_DATA.X(:,4) = DeltaAverage;
 RESULTS_DATA.X(:,5) = Average_x;
 RESULTS_DATA.X(:,6) = Average_y;
-RESULTS_DATA.X(:,7) = MinNum;
+
+RESULTS_DATA.X(:,7) = p_signrank;
+RESULTS_DATA.X(:,10) = DeltaMedian;
+RESULTS_DATA.X(:,11) = Median_x;
+RESULTS_DATA.X(:,12) = Median_y;
+
+
+RESULTS_DATA.X(:,13) = MinNum;
 
 try
     [~, RESULTS_DATA.X(:,2),~] = mafdr(p_TT);
@@ -88,4 +105,14 @@ catch
     RESULTS_DATA.X(:,3) = ones(DATA.nCol,1);
 end
 
+try
+    [~, RESULTS_DATA.X(:,8),~] = mafdr(p_signrank);
+catch
+    RESULTS_DATA.X(:,8) = ones(DATA.nCol,1);
+end
+try
+    [RESULTS_DATA.X(:,9)] = mafdr(p_signrank,'BHFDR',true);
+catch
+    RESULTS_DATA.X(:,9) = ones(DATA.nCol,1);
+end
 

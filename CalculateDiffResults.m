@@ -32,7 +32,7 @@ SampleId_x = DATA.RowId(SampleIndx_x);
 SampleId_y = DATA.RowId(SampleIndx_y);
 
 
-RESULTS_DATA = CreateDataStructure(DATA.nCol,11,[],[]);
+RESULTS_DATA = CreateDataStructure(DATA.nCol,17,[],[]);
 
 % Add Info
 RESULTS_DATA.Title = 'Difference analysis results';
@@ -52,7 +52,7 @@ RESULTS_DATA.RowAnnotationFields = DATA.ColAnnotationFields;
 
 
 
-VarNames = {'Signal2Noise','p t-test','q t-test','fdr t-test','Delta Average',sprintf('Average %s',Group1{1}),sprintf('Average %s',Group2{1}),'p Bartlett','q Bartlett','fdr Bartlett','Min Samples'}';
+VarNames = {'Signal2Noise','p t-test','q t-test','fdr t-test','Delta Average',sprintf('Average %s',Group1{1}),sprintf('Average %s',Group2{1}),'p Bartlett','q Bartlett','fdr Bartlett','p MW-test','q MW-test','fdr MW-test','Delta Median',sprintf('Median %s',Group1{1}),sprintf('Median %s',Group2{1}),'Min Samples'}';
 RESULTS_DATA.ColId=VarNames;
 
 RESULTS_DATA.ColAnnotationFields = {'VarId'};
@@ -66,6 +66,13 @@ Average_x = zeros(DATA.nCol,1) * NaN;
 Average_y = zeros(DATA.nCol,1) * NaN;
 p_Bartlett = ones(DATA.nCol,1) * NaN;
 MinNum = zeros(DATA.nCol,1) * NaN;
+
+p_MW = ones(DATA.nCol,1) * NaN;
+DeltaMedian = zeros(DATA.nCol,1) * NaN;
+Median_x = zeros(DATA.nCol,1) * NaN;
+Median_y = zeros(DATA.nCol,1) * NaN;
+
+
 
 %for i=1:1000%DATA.NumProbes
 X_x = DATA.X(SampleIndx_x,:);
@@ -88,7 +95,11 @@ parfor i=1:DATA.nCol
         Average_y(i) = mean(y,'omitnan');
         p_Bartlett(i)=vartestn([x;y],[ones(size(x));ones(size(y))*2],'Display','off','TestType','Bartlett');
         DeltaAverage(i) = Average_y(i) - Average_x(i);
-        S2N(i) = DeltaAverage(i) /(std(x,'omitnan') + std(y,'omitnan'))
+        S2N(i) = DeltaAverage(i) /(std(x,'omitnan') + std(y,'omitnan'));
+        p_MW(i) = ranksum(x,y);
+        Median_x(i) = median(x,'omitnan');
+        Median_y(i) = median(y,'omitnan');
+        DeltaMedian(i) = Median_y(i) - Median_x(i);
 
     end
 end
@@ -99,7 +110,11 @@ RESULTS_DATA.X(:,5) = DeltaAverage;
 RESULTS_DATA.X(:,6) = Average_x;
 RESULTS_DATA.X(:,7) = Average_y;
 RESULTS_DATA.X(:,8) = p_Bartlett;
-RESULTS_DATA.X(:,11) = MinNum;
+RESULTS_DATA.X(:,11) = p_MW;
+RESULTS_DATA.X(:,14) = DeltaMedian;
+RESULTS_DATA.X(:,15) = Median_x;
+RESULTS_DATA.X(:,16) = Median_y;
+RESULTS_DATA.X(:,17) = MinNum;
 
 try
     [~, RESULTS_DATA.X(:,3),~] = mafdr(p_TT);
@@ -123,3 +138,13 @@ catch
     RESULTS_DATA.X(:,10) = ones(DATA.nCol,1);
 end
 
+try
+    [~, RESULTS_DATA.X(:,12),~] = mafdr(p_MW);
+catch
+    RESULTS_DATA.X(:,12) = ones(DATA.nCol,1);
+end
+try
+    [RESULTS_DATA.X(:,13)] = mafdr(p_MW,'BHFDR',true);
+catch
+    RESULTS_DATA.X(:,13) = ones(DATA.nCol,1);
+end
