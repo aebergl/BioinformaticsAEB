@@ -148,7 +148,13 @@ switch lower(AddReplace)
         DATA.RowAnnotationFields = SelectedVariables ;
     case 'add'
         DATA.RowAnnotation = [DATA.RowAnnotation Annotation];
-        DATA.RowAnnotationFields = [DATA.RowAnnotationFields SelectedVariables];
+        try
+            DATA.RowAnnotationFields = [DATA.RowAnnotationFields SelectedVariables];
+        catch
+
+            DATA.RowAnnotationFields = [DATA.RowAnnotationFields; SelectedVariables'];
+        end
+        
 end
 
 end
