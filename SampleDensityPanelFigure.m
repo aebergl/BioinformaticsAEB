@@ -1,4 +1,4 @@
-function fh = SampleDensityPanelFigure(DATA,IdColumn,Refsample,nRow,nCol,varargin)
+function [fh RESULTS_DATA] = SampleDensityPanelFigure(DATA,IdColumn,Refsample,nRow,nCol,varargin)
 
 
 PageWidth = 7.5;
@@ -99,6 +99,18 @@ switch DataType
 
 end
 
+VarNames = ["r Pearson" "r Spearman" "n > 2-fold" "n > 1.5-fold"]';
+nVar = length(VarNames);
+RESULTS_DATA = CreateDataStructure(nArrays,nVar,[],[]);
+% Add Info
+RESULTS_DATA.Title = 'Sample Density';
+
+RESULTS_DATA.ColId=VarNames;
+RESULTS_DATA.RowId = SampleIds(OtherSampleIndx);
+
+
+
+
 for i = 1:nImages
     fh(i) = figure('Name','Array Image','Color','w','Tag','Array Image',...
         'Visible',ShowFigure,'Units','inches','Colormap',turbo);
@@ -138,26 +150,26 @@ for i = 1:nImages
         ah.XGrid ='on';
         ah.YGrid ='on';
         ah.Box='on';
-        r_corr = corr(x_ref',y_sample','rows','pairwise');
-
+        r_Pearson = corr(x_ref',y_sample','Type','Pearson','rows','pairwise');
+        r_Spearman = corr(x_ref',y_sample','Type','Spearman','rows','pairwise');
         switch DataType
             case 'GeneExpression'
 
-                nDiff_2 = sum(abs(x_ref-y_sample) > 1);
-                nDiff_15 = sum(abs(x_ref-y_sample) > 0.585);
-                Str(1) = {['r = ',sprintf('%.5f',r_corr)]};
-                Str(2) = {['Num > 2-fold: ',sprintf('%u',nDiff_2)]};
-                Str(3) = {['Num > 1.5-fold: ',sprintf('%u',nDiff_15)]};
+                nDiff_1 = sum(abs(x_ref-y_sample) > 1);
+                nDiff_2 = sum(abs(x_ref-y_sample) > 0.585);
+                Str(1) = {['r = ',sprintf('%.5f',r_Pearson)]};
+                Str(2) = {['Num > 2-fold: ',sprintf('%u',nDiff_1)]};
+                Str(3) = {['Num > 1.5-fold: ',sprintf('%u',nDiff_2)]};
                 text(ah.XLim(1)+0.2,ah.YLim(2)+0.1,Str,'FontSize',FontSize,'VerticalAlignment','bottom','HorizontalAlignment','Left','Color','k');
                 line([ah.XLim(1) ah.XLim(2)],[ah.YLim(1) ah.YLim(2)],'Linewidth',LineWidth,'LineStyle','-','color','k')
                 line([ah.XLim(1) ah.XLim(2)-1],[ah.YLim(1)+1 ah.YLim(2)],'Linewidth',LineWidth,'LineStyle',':','color','k')
                 line([ah.XLim(1)+1 ah.XLim(2)],[ah.YLim(1) ah.YLim(2)-1],'Linewidth',LineWidth,'LineStyle',':','color','k')
             case 'Methylation'
-                nDiff_01 = sum(abs(x_ref-y_sample) > 0.1);
-                nDiff_02 = sum(abs(x_ref-y_sample) > 0.2);
-                Str(1) = {['r = ',sprintf('%.5f',r_corr)]};
-                Str(2) = {['Num > 0.1: ',sprintf('%u',nDiff_01)]};
-                Str(3) = {['Num > 0.2: ',sprintf('%u',nDiff_02)]};
+                nDiff_1 = sum(abs(x_ref-y_sample) > 0.1);
+                nDiff_2 = sum(abs(x_ref-y_sample) > 0.2);
+                Str(1) = {['r = ',sprintf('%.5f',r_Pearson)]};
+                Str(2) = {['Num > 0.1: ',sprintf('%u',nDiff_1)]};
+                Str(3) = {['Num > 0.2: ',sprintf('%u',nDiff_2)]};
                 text(ah.XLim(1)+0.01,ah.YLim(2)+0.01,Str,'FontSize',FontSize,'VerticalAlignment','bottom','HorizontalAlignment','Left','Color','k');
                 line([ah.XLim(1) ah.XLim(2)],[ah.YLim(1) ah.YLim(2)],'Linewidth',LineWidth,'LineStyle','-','color','k')
                 line([ah.XLim(1) ah.XLim(2)-0.1],[ah.YLim(1)+0.1 ah.YLim(2)],'Linewidth',LineWidth,'LineStyle',':','color','k')
@@ -166,7 +178,11 @@ for i = 1:nImages
                 line([ah.XLim(1)+0.2 ah.XLim(2)],[ah.YLim(1) ah.YLim(2)-0.2],'Linewidth',LineWidth,'LineStyle','--','color','k')
 
         end
-
+        RESULTS_DATA.X(counter,1) = r_Pearson;
+        RESULTS_DATA.X(counter,2) = r_Spearman;
+        RESULTS_DATA.X(counter,3) = nDiff_1;
+        RESULTS_DATA.X(counter,4) = nDiff_1;
+        drawnow
     end
     if ExportPlot
         if nImages > 1

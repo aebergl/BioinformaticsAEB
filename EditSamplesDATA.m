@@ -64,7 +64,9 @@ if Stable
         DATA.X = DATA.X(indx,:);
         DATA.RowId = DATA.RowId(indx);
         DATA.nRow = size(DATA.X,1);
+        if ~ isempty(DATA.RowAnnotation)
         DATA.RowAnnotation = DATA.RowAnnotation(indx,:);
+        end
         if isfield(DATA,'SURVIVAL')
             DATA.SURVIVAL.RowId =  DATA.SURVIVAL.RowId(indx);
             DATA.SURVIVAL.SurvEvent =  DATA.SURVIVAL.SurvEvent(indx,:);

@@ -5,13 +5,13 @@ minSize = 20;
 maxSize = 100;
 LineWidth = 0.5;
 GridLines = 'on';
-RightMargin = 0.7;
+RightMargin = 0.8;
 
 NameField = "NAME";
 SizeCutOffs =[1 0.05 0.01 0.001 0.0001];
 LegendSizeVal = [5 20 40 60 80];
-SizeCutOffs =[1 0.15 0.1 0.05 0.01 ];
-LegendSizeVal = [5 20 40 60 80];
+% SizeCutOffs =[1 0.15 0.1 0.05 0.01 ];
+% LegendSizeVal = [5 20 40 60 80];
 
 FlipNeg = true;
 ColorBy = "Enrichment";
@@ -122,7 +122,7 @@ switch lower(CollectionType)
             'HALLMARK_PEROXISOME','Peroxisome','cellular component';
             'HALLMARK_PI3K_AKT_MTOR_SIGNALING','PI3K AKT MTOR Signaling','signaling';
             'HALLMARK_PROTEIN_SECRETION','Protein Secretion','pathway';
-            'HALLMARK_REACTIVE_OXIGEN_SPECIES_PATHWAY','Reactive Oxygen Species Pathway','pathway';
+            'HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY','Reactive Oxygen Species','pathway';
             'HALLMARK_SPERMATOGENESIS','Spermatogenesis','development';
             'HALLMARK_TGF_BETA_SIGNALING','TGF beta Signaling','signaling';
             'HALLMARK_TNFA_SIGNALING_VIA_NFKB','TNFa Signaling Via NFkB','signaling';
@@ -133,6 +133,7 @@ switch lower(CollectionType)
             'HALLMARK_XENOBIOTIC_METABOLISM','Xenobiotic Metabolism','metabolic';
             };
         [~,indx_new]=ismember(YtickLabelTxt,GSEA_Name(:,1));
+
         YtickLabelTxt = GSEA_Name(indx_new,2);
         ColorGroups = GSEA_Name(indx_new,3);
         AllTypes = {'cellular component','development','DNA damage','immune','metabolic','pathway','proliferation','signaling'};
