@@ -151,8 +151,6 @@ end
 
 % SizeValPlot = rescale(SizeVal,minSize,maxSize);
 % LegendSizeValPlot = rescale(LegendSizeVal,minSize,maxSize);
-
-
 % Color type
 
 switch lower(ColorBy)
@@ -160,11 +158,13 @@ switch lower(ColorBy)
     case 'enrichment'
         ColorVal = [1*ones(nPos,1); 2*ones(nNeg,1)];
         Cmap = GetPalette('Lancet', [2 1]);
+        ColorVal = Cmap(ColorVal,:);
     case 'type'
         ColorVal = categorical(ColorGroups,AllTypes);
         ColorVal = double(ColorVal);
-        Cmap = GetPalette('aeb01',[ 7 6 3 4 8 9 11 5]);
+        %Cmap = GetPalette('aeb01',[ 7 6 3 4 8 9 11 5]);
         Cmap = GetPalette('Tab10',[ 7 3 5 10 9 8 2 6]);
+        ColorVal = Cmap(ColorVal,:);
         YtickLabelTxt(1:nPos) = strcat('\color{red}',YtickLabelTxt(1:nPos));
         YtickLabelTxt(nPos+1:end) = strcat('\color{blue}',YtickLabelTxt(nPos+1:end));
 end
@@ -191,6 +191,7 @@ ah.YTick = 1:nGroups;
 ah.YLim = [0.5 nGroups+0.5];
 ah.YTickLabel = YtickLabelTxt;
 ah.Colormap = Cmap;
+ah.ColorOrder = Cmap;
 %ah.CLim = CLim;
 ah.XLim =[minVal-nudgeVal maxVal+nudgeVal];
 ah.OuterPosition(3:4) = [fWidth-RightMargin fHight];
@@ -210,8 +211,6 @@ end
 
 
 sh = scatter(xVal,1:nGroups,SizeValPlot,ColorVal,'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
-
-
 
 StepVal = 1.1;
 
@@ -237,14 +236,14 @@ switch lower(ColorBy)
         scatter(ah,ah.XLim(2)+nudgeVal,YPos_Size(end)+1+(4.2*StepVal),LegendSizeVal(end),Cmap(2,:),'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
         text(ah.XLim(2)+1.6*nudgeVal,YPos_Size(end)+1+(4.2*StepVal),'Down-regulated','HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
     case 'type'
-        ColorGroups = unique(ColorGroups);
-        ColorVal = categorical(ColorGroups,AllTypes);
-        ColorVal = double(ColorVal);
-        YPos_Color = 1:StepVal:StepVal*length(ColorVal);
+        ColorGroupslegend = unique(ColorGroups,'stable');
+        ColorValLegend = unique(ColorVal,'stable','rows');
+%        ColorValLegend = double(ColorValLegend);
+        YPos_Color = 1:StepVal:StepVal*length(ColorValLegend);
         YPos_Color = YPos_Color + YPos_Text(end) + 1;
-        for i=1:length(ColorVal)
-            scatter(ah,ah.XLim(2)+nudgeVal*0.9,YPos_Color(i),LegendSizeVal(end-1),Cmap(ColorVal(i),:),'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
-            text(ah.XLim(2)+1.3*nudgeVal,YPos_Color(i),ColorGroups{i},'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
+        for i=1:length(ColorValLegend)
+            scatter(ah,ah.XLim(2)+nudgeVal*0.9,YPos_Color(i),LegendSizeVal(end-1),ColorValLegend(i,:),'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
+            text(ah.XLim(2)+1.3*nudgeVal,YPos_Color(i),ColorGroupslegend{i},'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
         end
 end
 

@@ -99,7 +99,7 @@ switch DataType
 
 end
 
-VarNames = ["r Pearson" "r Spearman" "n > 2-fold" "n > 1.5-fold"]';
+VarNames = ["r Pearson" "r Spearman" "CCC" "n > 2-fold" "n > 1.5-fold"]';
 nVar = length(VarNames);
 RESULTS_DATA = CreateDataStructure(nArrays,nVar,[],[]);
 % Add Info
@@ -152,14 +152,14 @@ for i = 1:nImages
         ah.Box='on';
         r_Pearson = corr(x_ref',y_sample','Type','Pearson','rows','pairwise');
         r_Spearman = corr(x_ref',y_sample','Type','Spearman','rows','pairwise');
+        c = f_CCC([x_ref',y_sample'],0.05);
         switch DataType
             case 'GeneExpression'
 
                 nDiff_1 = sum(abs(x_ref-y_sample) > 1);
                 nDiff_2 = sum(abs(x_ref-y_sample) > 0.585);
-                Str(1) = {['r = ',sprintf('%.5f',r_Pearson)]};
-                Str(2) = {['Num > 2-fold: ',sprintf('%u',nDiff_1)]};
-                Str(3) = {['Num > 1.5-fold: ',sprintf('%u',nDiff_2)]};
+                Str(1) = {[sprintf('rp=%.4f rs=%.4f ccc=%.4f',r_Pearson,r_Spearman,c{1}.est)]};
+                Str(2) = {[sprintf('n > 2-fold: %u   n > 1.5-fold: %u',nDiff_1,nDiff_2)]};
                 text(ah.XLim(1)+0.2,ah.YLim(2)+0.1,Str,'FontSize',FontSize,'VerticalAlignment','bottom','HorizontalAlignment','Left','Color','k');
                 line([ah.XLim(1) ah.XLim(2)],[ah.YLim(1) ah.YLim(2)],'Linewidth',LineWidth,'LineStyle','-','color','k')
                 line([ah.XLim(1) ah.XLim(2)-1],[ah.YLim(1)+1 ah.YLim(2)],'Linewidth',LineWidth,'LineStyle',':','color','k')
@@ -178,10 +178,12 @@ for i = 1:nImages
                 line([ah.XLim(1)+0.2 ah.XLim(2)],[ah.YLim(1) ah.YLim(2)-0.2],'Linewidth',LineWidth,'LineStyle','--','color','k')
 
         end
+
         RESULTS_DATA.X(counter,1) = r_Pearson;
         RESULTS_DATA.X(counter,2) = r_Spearman;
-        RESULTS_DATA.X(counter,3) = nDiff_1;
+        RESULTS_DATA.X(counter,3) = c{1}.est;
         RESULTS_DATA.X(counter,4) = nDiff_1;
+        RESULTS_DATA.X(counter,5) = nDiff_2;
         drawnow
     end
     if ExportPlot

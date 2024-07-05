@@ -100,7 +100,6 @@ end
 
 DATA = CreateDataStructure(numRead,numXColumns,numIdColumns,numHeaderRows);
 
-
 DATA.X = cell2mat(S(numIdColumns+1:end));
 
 
@@ -125,8 +124,8 @@ if numHeaderRows > 0
     for i=2:numHeaderRows
         [tmp,~] = textscan(HeaderData{i},'%q','delimiter',DelimiterType);
         tmp = tmp{1};
-        DATA.ColAnnotationFields(i) = tmp(1,1);
-        DATA.ColAnnotation(:,i) = tmp(numIdColumns+1:end,1);
+        DATA.ColAnnotationFields(i-1) = tmp(1,1);
+        DATA.ColAnnotation(:,i-1) = tmp(numIdColumns+1:end,1);
     end
     DATA.RowId  = S{1};
     if numIdColumns > 1
