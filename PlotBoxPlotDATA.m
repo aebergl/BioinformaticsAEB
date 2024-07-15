@@ -16,7 +16,10 @@ VariableIdentifier = false;
 CalcStats = false;
 CalcGroup = [];
 CalcGroupAllUnique = true;
+StatType = 't-test';
+StatType = 'MW';
 PlotStars = false;
+TargetAxes = false;
 % CMap = GetPalette('Lancet',[3 4 5]);
 
 CMap = GetPalette('Science');
@@ -24,39 +27,40 @@ CMap = GetPalette('Science');
 SortData=false;
 %SortData='descend';
 
-i=0;
-while i<numel(varargin)
-    i = i + 1;
-    if strcmpi(varargin{i},'VariableIdentifier')
-        i = i + 1;
-        VariableIdentifier = varargin{i};
-    elseif strcmpi(varargin{i},'Truncate')
-        i = i + 1;
-        Truncate = varargin{i};
-    elseif strcmpi(varargin{i},'FigureSize')
-        i = i + 1;
-        FigureSize = varargin{i};
+% Check input
+if nargin > 4
+    ArgsList = {'VariableIdentifier','FigureSize','Ylabel','TitleText','ColorMap','MarkerTypes','CalcStats','TargetAxes'};
+    for j=1:2:numel(varargin)
+        ArgType = varargin{j};
+        ArgVal = varargin{j+1};
+        if ~strncmpi(ArgType,ArgsList,numel(ArgType))
+            error('Invalid input option: %s', ArgType);
+        else
+            switch lower(ArgType)
 
-    elseif strcmpi(varargin{i},'Ylabel')
-        i = i + 1;
-        YlabelTxt = varargin{i};
-    elseif strcmpi(varargin{i},'TitleTxt')
-        i = i + 1;
-        TitleTxt = varargin{i};
-    elseif strcmpi(varargin{i},'ColorMap')
-        i = i + 1;
-        CMap = varargin{i};
-    elseif strcmpi(varargin{i},'MarkerTypes')
-        i = i + 1;
-        MarkerTypes = varargin{i};
-    elseif strcmpi(varargin{i},'CalcStats')
-        i = i + 1;
-        CalcGroup = varargin{i};
-        CalcStats = true;
+                case 'variableidentifier'
+                    VariableIdentifier =ArgVal;
+                case 'figuresize'
+                    FigureSize = ArgVal;
+                case 'ylabel'
+                    YlabelTxt =ArgVal;
+                case 'titletext'
+                    TitleTxt = ArgVal;
+                case 'colormap'
+                    CMap = ArgVal;
+                case 'markertypes'
+                    MarkerTypes = ArgVal;
+                case 'calcstats'
+                    CalcGroup = ArgVal;
+                    CalcStats = true;
+               case 'targetaxes'
+                    TargetAxes = ArgVal;
+
+            end
+
+        end
     end
-
 end
-
 
 % Select Samples
 if isempty(GroupVariableName)
@@ -173,11 +177,16 @@ if SortData
 end
 
 % Create Figure
-fh = figure('Name','Box Plot','Color','w','Tag','Box Plot','Units','inches','Colormap',CMap);
-fh.Position(3:4) = FigureSize;
-ah = axes(fh,'NextPlot','add','tag','Gene Sample Plot','Box','on','FontSize',FontSize,'Linewidth',0.5,...
-    'ActivePositionProperty','outerposition','XGrid','on','YGrid','on');
-ah.LineWidth = 0.5;
+if isgraphics(TargetAxes,'axes')
+    ah = TargetAxes;
+    fh = TargetAxes.Parent;
+else
+    fh = figure('Name','Box Plot','Color','w','Tag','Box Plot','Units','inches','Colormap',CMap);
+    fh.Position(3:4) = FigureSize;
+    ah = axes(fh,'NextPlot','add','tag','Gene Sample Plot','Box','on','FontSize',FontSize,'Linewidth',0.5,...
+        'ActivePositionProperty','outerposition','XGrid','on','YGrid','on');
+    ah.LineWidth = 0.5;
+end
 ah.Colormap=CMap;
 
 % Select Sample Id
@@ -191,10 +200,12 @@ for i=1:nGroups
 
 end
 
-bh = boxplot(ah,y_var,GroupVariableNumber,'orientation','vertical','color',BoxColor,'Symbol','','Widths',BoxWidths);
-s=findobj( ah.Children, 'Tag', 'boxplot' );
-set( findobj( s.Children, 'LineStyle', '--' ),'LineStyle','-')
-set( s.Children,'LineWidth',BoxLineWidth)
+%bh = boxplot(ah,y_var,GroupVariableNumber,'orientation','vertical','color',BoxColor,'Symbol','','Widths',BoxWidths);
+bh = boxchart(ah,GroupVariableNumber,y_var,'orientation','vertical','BoxWidth',BoxWidths,'BoxFaceColor','none','BoxEdgeColor',BoxColor,'MarkerStyle','none','LineWidth',BoxLineWidth);
+
+%s=findobj( ah.Children, 'Tag', 'boxchart' )
+% set( findobj( s.Children, 'LineStyle', '--' ),'LineStyle','-')
+% set( s.Children,'LineWidth',BoxLineWidth)
 
 if isempty(YlabelTxt)
     %ylabel(sprintf('\\it %s\\rm value',VariableId{1}),'FontSize',FontSize)
@@ -229,11 +240,16 @@ if CalcStats
             Y_pos = Y_pos+y_nudge;
         end
         line(CalcGroup(i,:),[Y_pos Y_pos],'Color',[0 0 0],'Linewidth',0.75)
-        [~,p_tt] = ttest2(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),0.05,'both','unequal');
-        [p_mw] = ranksum(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))));
-        txt_p = pval2stars(p_tt,[]);
+        switch lower(StatType)
+            case 't-test'
+                [~,p_val] = ttest2(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),0.05,'both','unequal');
+            case 'mw'
+                [p_val] = ranksum(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))));
+        end
+        
+        txt_p = pval2stars(p_val,[]);
         if PlotStars
-            if p_tt > 0.05
+            if p_val > 0.05
                 FontSize = 6;
                 VerticalAlignment = 'bottom';
             else
@@ -245,7 +261,7 @@ if CalcStats
 
             FontSize = 6;
             VerticalAlignment = 'bottom';
-            txt_p = num2str(p_tt,2);
+            txt_p = num2str(p_val,2);
             text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
         end
 

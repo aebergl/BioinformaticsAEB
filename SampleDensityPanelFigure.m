@@ -106,7 +106,7 @@ RESULTS_DATA = CreateDataStructure(nArrays,nVar,[],[]);
 RESULTS_DATA.Title = 'Sample Density';
 
 RESULTS_DATA.ColId=VarNames;
-RESULTS_DATA.RowId = SampleIds(OtherSampleIndx);
+%RESULTS_DATA.RowId = SampleIds(OtherSampleIndx);
 
 
 
@@ -132,6 +132,7 @@ for i = 1:nImages
             RefSampleIndx_y = strcmp(MatchedSamplePairs(counter,2),SampleIds);
             x_ref=DATA.X(RefSampleIndx_x,:);
             y_sample=DATA.X(RefSampleIndx_y,:);
+            
             DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',mSize,'PointsToExclude', PointsToExclude);
             xlabel(MatchedSamplePairs(counter,1),'FontSize',FontSize+2,'Interpreter','none');
             ylabel(MatchedSamplePairs(counter,2), 'FontSize',FontSize+2,'Interpreter','none')

@@ -86,7 +86,7 @@ if SeperateFiles
         fprintf(fid_VA,'\n');
     end
     fclose(fid_VA);
-%%%%%%%
+
     [fid_SURV,message] = fopen(strcat(name,'_Survival',ext),'w');
     if  fid_SURV == -1
         disp(FileOut)
@@ -113,7 +113,7 @@ fprintf(fid,'Id');
 if SampleAnnotationFlag
     if  ~isempty(DATA.RowAnnotationFields)
         fprintf(fid,format_str_txt,DATA.RowAnnotationFields{:});
-        fprintf(fid,'\t');
+        %fprintf(fid,'\t');
     end
 end
 
@@ -138,7 +138,7 @@ for i=1:DATA.nRow
     if SampleAnnotationFlag
         if  ~isempty(DATA.RowAnnotation)
             fprintf(fid,format_str_txt,DATA.RowAnnotation{i,:});
-            fprintf(fid,'\t');
+            %fprintf(fid,'\t');
         end
     end
     if SurvivalFlag & SampleAnnotationFlag
