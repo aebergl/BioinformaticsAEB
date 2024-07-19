@@ -94,6 +94,7 @@ else
 end
 indx = ismember(DATA_ID,VariableId_x);
 x_var = DATA.X(:,indx);
+x_var = -log10(x_var);
 x_var(~SampleIndxToUse) = NaN;
 
 indx = ismember(DATA_ID,VariableId_y);
@@ -145,6 +146,8 @@ end
 
 line(ah,ah.XLim,[0 0],'Linewidth',0.5,'Color','k','LineStyle','-')
 line(ah,[0 0],ah.YLim,'Linewidth',0.5,'Color','k','LineStyle','-')
+VariableId_x = strrep(VariableId_x,'_' , ' ');
+VariableId_y = strrep(VariableId_y,'_' , ' ');
 ah.XLabel.String = VariableId_x;
 ah.YLabel.String = VariableId_y;
 
