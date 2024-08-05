@@ -94,7 +94,7 @@ else
 end
 indx = ismember(DATA_ID,VariableId_x);
 x_var = DATA.X(:,indx);
-x_var = -log10(x_var);
+%x_var = -log10(x_var);
 x_var(~SampleIndxToUse) = NaN;
 
 indx = ismember(DATA_ID,VariableId_y);

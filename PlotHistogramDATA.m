@@ -1,11 +1,11 @@
 function fh = PlotHistogramDATA(DATA,GroupVariable,GroupsToUse,CMap,LineTypes)
-LineWidth = 1;
+LineWidth = 1.5;
 FontSize = 12;
 nBins = 100;
 BandwidthValue = 0.05;
 nPoints=1000;
 KernalDensity = true;
-AlphaValue  = 0.6;
+AlphaValue  = 1;
 
 if isempty(GroupVariable)
     nGroups = 1;
@@ -82,7 +82,7 @@ for i = 1:nGroups
 
         end
 
-        UniqueLineObjects(i) = line(x,N,'Parent',ah,'LineWidth',LineWidth,'Color',[CMap(i,:) AlphaValue]);
+        UniqueLineObjects(i) = line(x,N,'Parent',ah,'LineWidth',LineWidth,'Color',[CMap(i,:) AlphaValue],'LineStyle',LineTypes{i});
         
         % row = dataTipTextRow('',DATA.RowAnnotation(group_indx(j),1));
         % UniqueLineObjects(i).DataTipTemplate.DataTipRows = row;

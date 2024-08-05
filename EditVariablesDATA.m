@@ -47,6 +47,7 @@ else
     DATA_ID = DATA.ColId;
 end
 
+
 if Truncate
     DATA_ID = cellfun(@(x) x(1:Truncate), DATA_ID, 'UniformOutput', false);
     InputIds = cellfun(@(x) x(1:Truncate), InputIds, 'UniformOutput', false);

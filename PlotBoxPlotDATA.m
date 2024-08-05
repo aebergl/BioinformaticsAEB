@@ -1,8 +1,8 @@
 function fh = PlotBoxPlotDATA(DATA,VariableId,GroupVariableName,GroupsToUse,varargin)
-MarkerSize = 30;
-MarkerLineWidth = 1;
+MarkerSize = 10;
+MarkerLineWidth = 0.5;
 BoxLineWidth = 0.5;
-FontSize = 8;
+FontSize = 6;
 FigureSize = [3,2.6];
 BoxColor = [0 0 0];
 MarkerTypes = {'o'}';
@@ -18,8 +18,9 @@ CalcGroup = [];
 CalcGroupAllUnique = true;
 StatType = 't-test';
 StatType = 'MW';
-PlotStars = false;
+PlotStars = true;
 TargetAxes = false;
+XTickAngle = -45;
 % CMap = GetPalette('Lancet',[3 4 5]);
 
 CMap = GetPalette('Science');
@@ -209,7 +210,7 @@ bh = boxchart(ah,GroupVariableNumber,y_var,'orientation','vertical','BoxWidth',B
 
 if isempty(YlabelTxt)
     %ylabel(sprintf('\\it %s\\rm value',VariableId{1}),'FontSize',FontSize)
-    ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize)
+    ylabel(sprintf('\\it%s',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('%s \\beta-value',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('Average \\beta-value',VariableId{1}),'FontSize',FontSize)
 else
@@ -222,7 +223,7 @@ end
 
 ah.XLim = [0.3 nGroups+0.7];
 ah.XTick = 1:nGroups;
-ah.XTickLabelRotation = -45;
+ah.XTickLabelRotation = XTickAngle;
 ah.XTickLabel = GroupName;
 
 y_nudge=range(y_var)/10;
@@ -250,10 +251,10 @@ if CalcStats
         txt_p = pval2stars(p_val,[]);
         if PlotStars
             if p_val > 0.05
-                FontSize = 6;
+                FontSize = FontSize;
                 VerticalAlignment = 'bottom';
             else
-                FontSize = 12;
+                FontSize = 8;
                 VerticalAlignment = 'middle';
             end
             text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
