@@ -17,11 +17,10 @@ end
 if sum(TimeColumn) < length(TimeColumnId)
     error('Not all Event column found')
 end
-Time = DATA.RowAnnotation(:,TimeColumn)
+Time = DATA.RowAnnotation(:,TimeColumn);
 
-
-Time=cellfun(@(x) str2num(x), Time, 'UniformOutput', 0)
-Time = cell2mat(Time)
+Time=cellfun(@(x) str2double(x), Time, 'UniformOutput', 0);
+Time = cell2mat(Time);
 
 
 DATA.SURVIVAL.RowId = DATA.RowId;

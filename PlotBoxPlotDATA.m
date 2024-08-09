@@ -1,9 +1,9 @@
 function fh = PlotBoxPlotDATA(DATA,VariableId,GroupVariableName,GroupsToUse,varargin)
-MarkerSize = 10;
-MarkerLineWidth = 0.5;
-BoxLineWidth = 0.5;
-FontSize = 6;
-FigureSize = [3,2.6];
+MarkerSize = 30;
+MarkerLineWidth = 1;
+BoxLineWidth = 1;
+FontSize = 10;
+FigureSize = [2,2.6];
 BoxColor = [0 0 0];
 MarkerTypes = {'o'}';
 CMap = GetPalette('aeb01');
@@ -17,11 +17,26 @@ CalcStats = false;
 CalcGroup = [];
 CalcGroupAllUnique = true;
 StatType = 't-test';
-StatType = 'MW';
+%StatType = 'MW';
 PlotStars = true;
 TargetAxes = false;
-XTickAngle = -45;
+XTickAngle = 0;
+
 % CMap = GetPalette('Lancet',[3 4 5]);
+
+% Radiation Methylation
+%*******************
+% MarkerSize = 10;
+% MarkerLineWidth = 0.5;
+% BoxLineWidth = 0.5;
+% FontSize = 6;
+% FigureSize = [3,2.6];
+% BoxWidths = 0.8;
+% XJitterWidth = 0.6;
+% StatType = 'MW';
+% PlotStars = true;
+%*******************
+
 
 CMap = GetPalette('Science');
 
@@ -184,6 +199,7 @@ if isgraphics(TargetAxes,'axes')
 else
     fh = figure('Name','Box Plot','Color','w','Tag','Box Plot','Units','inches','Colormap',CMap);
     fh.Position(3:4) = FigureSize;
+    fh.Renderer='painters';
     ah = axes(fh,'NextPlot','add','tag','Gene Sample Plot','Box','on','FontSize',FontSize,'Linewidth',0.5,...
         'ActivePositionProperty','outerposition','XGrid','on','YGrid','on');
     ah.LineWidth = 0.5;
@@ -209,8 +225,10 @@ bh = boxchart(ah,GroupVariableNumber,y_var,'orientation','vertical','BoxWidth',B
 % set( s.Children,'LineWidth',BoxLineWidth)
 
 if isempty(YlabelTxt)
+    ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it %s\\rm value',VariableId{1}),'FontSize',FontSize)
-    ylabel(sprintf('\\it%s',VariableId{1}),'FontSize',FontSize)
+    %ylabel(sprintf('\\it%s',VariableId{1}),'FontSize',FontSize)
+
     %ylabel(sprintf('%s \\beta-value',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('Average \\beta-value',VariableId{1}),'FontSize',FontSize)
 else
@@ -269,7 +287,12 @@ if CalcStats
 
     end
 end
+try
 ah.YLim = [min(y_var)-y_nudge max([Y_pos,MAX_Y]) + y_nudge*2];
+catch
+
+end
+
 % UniqueLineObjects=gobjects(nGroups,1);
 % for i = 1:nGroups
 %     group_indx = find(SampleIndx(:,i));

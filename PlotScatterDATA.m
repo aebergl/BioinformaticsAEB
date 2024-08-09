@@ -1,5 +1,5 @@
 function fh = PlotScatterDATA(DATA,VariableId_x,VariableId_y,GroupVariableName,GroupsToUse,varargin)
-MarkerSize = 100;
+MarkerSize = 75;
 MarkerEdgeLineWidth = 0.5;
 AlphaValue=0.8;
 AlphaValueMarkerLine = 0.8;
@@ -10,6 +10,8 @@ MarkerTypes = {'o','v','^','<','>','d'}';
 CMap = GetPalette('aeb01');
 AxisType = 'normal';
 VariableIdentifier = false;
+AddCorr = true;
+CorrType = 'Pearson';
 
 i=0;
 while i<numel(varargin)
@@ -93,6 +95,7 @@ else
     DATA_ID = DATA.ColId;
 end
 indx = ismember(DATA_ID,VariableId_x);
+
 x_var = DATA.X(:,indx);
 %x_var = -log10(x_var);
 x_var(~SampleIndxToUse) = NaN;
@@ -116,6 +119,7 @@ MarkerTypes = MarkerTypes(1:nGroups,:);
 % Create Figure
 fh = figure('Name','Scatter Plot','Color','w','Tag','Scatter Plot','Units','inches','Colormap',CMap);
 fh.Position(3:4) = FigureSize;
+fh.Renderer='painters';
 ah = axes(fh,'NextPlot','add','tag','Gene Sample Plot','Box','on','FontSize',FontSize,'Linewidth',0.5,...
     'ActivePositionProperty','outerposition','XGrid','on','YGrid','on');
 ah.LineWidth = 0.5;
@@ -144,8 +148,18 @@ if ~isempty(GroupName)
     lh.AutoUpdate='off';
 end
 
-line(ah,ah.XLim,[0 0],'Linewidth',0.5,'Color','k','LineStyle','-')
-line(ah,[0 0],ah.YLim,'Linewidth',0.5,'Color','k','LineStyle','-')
+if AddCorr
+    [r p_val] = corr(x_var, y_var,'Type','Spearman','Rows','pairwise')
+    [r p_val] = corr(x_var, y_var,'Type','Pearson','Rows','pairwise')
+    txt_str{1} = sprintf('r=%.2f',r);
+    txt_str{2} = sprintf('p=%.2g',p_val);
+
+    text(ah,(ah.XLim(2)-ah.XLim(1))/2+nudgeX,ah.YLim(2)-nudgeY/2,txt_str,'VerticalAlignment','Top','HorizontalAlignment', 'Left','FontSize',FontSize);
+end
+
+
+% line(ah,ah.XLim,[0 0],'Linewidth',0.5,'Color','k','LineStyle','-')
+% line(ah,[0 0],ah.YLim,'Linewidth',0.5,'Color','k','LineStyle','-')
 VariableId_x = strrep(VariableId_x,'_' , ' ');
 VariableId_y = strrep(VariableId_y,'_' , ' ');
 ah.XLabel.String = VariableId_x;
