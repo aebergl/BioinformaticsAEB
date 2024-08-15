@@ -10,12 +10,12 @@ if DATA.nCol ~= DATA2.nCol
 end
 
 % Check for matching ColId
-if ~all(DATA.ColId == DATA2.ColId)
+if ~all(string(DATA.ColId) == string(DATA2.ColId))
     error('DATA and DATA2 have different ColIds')
 end
 
 % Check for matching ColId
-if ~all(DATA.RowAnnotationFields == DATA2.RowAnnotationFields)
+if ~all(string(DATA.RowAnnotationFields) == string(DATA2.RowAnnotationFields))
     error('DATA and DATA2 have different RowAnnotationFields')
 end
 

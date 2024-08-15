@@ -2,7 +2,7 @@ function fh = PlotScatterDATA(DATA,VariableId_x,VariableId_y,GroupVariableName,G
 MarkerSize = 75;
 MarkerEdgeLineWidth = 0.5;
 AlphaValue=0.8;
-AlphaValueMarkerLine = 0.8;
+AlphaValueMarkerLine = 0.95;
 MarkerEdgeColor = [0.1 0.1 0.1];
 FontSize = 10;
 FigureSize = [3,2.6];
@@ -10,7 +10,7 @@ MarkerTypes = {'o','v','^','<','>','d'}';
 CMap = GetPalette('aeb01');
 AxisType = 'normal';
 VariableIdentifier = false;
-AddCorr = true;
+AddCorr = false;
 CorrType = 'Pearson';
 
 i=0;
@@ -133,7 +133,7 @@ axis(AxisType)
 
 for i=1:nGroups
     indx = SampleIndxMat(:,i);
-    sh = scatter(ah,x_var(indx),y_var(indx),MarkerSize,CMap(i,:),MarkerTypes{i},'XJitter','density','Linewidth',MarkerEdgeLineWidth,'MarkerFaceColor','flat','MarkerEdgeColor',MarkerEdgeColor);
+    sh = scatter(ah,x_var(indx),y_var(indx),MarkerSize,CMap(i,:),MarkerTypes{i},'Linewidth',MarkerEdgeLineWidth,'MarkerFaceColor','flat','MarkerEdgeColor',MarkerEdgeColor);
     row = dataTipTextRow('',SampleId(indx));
     sh.DataTipTemplate.DataTipRows = row;
     sh.DataTipTemplate.Interpreter='none';

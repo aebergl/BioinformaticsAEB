@@ -1,20 +1,20 @@
-function fh = GSEA_DotPlot_MultiDataSets(DATA,GeneSetSource,XAxisId,XGroups,YAxisId,YGroups,SizeVar,ColorVar)
+function fh = ExtBlood_DotPlot_MultiDataSets(DATA,XAxisId,XGroups,YAxisId,YGroups,SizeVar,ColorVar)
 
 VariableIdentifier=[];
-FontSize = 8;
+FontSize = 10;
 minSize = 20;
 maxSize = 100;
 LineWidth = 0.5;
 GridLines = 'on';
 RightMargin = 0.5;
-SizeCutOffs =[1 0.05 0.01 0.001 0.0001];
-LegendSizeVal = [5 20 40 60 80];
+SizeCutOffs =[1 0.1 0.05 0.01 0.001];
+LegendSizeVal = [5 40 60 80 100];
 
 
 CMap = colorcet('D01');
 CLim = [-3 3];
 fWidth = 4;
-fHight = 7.5;
+fHight = 4;
 
 % Get groups for X-axis
 indx = strcmpi(XAxisId,DATA.RowAnnotationFields);
@@ -77,6 +77,8 @@ nVal = length(ColorVal);
 nXval = length(unique(XAxisData));
 nYval = length(unique(YAxisData));
 
+ColorVal = log2(ColorVal);
+
 % Make numeric for plotting
 XAxisDataPlot = double(XAxisData);
 XAxisDatalabels = categories(XAxisData);
@@ -92,6 +94,7 @@ SizeValPlot = LegendSizeVal(LegendSizeValMat);
 
 fh=figure('Name','GSEA Plot','Color','w','Tag','GSEA Plot','Units','inches');
 fh.Position(3:4) = [fWidth fHight];
+fh.Renderer='painters';
 ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','on','Layer','top','FontSize',FontSize,'Units','inches',...
     'PositionConstraint','outerposition','Clipping','off','YDir','reverse');
 
@@ -135,7 +138,7 @@ ah.XAxis.TickLabels = XAxisDatalabels;
 % Add color bar
 ch = colorbar(ah,'Units','inches','FontSize',FontSize,...
     'Position',[ah.Position(1) + ah.Position(3)+0.1, ah.Position(2) 0.1, fHight/5]);
-ch.Label.String=ColorVar;
+ch.Label.String='log_2 HR';
 ch.FontSize=FontSize;
 
 % Add size legend
