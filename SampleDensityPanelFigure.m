@@ -1,7 +1,8 @@
 function [fh RESULTS_DATA] = SampleDensityPanelFigure(DATA,IdColumn,Refsample,nRow,nCol,varargin)
 
 
-PageWidth = 7.5;
+PageWidth = 8.9;
+PageHight = 8;
 ShowFigure = true;
 FontSize = 6;
 ExportPlot = false;
@@ -55,6 +56,7 @@ else
     IDColumnIndx = strcmp(IdColumn,DATA.RowAnnotationFields);
     SampleIds = DATA.RowAnnotation(:,IDColumnIndx);
 end
+
 if ALLvsALL
     n=length(SampleIds);
     MatchedSamplePairs = cell(n*(n-1)/2,2);
@@ -115,7 +117,8 @@ for i = 1:nImages
     fh(i) = figure('Name','Array Image','Color','w','Tag','Array Image',...
         'Visible',ShowFigure,'Units','inches','Colormap',turbo);
     fh(i).Position(3) = PageWidth;
-    fh(i).Position(4) = PageWidth*nRow/nCol;
+    %fh(i).Position(4) = PageWidth*nRow/nCol;
+     fh(i).Position(4) = PageHight;
     th = tiledlayout(fh(i),nRow,nCol,'TileSpacing','tight','padding','tight');
     %th.Title.String = Refsample;
     %th.Title.FontWeight = 'bold';
@@ -168,9 +171,8 @@ for i = 1:nImages
             case 'Methylation'
                 nDiff_1 = sum(abs(x_ref-y_sample) > 0.1);
                 nDiff_2 = sum(abs(x_ref-y_sample) > 0.2);
-                Str(1) = {['r = ',sprintf('%.5f',r_Pearson)]};
-                Str(2) = {['Num > 0.1: ',sprintf('%u',nDiff_1)]};
-                Str(3) = {['Num > 0.2: ',sprintf('%u',nDiff_2)]};
+                Str(1) = {sprintf('rp=%.4f rs=%.4f ccc=%.4f',r_Pearson,r_Spearman,c{1}.est)};
+                Str(2) = {sprintf('n > 0.1: %u   n > 0.2-fold: %u',nDiff_1,nDiff_2)};
                 text(ah.XLim(1)+0.01,ah.YLim(2)+0.01,Str,'FontSize',FontSize,'VerticalAlignment','bottom','HorizontalAlignment','Left','Color','k');
                 line([ah.XLim(1) ah.XLim(2)],[ah.YLim(1) ah.YLim(2)],'Linewidth',LineWidth,'LineStyle','-','color','k')
                 line([ah.XLim(1) ah.XLim(2)-0.1],[ah.YLim(1)+0.1 ah.YLim(2)],'Linewidth',LineWidth,'LineStyle',':','color','k')
