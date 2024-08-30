@@ -78,8 +78,8 @@ end
 SampleIndxToUse = any(SampleIndxMat,2);
 
 % Select Sample Id
-%SampleId = DATA.RowAnnotation(:,1);
-SampleId = DATA.RowId;
+SampleId = DATA.RowAnnotation(:,1);
+%SampleId = DATA.RowId;
 
 % Selection of Y variable
 if VariableIdentifier

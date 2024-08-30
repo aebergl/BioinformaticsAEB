@@ -18,9 +18,9 @@ CalcGroup = [];
 CalcGroupAllUnique = true;
 StatType = 't-test';
 %StatType = 'MW';
-PlotStars = true;
+PlotStars = false;
 TargetAxes = false;
-XTickAngle = 0;
+XTickAngle = -45;
 
 % CMap = GetPalette('Lancet',[3 4 5]);
 
