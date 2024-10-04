@@ -10,6 +10,8 @@ RightMargin = 0.8;
 NameField = "NAME";
 SizeCutOffs =[1 0.05 0.01 0.001 0.0001];
 LegendSizeVal = [5 20 40 60 80];
+% SizeCutOffs =[1 0.2 0.1 0.05 ];
+% LegendSizeVal = [5 40 60 100];
 % SizeCutOffs =[1 0.15 0.1 0.05 0.01 ];
 % LegendSizeVal = [5 20 40 60 80];
 
@@ -48,7 +50,7 @@ nPos = length(xVal_pos);
 
 if ~ isempty(File_neg)
     opts_neg=detectImportOptions(File_neg,'FileType','delimitedtext','VariableNamingRule','preserve',"TextType","string","Delimiter","\t");
-    T_neg=readtable(File_neg,opts_pos);
+    T_neg=readtable(File_neg,opts_neg);
     xVal_neg = table2array(T_neg(:,X_value_name));
     SizeVal_neg = table2array(T_neg(:,Size_value_Name));
     YtickLabelTxt_neg = table2array(T_neg(:,NameField));

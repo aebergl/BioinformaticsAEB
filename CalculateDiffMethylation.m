@@ -95,6 +95,7 @@ if isempty(DATA_Median)
     end
     ChrTxt = {'Chr.01','Chr.02','Chr.03','Chr.04','Chr.05','Chr.06','Chr.07','Chr.08','Chr.09','Chr.10','Chr.11','Chr.12','Chr.13','Chr.14','Chr.15','Chr.16','Chr.17','Chr.18','Chr.19','Chr.20','Chr.21','Chr.22'}';
     ChrTxt=strcat({'Average '},ChrTxt);
+    RESULTS_DATA.ColId = [RESULTS_DATA.ColId; ChrTxt];
 else
     RESULTS_DATA.X(:,2) = sum(X_pos,2,'omitnan') ./ x_max;
     RESULTS_DATA.X(:,3) = sum(X_neg,2,'omitnan') ./ x_min;
@@ -108,7 +109,7 @@ else
     ChrTxt = {'Chr.01','Chr.02','Chr.03','Chr.04','Chr.05','Chr.06','Chr.07','Chr.08','Chr.09','Chr.10','Chr.11','Chr.12','Chr.13','Chr.14','Chr.15','Chr.16','Chr.17','Chr.18','Chr.19','Chr.20','Chr.21','Chr.22'}';
     ChrTxtHyper=strcat({'Hyper '},ChrTxt);
     ChrTxtHypo=strcat({'Hypo '},ChrTxt);
+    RESULTS_DATA.ColId = [RESULTS_DATA.ColId; ChrTxtHyper; ChrTxtHypo];
 end
 
 
-RESULTS_DATA.ColId = [RESULTS_DATA.ColId; ChrTxtHyper; ChrTxtHypo];

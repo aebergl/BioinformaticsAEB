@@ -155,9 +155,9 @@ y_var(~SampleIndxToUse) = NaN;
 
 if size(y_var,2) > 1
     %y_var = B2M(y_var);
-    %y_var=mean(y_var,2,"omitnan");
-    [PCA_Model] = NIPALS_PCA(y_var,'NumComp',1,'ScaleX',false);
-    y_var = PCA_Model.T(:,1);
+    y_var=mean(y_var,2,"omitnan");
+    % [PCA_Model] = NIPALS_PCA(y_var,'NumComp',1,'ScaleX',false);
+    % y_var = PCA_Model.T(:,1);
     VariableId = "Average";
 end
 
@@ -225,8 +225,9 @@ bh = boxchart(ah,GroupVariableNumber,y_var,'orientation','vertical','BoxWidth',B
 % set( s.Children,'LineWidth',BoxLineWidth)
 
 if isempty(YlabelTxt)
-    ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize)
+    %ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it %s\\rm value',VariableId{1}),'FontSize',FontSize)
+    ylabel(sprintf('\\it %s\\rm expression',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it%s',VariableId{1}),'FontSize',FontSize)
 
     %ylabel(sprintf('%s \\beta-value',VariableId{1}),'FontSize',FontSize)

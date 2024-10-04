@@ -263,7 +263,7 @@ cMap=flipud(cMap);
 cMap = colormap(colorcet('L02','reverse',true));
 
 % Select Sample Id
-SampleId = DATA.RowAnnotation(:,2);
+SampleId = DATA.RowAnnotation(:,18);
 %SampleId = DATA.RowId;
 SampleId_pos = SampleId(indx_pos);
 SampleId_neg = SampleId(indx_neg);
@@ -276,6 +276,8 @@ if any(indx_pos_scatter)
     sh_pos.MarkerFaceAlpha = 'flat';
     row = dataTipTextRow('',SampleId_pos(indx_pos_scatter));
     sh_pos.DataTipTemplate.DataTipRows = row;
+    sh_pos.DataTipTemplate.FontSize = FontSize;
+    sh_pos.DataTipTemplate.FontAngle = 'italic';
 
 end
 
@@ -287,7 +289,8 @@ if any(indx_neg_scatter)
     sh_neg.MarkerFaceAlpha = 'flat';
     row = dataTipTextRow('',SampleId_neg(indx_neg_scatter));
     sh_neg.DataTipTemplate.DataTipRows = row;
-
+    sh_neg.DataTipTemplate.FontSize = FontSize;
+    sh_neg.DataTipTemplate.FontAngle = 'italic';
 end
 
 if ~isempty(RowsToHighligh)

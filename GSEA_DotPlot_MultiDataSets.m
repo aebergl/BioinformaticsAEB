@@ -6,7 +6,7 @@ minSize = 20;
 maxSize = 100;
 LineWidth = 0.5;
 GridLines = 'on';
-RightMargin = 0.5;
+RightMargin = 0.7;
 SizeCutOffs =[1 0.05 0.01 0.001 0.0001];
 LegendSizeVal = [5 20 40 60 80];
 

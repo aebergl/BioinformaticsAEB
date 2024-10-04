@@ -80,6 +80,7 @@ end
 % Get info for annotation file
 try
     opts = detectImportOptions(FileName,'Sheet',SheetName,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true);
+    opts.DataRange='A2';
 catch
     opts = detectImportOptions(FileName,'FileType','text','Delimiter',Delimiter,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true);
 end
@@ -112,6 +113,7 @@ switch lower(fExt)
     otherwise  % Under all circumstances SWITCH gets an OTHERWISE!
         error('Unexpected file extension: %s', fExt);
 end
+
 
 % Fix numeric to str
 indx_numeric = cellfun(@(x) isnumeric(x),C);

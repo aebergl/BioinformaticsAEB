@@ -86,27 +86,27 @@ if SeperateFiles
         fprintf(fid_VA,'\n');
     end
     fclose(fid_VA);
-
-    [fid_SURV,message] = fopen(strcat(name,'_Survival',ext),'w');
-    if  fid_SURV == -1
-        disp(FileOut)
-        disp(message)
-        return
-    end
-    fprintf(fid_SURV,'SampleId');
-    for i=1:length(DATA.SURVIVAL.SurvivalTypes)
-           fprintf(fid_SURV,'\t%s (Event)\t%s Time (%s)',DATA.SURVIVAL.SurvivalTypes{i},DATA.SURVIVAL.SurvivalTypes{i},DATA.SURVIVAL.Units{i});
-    end
-    fprintf(fid_SURV,'\n');
-    for i=1:DATA.nRow
-        fprintf(fid_SURV,format_str_short,DATA.SURVIVAL.RowId{i});
-        for j=1:length(DATA.SURVIVAL.SurvivalTypes)
-            fprintf(fid_SURV,'\t%s\t%g',DATA.SURVIVAL.SurvEvent{i,j},DATA.SURVIVAL.SurvTime(i,j));
+    if  isfield(DATA,'SURVIVAL')
+        [fid_SURV,message] = fopen(strcat(name,'_Survival',ext),'w');
+        if  fid_SURV == -1
+            disp(FileOut)
+            disp(message)
+            return
+        end
+        fprintf(fid_SURV,'SampleId');
+        for i=1:length(DATA.SURVIVAL.SurvivalTypes)
+            fprintf(fid_SURV,'\t%s (Event)\t%s Time (%s)',DATA.SURVIVAL.SurvivalTypes{i},DATA.SURVIVAL.SurvivalTypes{i},DATA.SURVIVAL.Units{i});
         end
         fprintf(fid_SURV,'\n');
+        for i=1:DATA.nRow
+            fprintf(fid_SURV,format_str_short,DATA.SURVIVAL.RowId{i});
+            for j=1:length(DATA.SURVIVAL.SurvivalTypes)
+                fprintf(fid_SURV,'\t%s\t%g',DATA.SURVIVAL.SurvEvent{i,j},DATA.SURVIVAL.SurvTime(i,j));
+            end
+            fprintf(fid_SURV,'\n');
+        end
+        fclose(fid_SURV);
     end
-    fclose(fid_SURV);
-
 end
 
 fprintf(fid,'Id');
