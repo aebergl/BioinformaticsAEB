@@ -47,11 +47,11 @@ RESULTS.X(:,2) = (sum(DATA.X(:,indx_include)>0.5,2) - sum(DATA.X(:,indx_include)
 
 % Ratio >0.7/<0.3
 %RESULTS.X(:,3) = sum(DATA.X(:,indx_include)>0.7,2) ./ sum(DATA.X(:,indx_include)<0.3,2);
-RESULTS.X(:,3) = (sum(DATA.X(:,indx_include)>0.7,2) - sum(DATA.X(:,indx_include)<0.7,2)) ./ (sum(DATA.X(:,indx_include)>0.7,2) + sum(DATA.X(:,indx_include)<0.3,2));
+RESULTS.X(:,3) = (sum(DATA.X(:,indx_include)>0.7,2) - sum(DATA.X(:,indx_include)<0.3,2)) ./ (sum(DATA.X(:,indx_include)>0.7,2) + sum(DATA.X(:,indx_include)<0.3,2));
 
 % Ratio >0.75/<0.25
 %RESULTS.X(:,4) = sum(DATA.X(:,indx_include)>0.75,2) ./ sum(DATA.X(:,indx_include)<0.25,2);
-RESULTS.X(:,4) = (sum(DATA.X(:,indx_include)>0.75,2) - sum(DATA.X(:,indx_include)<0.75,2)) ./ (sum(DATA.X(:,indx_include)>0.75,2) + sum(DATA.X(:,indx_include)<0.25,2));
+RESULTS.X(:,4) = (sum(DATA.X(:,indx_include)>0.75,2) - sum(DATA.X(:,indx_include)<0.25,2)) ./ (sum(DATA.X(:,indx_include)>0.75,2) + sum(DATA.X(:,indx_include)<0.25,2));
 
 % Ratio >0.8/<0.2
 %RESULTS.X(:,5) = sum(DATA.X(:,indx_include)>0.8,2) ./ sum(DATA.X(:,indx_include)<0.2,2);
