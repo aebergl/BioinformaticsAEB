@@ -44,10 +44,10 @@ while i<numel(varargin)
         numIdColumns = varargin{i};
     elseif strcmpi(varargin{i},'Delimiter')
         i = i + 1;
-        DelimiterType = varargin{i};      
-    elseif strcmpi(varargin{i},'T')        
+        DelimiterType = varargin{i};
+    elseif strcmpi(varargin{i},'T')
         TransposeX = true;
-   elseif strcmpi(varargin{i},'NoT')
+    elseif strcmpi(varargin{i},'NoT')
         TransposeX = false;
     elseif strcmpi(varargin{i},'R')
         R_Input = 1;
@@ -95,7 +95,7 @@ numRead =numel(S{2});
 if numRead < numDataRows
 
     warning('WARNING!!! %u lines read but there should have been %u',numRead,numDataRows);
-    
+
 end
 
 DATA = CreateDataStructure(numRead,numXColumns,numIdColumns,numHeaderRows);
@@ -133,13 +133,19 @@ if numHeaderRows > 0
 
     end
 else
-    
-    
+    error('There need to be at least one header Ropw')
+
 end
+
+DATA.ColId=string(DATA.ColId);
+DATA.RowId=string(DATA.RowId);
+
 % transpose DATA
 if TransposeX
-    DATA = TransposeData(DATA);  
+    DATA = TransposeData(DATA);
 end
+
+
 
 % Check for unique identifiers
 
