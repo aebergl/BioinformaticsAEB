@@ -9,7 +9,10 @@ RightMargin = 0.8;
 
 NameField = "NAME";
 SizeCutOffs =[1 0.05 0.01 0.001 0.0001];
-LegendSizeVal = [5 20 40 60 80];
+LegendSizeVal = [5 20 40 60 80];1
+% SizeCutOffs =[1 0.2 0.05 0.01 0.001];
+% LegendSizeVal = [5 20 40 60 80];
+
 % SizeCutOffs =[1 0.2 0.1 0.05 ];
 % LegendSizeVal = [5 40 60 100];
 % SizeCutOffs =[1 0.15 0.1 0.05 0.01 ];
@@ -215,13 +218,14 @@ end
 sh = scatter(xVal,1:nGroups,SizeValPlot,ColorVal,'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
 
 StepVal = 1.1;
+StepVal = 0.6;
 
 % Add color legend
 YPos_Size = 0;
 YPos_Text = 0;
 YPos_Color = 0;
 
-YPos_Text = 1:StepVal:StepVal*3;
+YPos_Text = 1:StepVal:StepVal*4;
 
 
 text(ah.XLim(2)+1.8*nudgeVal,YPos_Text(1),CollectionType,'HorizontalAlignment','center','VerticalAlignment','middle','FontSize',FontSize,'FontWeight','bold')
@@ -241,8 +245,8 @@ switch lower(ColorBy)
         ColorGroupslegend = unique(ColorGroups,'stable');
         ColorValLegend = unique(ColorVal,'stable','rows');
 %        ColorValLegend = double(ColorValLegend);
-        YPos_Color = 1:StepVal:StepVal*length(ColorValLegend);
-        YPos_Color = YPos_Color + YPos_Text(end) + 1;
+        YPos_Color = 1:StepVal:StepVal*(length(ColorValLegend)+1);
+        YPos_Color = YPos_Color + YPos_Text(end) ;
         for i=1:length(ColorValLegend)
             scatter(ah,ah.XLim(2)+nudgeVal*0.9,YPos_Color(i),LegendSizeVal(end-1),ColorValLegend(i,:),'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
             text(ah.XLim(2)+1.3*nudgeVal,YPos_Color(i),ColorGroupslegend{i},'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
@@ -250,9 +254,9 @@ switch lower(ColorBy)
 end
 
 % Add size legend
-YPos_Size = 1:StepVal:StepVal*length(LegendSizeVal);
-YPos_Size = YPos_Size + YPos_Color(end) + 3;
-shl = scatter(ah,ah.XLim(2)+nudgeVal,YPos_Size,LegendSizeVal,[0 0 0]);
+YPos_Size = 1:StepVal:StepVal*(length(LegendSizeVal)+1);
+YPos_Size = YPos_Size + YPos_Color(end) + 1;
+
 text(ah.XLim(2)+1.3*nudgeVal,YPos_Size(1)-StepVal,Size_value_Name,'HorizontalAlignment','center','VerticalAlignment','middle','FontSize',FontSize)
 for i = 1:length(LegendSizeVal)
     if i==1
@@ -263,5 +267,6 @@ for i = 1:length(LegendSizeVal)
         txt_str = num2str(SizeCutOffs(i));
     end
     text(ah.XLim(2)+1.6*nudgeVal,YPos_Size(i),txt_str,'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
+    shl = scatter(ah,ah.XLim(2)+nudgeVal,YPos_Size(i),LegendSizeVal(i),[0 0 0]);
 end
 

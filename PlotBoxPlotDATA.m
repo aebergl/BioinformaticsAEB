@@ -21,6 +21,7 @@ StatType = 't-test';
 PlotStars = false;
 TargetAxes = false;
 XTickAngle = -45;
+Show_NS=false;
 
 % CMap = GetPalette('Lancet',[3 4 5]);
 
@@ -225,9 +226,9 @@ bh = boxchart(ah,GroupVariableNumber,y_var,'orientation','vertical','BoxWidth',B
 % set( s.Children,'LineWidth',BoxLineWidth)
 
 if isempty(YlabelTxt)
-    %ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize)
+    ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize,'Interpreter','none')
     %ylabel(sprintf('\\it %s\\rm value',VariableId{1}),'FontSize',FontSize)
-    ylabel(sprintf('\\it %s\\rm expression',VariableId{1}),'FontSize',FontSize)
+    %ylabel(sprintf('\\it %s\\rm expression',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it%s',VariableId{1}),'FontSize',FontSize)
 
     %ylabel(sprintf('%s \\beta-value',VariableId{1}),'FontSize',FontSize)
@@ -276,7 +277,9 @@ if CalcStats
                 FontSize = 8;
                 VerticalAlignment = 'middle';
             end
-            text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
+            if ~Show_NS && p_val < 0.05
+                text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
+            end
         else
 
             FontSize = 6;

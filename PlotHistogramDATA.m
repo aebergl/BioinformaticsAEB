@@ -1,10 +1,10 @@
 function fh = PlotHistogramDATA(DATA,GroupVariable,GroupsToUse,CMap,LineTypes)
-LineWidth = 2;
+LineWidth = 0.5;
 FontSize = 12;
 nBins = 100;
 BandwidthValue = 0.05;
 nPoints=1000;
-KernalDensity = true;
+KernalDensity = false;
 AlphaValue  = 0.8;
 
 if isempty(GroupVariable)

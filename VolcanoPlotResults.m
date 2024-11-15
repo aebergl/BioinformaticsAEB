@@ -14,7 +14,7 @@ i=0;
 Cmap_UpDn = [1 0 0; 0 0 1];
 XLim=[];
 YLim=[];
-
+TitleTxt = false;
 
 while i<numel(varargin)
     i = i + 1;
@@ -52,6 +52,10 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'FontSize')
         i = i + 1;
         FontSize = varargin{i};
+    elseif strcmpi(varargin{i},'Title')
+        i = i + 1;
+        TitleTxt = varargin{i};
+
     end
 end
 
@@ -65,8 +69,8 @@ else
 end
 switch X_Variable
     case 'Delta Average'
-        XLabel = {'\Delta \beta-value'};
-        %XLabel = {'\Delta M-value'};
+        %XLabel = {'\Delta \beta-value'};
+        XLabel = {'\Delta M-value'};
         %XLabel = {'Log_2 FC'};
     case 'Delta Median'
         XLabel = {'\Delta \beta-value'};
@@ -213,7 +217,8 @@ end
 
 fh=figure('Name','Volcano Plot','Color','w','Tag','Volcano Plot figure','Units','inches');
 fh.Position(3:4) = FigureSize;
-ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','off','Layer','top','FontSize',FontSize,'YAxisLocation','origin');
+ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','off','Layer','top','FontSize',FontSize,'YAxisLocation','origin','PositionConstraint','outerposition');
+
 ah.LineWidth = 0.5;
 switch PlotType
     case 'simple'
@@ -263,7 +268,7 @@ cMap=flipud(cMap);
 cMap = colormap(colorcet('L02','reverse',true));
 
 % Select Sample Id
-SampleId = DATA.RowAnnotation(:,18);
+SampleId = DATA.RowAnnotation(:,2);
 %SampleId = DATA.RowId;
 SampleId_pos = SampleId(indx_pos);
 SampleId_neg = SampleId(indx_neg);
@@ -300,6 +305,9 @@ if ~isempty(RowsToHighligh)
 
 end
 
+
+
+
 xlabel(ah,XLabel);
 ylabel(ah,YLabel);
 
@@ -330,6 +338,13 @@ end
 
 ah.YAxis.Label.HorizontalAlignment='center';
 ah.YAxis.Label.VerticalAlignment='bottom';
+
+if TitleTxt
+    th = title(TitleTxt,'FontWeight','normal','FontSize',FontSize+2);
+    th.Position(2) =th.Position(2) + nudge_y*1.5;
+    ah.Position(4) = 0.75;
+end
+
 
 switch PlotType
     case 'simple'

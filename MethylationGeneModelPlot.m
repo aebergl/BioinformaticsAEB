@@ -1,6 +1,6 @@
 function h = MethylationGeneModelPlot(DATA,GeneModel,GeneName,varargin)
 
-FontSize = 7;
+FontSize = 10;
 %CorrType='Pearson';
 CorrType='Spearman';
 FigureSize = [5 6];
@@ -50,12 +50,21 @@ h.XDisplayLabels = strings(N,1);
 % Scatter Plot
 ah_SC = axes(h.Parent,'Units','inches','NextPlot','add','Box','on',...
     'FontSize',FontSize,'Linewidth',0.5,'XGrid','on','YGrid','on','PositionConstraint','Outerposition',...
-    'InnerPosition',[LeftBorderWidth  h.InnerPosition(2)+AxesSize(1)+0.15    AxesSize]);
-scatter(ah_SC,repmat(1:N,M,1),X,'XJitter','density','XJitterWidth',0.5 )
+    'InnerPosition',[LeftBorderWidth  h.InnerPosition(2)+AxesSize(1)+0.25    AxesSize]);
+% scatter(ah_SC,repmat(1:N,M,1),X,'XJitter','density','XJitterWidth',0.5 )
+% ah_SC.XLim=[0.5 N+0.5];
+% ah_SC.XTick = 1:N;
+% ah_SC.XAxisLocation='bottom';
+% ah_SC.XTickLabelRotation = 0;
+Group=DATA.RowAnnotation(:,4);
+Group = repmat(Group,N,1);
+X_pos = repmat(1:N,M,1);
+boxchart(ah_SC,X_pos(:),X(:),'GroupByColor',Group)
 ah_SC.XLim=[0.5 N+0.5];
 ah_SC.XTick = 1:N;
 ah_SC.XAxisLocation='bottom';
 ah_SC.XTickLabelRotation = 0;
+
 ylabel(ah_SC,'\beta-value');
 title(GeneName,'FontWeight','normal')
 
