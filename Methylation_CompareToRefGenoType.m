@@ -1,4 +1,4 @@
-function [fh] = EPIC_SNP_Plot(DATA,SortingVariable,SimilarityThreshold,FigSize)
+function [fh] = Methylation_CompareToRefGenoType(DATA_Ref,DATA,SortingVariable,SimilarityThreshold,FigSize)
 
 SortingDirection = 'ascend';
 
@@ -8,6 +8,10 @@ maxSize = 100;
 LineWidth = 0.5;
 GridLines = 'on';
 RightMargin = 0.5;
+
+%Get Matching variables
+c_common = intersect(DATA_Ref.ColId,DATA.ColId);
+
 
 
 

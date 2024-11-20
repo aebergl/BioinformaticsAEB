@@ -1,4 +1,4 @@
-function DATA = Merge_DATA_Vertical(DATA,DATA2)
+function DATA = Merge_DATA_Vertical(DATA,DATA2,DataSetId,DataSetNames)
 % DATA = Merge_DATA_Vertical(DATA,DATA2)
 %
 %   Merge two data strcucures vertically
@@ -14,7 +14,7 @@ if ~all(string(DATA.ColId) == string(DATA2.ColId))
     error('DATA and DATA2 have different ColIds')
 end
 
-% Check for matching ColId
+% Check for matching RowAnnotationFields
 if ~all(string(DATA.RowAnnotationFields) == string(DATA2.RowAnnotationFields))
     error('DATA and DATA2 have different RowAnnotationFields')
 end
