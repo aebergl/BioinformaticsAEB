@@ -1,7 +1,7 @@
 function fh = PlotScatterDATA(DATA,VariableId_x,VariableId_y,GroupVariableName,GroupsToUse,varargin)
 MarkerSize = 100;
 MarkerEdgeLineWidth = 0.5;
-AlphaValue=0.5;
+AlphaValue=0.8;
 AlphaValueMarkerLine = 0.95;
 MarkerEdgeColor = [0.1 0.1 0.1];
 FontSize = 10;
@@ -78,8 +78,8 @@ end
 SampleIndxToUse = any(SampleIndxMat,2);
 
 % Select Sample Id
-%SampleId = DATA.RowAnnotation(:,1);
-SampleId = DATA.RowId;
+SampleId = DATA.RowAnnotation(:,1);
+%SampleId = DATA.RowId;
 
 % Selection of Y variable
 if VariableIdentifier

@@ -1,6 +1,6 @@
 function RESULTS = Methylation_Calc_Methylation_levels(DATA,CHR_Column)
 
-ChrToExclude = ["chrX" "chrY" "NA"];
+ChrToExclude = ["chrX" "chrY" "NA" "X" "Y"];
 
 VarNames = {'Average Methylation','Ratio >0.5/<0.5','Ratio >0.7/<0.3','Ratio >0.75/<0.25','Ratio >0.8/<0.2'};
 nVar = length(VarNames);

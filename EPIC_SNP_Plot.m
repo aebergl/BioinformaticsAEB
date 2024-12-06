@@ -2,7 +2,7 @@ function [fh] = EPIC_SNP_Plot(DATA,SortingVariable,SimilarityThreshold,FigSize)
 
 SortingDirection = 'ascend';
 
-FontSize = 7;
+FontSize = 8;
 minSize = 20;
 maxSize = 100;
 LineWidth = 0.5;
@@ -33,7 +33,7 @@ else
 end
 
 
-if size(X_data,2) < 100
+if size(X_data,2) < 1000
     if anynan(X_data)
         x = pdist(X_data,@naneucdist);
     else

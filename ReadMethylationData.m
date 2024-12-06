@@ -115,7 +115,7 @@ DATA = CreateDataStructure(numRead,numXColumns/2,numIdColumns,numHeaderRows);
 
 if numHeaderRows > 0
     [tmp,~] = textscan(HeaderData{1},'%q','delimiter',DelimiterType);
-    tmp = tmp{1};
+    tmp = tmp{1}
     if R_Input
         tmp = [{'SampleId'};tmp];
     end

@@ -208,8 +208,8 @@ end
 ah.Colormap=CMap;
 
 % Select Sample Id
-%SampleId = DATA.RowAnnotation(:,18);
-SampleId = DATA.RowId;
+SampleId = DATA.RowAnnotation(:,2);
+%SampleId = DATA.RowId;
 for i=1:nGroups
     indx = SampleIndxMat(:,i);
     sh = scatter(ah,GroupVariableNumber(indx),y_var(indx),MarkerSize,CMap(i,:),MarkerTypes{i},'XJitter','density','XJitterWidth',XJitterWidth,'Linewidth',MarkerLineWidth,'MarkerFaceColor',MarkerFaceColor);

@@ -16,3 +16,9 @@ DATA = renameStructField(DATA, 'ProbeAnnotation', 'ColAnnotation');
 DATA = rmfield(DATA,'ProbeXDim');
 DATA = rmfield(DATA,'SampleXDim');
 
+DATA.ColId = string(DATA.ColId);
+DATA.RowId = string(DATA.RowId);
+DATA.ColAnnotation = string(DATA.ColAnnotation);
+DATA.RowAnnotation = string(DATA.RowAnnotation);
+
+
