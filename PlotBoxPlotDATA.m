@@ -18,7 +18,7 @@ CalcGroup = [];
 CalcGroupAllUnique = true;
 StatType = 't-test';
 %StatType = 'MW';
-PlotStars = false;
+PlotStars = true;
 TargetAxes = false;
 XTickAngle = -45;
 Show_NS=false;
@@ -224,9 +224,9 @@ bh = boxchart(ah,GroupVariableNumber,y_var,'orientation','vertical','BoxWidth',B
 %s=findobj( ah.Children, 'Tag', 'boxchart' )
 % set( findobj( s.Children, 'LineStyle', '--' ),'LineStyle','-')
 % set( s.Children,'LineWidth',BoxLineWidth)
-
+VariableId
 if isempty(YlabelTxt)
-    ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize,'Interpreter','none')
+    ylabel(sprintf('%s',VariableId),'FontSize',FontSize,'Interpreter','none')
     %ylabel(sprintf('\\it %s\\rm value',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it %s\\rm expression',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it%s',VariableId{1}),'FontSize',FontSize)

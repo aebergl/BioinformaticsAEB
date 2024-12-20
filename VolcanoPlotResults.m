@@ -69,8 +69,8 @@ else
 end
 switch X_Variable
     case 'Delta Average'
-        %XLabel = {'\Delta \beta-value'};
-        XLabel = {'\Delta M-value'};
+        XLabel = {'\Delta \beta-value'};
+        %XLabel = {'\Delta M-value'};
         %XLabel = {'Log_2 FC'};
     case 'Delta Median'
         XLabel = {'\Delta \beta-value'};
@@ -268,8 +268,8 @@ cMap=flipud(cMap);
 cMap = colormap(colorcet('L02','reverse',true));
 
 % Select Sample Id
-SampleId = DATA.RowAnnotation(:,2);
-%SampleId = DATA.RowId;
+%SampleId = DATA.RowAnnotation(:,2);
+SampleId = DATA.RowId;
 SampleId_pos = SampleId(indx_pos);
 SampleId_neg = SampleId(indx_neg);
 
@@ -282,8 +282,8 @@ if any(indx_pos_scatter)
     row = dataTipTextRow('',SampleId_pos(indx_pos_scatter));
     sh_pos.DataTipTemplate.DataTipRows = row;
     sh_pos.DataTipTemplate.FontSize = FontSize;
-    sh_pos.DataTipTemplate.FontAngle = 'italic';
-
+    sh_pos.DataTipTemplate.FontAngle = 'normal';
+    sh_pos.DataTipTemplate.Interpreter = 'none';
 end
 
 if any(indx_neg_scatter)
@@ -295,7 +295,8 @@ if any(indx_neg_scatter)
     row = dataTipTextRow('',SampleId_neg(indx_neg_scatter));
     sh_neg.DataTipTemplate.DataTipRows = row;
     sh_neg.DataTipTemplate.FontSize = FontSize;
-    sh_neg.DataTipTemplate.FontAngle = 'italic';
+    sh_neg.DataTipTemplate.FontAngle = 'normal';
+    sh_neg.DataTipTemplate.Interpreter = 'none';
 end
 
 if ~isempty(RowsToHighligh)

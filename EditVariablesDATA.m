@@ -34,6 +34,7 @@ while i<numel(varargin)
     end
 end
 
+
 if VariableIdentifier
     indx = strcmpi(VariableIdentifier,DATA.ColAnnotationFields);
     if ~any(indx)
@@ -61,10 +62,11 @@ end
 
 if Stable
     if length(IdUnique) == DATA.nCol && strcmpi('keep',KeepRemove) % Simple if there is unique list of IDs
+
         [~,~,indx] = intersect(InputIds,DATA_ID,'Stable');
         DATA.X = DATA.X(:,indx);
-        DATA.RowId = DATA.ColId(indx);
-        DATA.nRow = size(DATA.X,2);
+        DATA.ColId = DATA.ColId(indx);
+        DATA.nCol = size(DATA.X,2);
         if ~isempty(DATA.ColAnnotation)
             DATA.ColAnnotation = DATA.ColAnnotation(indx,:);
         end
