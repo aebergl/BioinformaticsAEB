@@ -68,21 +68,21 @@ x_str = sprintf('\\fontsize{14}\\bf{\\color[rgb]%sTSS1500\n\\color[rgb]%sTSS200\
 x_str = sprintf('\\fontsize{8}\\bf{\\color[rgb]%sTSS1500\n\\color[rgb]%sTSS200\n\\color[rgb]%s5UTR\n\\color[rgb]%s1stExon\n\\color[rgb]%sExonBnd\n\\color[rgb]%s3UTR}',S_C1,S_C2,S_C3,S_C4,S_C5,S_C6);
 
 Ypos = 0;
-GeneAccession_indx = ~isundefined(S.GeneAccession);
-for j = 1:S.numTranscripts
-    Ypos = Ypos - 0.05;
-   for i=1:numProbes
-       GeneBodyType = cellstr(S.GeneGroup(i,j));
-       indx = strcmp(GeneBodyType,GeneGroupTypes);
-       if any(indx)
-           line([ i-0.5 i+0.5], [Ypos Ypos],'LineStyle','-','LineWidth',4,'Color',GeneColor(indx,:))
-       end
-       indx = find(GeneAccession_indx(:,j));
-       text(0.5,Ypos,cellstr(S.GeneAccession(indx(1),j)),'FontSize',6,'HorizontalAlignment','right','Interpreter','none')
-
-   end
-end
-line([ 0.5 numProbes + 0.5], [0 0],'LineStyle','-','LineWidth',1,'Color',[0 0 0]);
+% GeneAccession_indx = ~isundefined(S.GeneAccession);
+% for j = 1:S.numTranscripts
+%     Ypos = Ypos - 0.05;
+%    for i=1:numProbes
+%        GeneBodyType = cellstr(S.GeneGroup(i,j));
+%        indx = strcmp(GeneBodyType,GeneGroupTypes);
+%        if any(indx)
+%            line([ i-0.5 i+0.5], [Ypos Ypos],'LineStyle','-','LineWidth',4,'Color',GeneColor(indx,:))
+%        end
+%        indx = find(GeneAccession_indx(:,j));
+%        text(0.5,Ypos,cellstr(S.GeneAccession(indx(1),j)),'FontSize',6,'HorizontalAlignment','right','Interpreter','none')
+% 
+%    end
+% end
+% line([ 0.5 numProbes + 0.5], [0 0],'LineStyle','-','LineWidth',1,'Color',[0 0 0]);
 
 
 

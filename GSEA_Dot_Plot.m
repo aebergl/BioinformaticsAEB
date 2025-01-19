@@ -1,6 +1,6 @@
 function fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal,YTickText)
 
-FontSize = 7;
+FontSize = 10;
 minSize = 20;
 maxSize = 100;
 LineWidth = 0.5;

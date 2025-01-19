@@ -224,9 +224,9 @@ bh = boxchart(ah,GroupVariableNumber,y_var,'orientation','vertical','BoxWidth',B
 %s=findobj( ah.Children, 'Tag', 'boxchart' )
 % set( findobj( s.Children, 'LineStyle', '--' ),'LineStyle','-')
 % set( s.Children,'LineWidth',BoxLineWidth)
-VariableId
+
 if isempty(YlabelTxt)
-    ylabel(sprintf('%s',VariableId),'FontSize',FontSize,'Interpreter','none')
+    ylabel(sprintf('%s',VariableId),'FontSize',FontSize,'Interpreter','tex')
     %ylabel(sprintf('\\it %s\\rm value',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it %s\\rm expression',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it%s',VariableId{1}),'FontSize',FontSize)
@@ -256,7 +256,7 @@ if CalcStats
     for i=1:size(CalcGroup,1)
         if CalcGroupAllUnique && diff(CalcGroup(i,:)) == 1
             max_y = max([y_var(SampleIndxMat(:,CalcGroup(i,1))); y_var(SampleIndxMat(:,CalcGroup(i,2)))]);
-            Y_pos = max_y+y_nudge/1.5;
+            Y_pos = max_y+(y_nudge/1.5);
         else
             Y_pos = Y_pos+y_nudge;
         end
@@ -274,7 +274,7 @@ if CalcStats
                 FontSize = FontSize;
                 VerticalAlignment = 'bottom';
             else
-                FontSize = 8;
+                FontSize = 12;
                 VerticalAlignment = 'middle';
             end
             if ~Show_NS && p_val < 0.05
