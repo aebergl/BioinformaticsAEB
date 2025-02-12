@@ -1,21 +1,25 @@
 function [fh, varargout]= VolcanoPlotResults(DATA,X_Variable,X_CutOff,Y_Variable,Y_CutOff,varargin)
-printResults=false;
-FontSize=8;
+AlphaRange = [0.01 0.5];
+printResults = false;
+FontSize = 8;
 EqualXLim = false;
 PlotType = 'simple';
 Delimiter = '\t';
-AlphaRange = [0.01 0.5];
 SizeRange = [1 75];
 FigureSize = [1.8 1.8];
 TopNValues = 0;
 TopPrctile = 0;
 RowsToHighligh = [];
-i=0;
 Cmap_UpDn = [1 0 0; 0 0 1];
-XLim=[];
-YLim=[];
+XLim = [];
+YLim = [];
 TitleTxt = false;
+LineWidth = 0.5;
+DataTipVariableName = [];
+XlimCrop = false;
 
+i=0;
+%Check input options
 while i<numel(varargin)
     i = i + 1;
     if strcmpi(varargin{i},'AlphaRange')
@@ -48,14 +52,20 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'EqualXLim')
         EqualXLim = true;
     elseif strcmpi(varargin{i},'Print')
-        printResults = true;
+        printResults = true;    
+    elseif strcmpi(varargin{i},'XlimCrop')
+        XlimCrop = true;
     elseif strcmpi(varargin{i},'FontSize')
         i = i + 1;
         FontSize = varargin{i};
     elseif strcmpi(varargin{i},'Title')
         i = i + 1;
         TitleTxt = varargin{i};
-
+    elseif strcmpi(varargin{i},'DataTip')
+        i = i + 1;
+        DataTipVariableName = varargin{i};
+    else 
+        error('%s is not a valid input option',varargin{i}')
     end
 end
 
@@ -67,6 +77,8 @@ if any(indx_X_Val)
 else
     error('%s not found',X_Variable)
 end
+
+% Not a perfect solution but it works
 switch X_Variable
     case 'Delta Average'
         XLabel = {'\Delta \beta-value'};
@@ -74,7 +86,6 @@ switch X_Variable
         %XLabel = {'Log_2 FC'};
     case 'Delta Median'
         XLabel = {'\Delta \beta-value'};
-
     case 'HR logrank DSS'
         x_data =  log2(x_data);
         XLabel = {'log_2(HR DSS)'};
@@ -87,7 +98,6 @@ switch X_Variable
     case 'HR coxreg PFS'
         x_data =  log2(x_data);
         XLabel = {'log_2(HR PFS)'};
-
     case 'HR logrank PFI'
         x_data =  log2(x_data);
         XLabel = {'log_2(HR PFI)'};
@@ -114,6 +124,7 @@ if any(indx_Y_Val)
 else
     error('%s not found',Y_Variable)
 end
+% Not a perfect solution but it works
 switch Y_Variable
     case 'p logrank PFS'
         y_data =  -log10(y_data);
@@ -205,7 +216,6 @@ switch Y_Variable
     case 'fdr MW-test'
         y_data =  -log10(y_data);
         YLabel = {'-log_1_0(fdr MW-test)'};
-
     case 'p Spearman'
         y_data =  -log10(y_data);
         YLabel = {'-log_1_0(p Spearman)'};
@@ -215,11 +225,13 @@ switch Y_Variable
 
 end
 
+%Create Figure
 fh=figure('Name','Volcano Plot','Color','w','Tag','Volcano Plot figure','Units','inches');
 fh.Position(3:4) = FigureSize;
+%Create Axis
 ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','off','Layer','top','FontSize',FontSize,'YAxisLocation','origin','PositionConstraint','outerposition');
 
-ah.LineWidth = 0.5;
+ah.LineWidth = LineWidth;
 switch PlotType
     case 'simple'
         ah.XGrid= 'off';
@@ -230,16 +242,18 @@ switch PlotType
 end
 
 if TopNValues
-    Y_CutOff = min(maxk(y_data,TopNValues+1))
+    Y_CutOff = min(maxk(y_data,TopNValues+1));
 end
 
 if TopPrctile
-    Y_CutOff = prctile(y_data,TopPrctile)
+    Y_CutOff = prctile(y_data,TopPrctile);
 end
 MaxVal_X_Significant = max(abs(x_data(y_data > Y_CutOff)));
 
-% x_data(x_data>MaxVal_X_Significant) = MaxVal_X_Significant;
-% x_data(x_data<-MaxVal_X_Significant) = -MaxVal_X_Significant;
+if XlimCrop
+    x_data(x_data>MaxVal_X_Significant) = MaxVal_X_Significant;
+    x_data(x_data<-MaxVal_X_Significant) = -MaxVal_X_Significant;
+end
 
 dist_val = pdist2([x_data y_data],[0 0],"seuclidean");
 dist_alpha = rescale(dist_val.^2,AlphaRange(1),AlphaRange(2));
@@ -261,15 +275,18 @@ dist_neg_alpha = dist_alpha(indx_neg);
 indx_pos_scatter = x_data_pos > X_CutOff & y_data_pos > Y_CutOff;
 indx_neg_scatter = x_data_neg < -X_CutOff & y_data_neg > Y_CutOff;
 
-sum(indx_pos_scatter)
-sum(indx_neg_scatter)
-cMap=colormap('bone');
-cMap=flipud(cMap);
+% cMap=colormap('bone');
+% cMap=flipud(cMap);
 cMap = colormap(colorcet('L02','reverse',true));
 
-% Select Sample Id
-%SampleId = DATA.RowAnnotation(:,2);
-SampleId = DATA.RowId;
+% Select Sample Id for data tip
+if isempty(DataTipVariableName)
+    SampleId = DATA.RowId;
+else
+    indx_DataTip = strcmpi(DataTipVariableName,DATA.RowAnnotationFields);
+    SampleId = DATA.RowAnnotation(:,indx_DataTip);
+end
+
 SampleId_pos = SampleId(indx_pos);
 SampleId_neg = SampleId(indx_neg);
 
