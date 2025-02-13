@@ -2,9 +2,7 @@ function fh = ChrPlotDiff(DATA,Chr,PlotRange,Y_Type,SizeType,ColorType,FigSize,M
 FontSize = 6;
 RightMargin = 0.4;
 TopMargin = 0;
-%FigSize = [5.5 2.15];
-% minSize = 1;
-% maxSize = 80;
+
 printResults=false;
 MarkSelected=false;
 Delimiter = '\t';
