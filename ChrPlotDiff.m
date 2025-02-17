@@ -1,4 +1,25 @@
 function fh = ChrPlotDiff(DATA,Chr,PlotRange,Y_Type,SizeType,ColorType,FigSize,MinMaxSize,varargin)
+%DATA = ReadData('GSE19188_tumor_iron_log2.txt','HeaderRows',1,'IdColumns',1)
+%  reads in a text file and creates a microarray data structure
+%  First row and column must be a probe/sample id
+%
+% DATA = ReadDataAEB(InputFile,varargin)
+%
+%   INPUT
+%       InputFile       File with Gene expression data
+
+%   options ---------------------------------------
+%
+%   'HeaderRows'            Number of Header Rows to read (default 1)
+%   'HeaderRowsToIgnore'    Number of Header Rows to be ignored (default 0)
+%   'EndRows'               Number of End Rows to be ignored (default 0)
+%   'IdColumns'             Number of Starting Id columns (default 1)
+%   'T'                     Transposes the input file [DEFAULT]
+%   'NoT'                   Do not transpose the input file
+%   'Delimiter'             Delimiter type (default '\t')
+%   'R'                     First element is missing in top row
+%
+% Anders Berglund
 FontSize = 6;
 RightMargin = 0.4;
 TopMargin = 0;
