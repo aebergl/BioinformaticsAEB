@@ -1,64 +1,89 @@
-function fh = ChrPlotDiff(DATA,Chr,PlotRange,Y_Type,SizeType,ColorType,FigSize,MinMaxSize,varargin)
-%DATA = ReadData('GSE19188_tumor_iron_log2.txt','HeaderRows',1,'IdColumns',1)
-%  reads in a text file and creates a microarray data structure
-%  First row and column must be a probe/sample id
+function fh = ChrPlotDiff(DATA,ChrPos,Chrfield,Chr,Y_Type,SizeType,ColorType,varargin)
+% USAGE:
+%   fh = ChrPlotDiff(DATA,ChrPos,Chrfield,Chr,Y_Type,SizeType,ColorType,varargin)
+%   Add column annotation from file to DATA
 %
-% DATA = ReadDataAEB(InputFile,varargin)
+% INPUTS:
+% * DATA: DATA structure with results
+% * ChrPos: Name of chr position field in RowAnnotationFields 'CpG_beg'
+% * Chrfield: Name of Chr field in RowAnnotationFields 'CpG_chrm'
+% * Chr: Name of Chromsome to be used 'chr1'
+% * Y_Type: Name variable to be used on Y-axis from ColId 'HR coxreg DSS'
+% * SizeType: Name variable to be used as size from ColId 'HR coxreg DSS'
+% * ColorType: Name variable to be used as size from ColId 'p coxreg DSS'
 %
-%   INPUT
-%       InputFile       File with Gene expression data
-
+% OUTPUTS:
+% * fh: Figure handle to Chromosome figure
 %   options ---------------------------------------
 %
-%   'HeaderRows'            Number of Header Rows to read (default 1)
-%   'HeaderRowsToIgnore'    Number of Header Rows to be ignored (default 0)
-%   'EndRows'               Number of End Rows to be ignored (default 0)
-%   'IdColumns'             Number of Starting Id columns (default 1)
-%   'T'                     Transposes the input file [DEFAULT]
-%   'NoT'                   Do not transpose the input file
-%   'Delimiter'             Delimiter type (default '\t')
-%   'R'                     First element is missing in top row
+%   'GENES'         List of genes to mark and gene symbol field from RowAnnotationFields
+%                   {'TMEM183A','RBBP5','ELK4'}, 'gene_HGNC'
+%   'PlotRange'     Vector with start and stop position to to show in figure [203000000 226100000]
+%   'MinMaxSize'    Vector with min and max marker size [1 80]
+%   'FigSize'       Vector with figure width and hight in inches [6 2]
+%   'REGION'        Highligth one or multiple regions cell structure with 
+%                   {[Xstart Xstop], [Ystart Xstop], LabelTxt} 
+%   'CytoBand'      Displays the Cytoband nased on HG38, give unit to be used, 'mb'
+%   'YValCutOff'    Selects points with abs(value) larger than YValCutOff [0]
+%   'SizeLegend'    Displays the Cytoband nased on HG38, give unit to be used, 'mb'
+%   'MarkSelected'  Displays the Cytoband nased on HG38, give unit to be used, 'mb'
+%   'Print'         Do not transpose the input file
 %
-% Anders Berglund
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% by Anders Berglund, 2020 aebergl at gmail.com                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Defaults
+PlotRange = [];
+FigSize = [6 2];
+MinMaxSize = [1 80];
 FontSize = 6;
 RightMargin = 0.4;
 TopMargin = 0;
-
 printResults=false;
 MarkSelected=false;
 Delimiter = '\t';
 pCeil = 15;
-ChrUnit = 'bp';
-% ChrUnit = 'kb';
 ChrUnit = 'mb';
 YLabel = '';
 Colorlabel = '';
 SizeLable= '';
 CytoBand = false;
-GENES=[];
+GENES = [];
 REGION = [];
 YValCutOff = 0;
 ColorValCutOff = 0;
 % Check Input
-i=0;
+
 SizeLegend = false;
 
-
+i=0;
 while i<numel(varargin)
     i = i + 1;
     if strcmpi(varargin{i},'GENES')
         i = i + 1;
+        GeneField = varargin{i};
+        i = 1 + 1;
         GENES = varargin{i};
     elseif strcmpi(varargin{i},'REGION')
         i = i + 1;
-        REGION = varargin{i};
+        REGION = varargin{i};           
+    elseif strcmpi(varargin{i},'PlotRange')
+        i = i + 1;
+        PlotRange = varargin{i};          
+    elseif strcmpi(varargin{i},'MinMaxSize')
+        i = i + 1;
+        MinMaxSize = varargin{i};
+    elseif strcmpi(varargin{i},'FigSize')
+        i = i + 1;
+        FigSize = varargin{i};
     elseif strcmpi(varargin{i},'Print')
         printResults = true;
-    elseif strcmpi(varargin{i},'ChrUnit')
-        i = i + 1;
-        ChrUnit = varargin{i};
     elseif strcmpi(varargin{i},'CytoBand')
         CytoBand = true;
+        i = i + 1;
+        ChrUnit = varargin{i};
     elseif strcmpi(varargin{i},'YValCutOff')
         i = i + 1;
         YValCutOff = varargin{i};
@@ -79,6 +104,21 @@ while i<numel(varargin)
     end
 end
 
+ChrPosColumn = strcmpi(ChrPos,DATA.RowAnnotationFields);
+if ~any(ChrPosColumn)
+    error('Given value for ChrPos not found, %s not found in RowAnnotationFields',ChrPos{1})
+end
+
+ChrColumn = strcmpi(Chrfield,DATA.RowAnnotationFields);
+if ~any(ChrColumn)
+    error('Given value for Chrfield not found, %s not found in RowAnnotationFields',ChrColumn{1})
+end
+if ~isempty(GENES)
+GeneColumn = strcmpi(GeneField,DATA.RowAnnotationFields);
+if ~any(ChrColumn)
+    error('Given value for GeneField not found, %s not found in RowAnnotationFields',ChrColumn{1})
+end
+end
 
 %
 % if DATA.NumProbes > 500000
@@ -91,9 +131,6 @@ end
 CytoBandfile = 'cytoBandIdeo_38.txt';
 % ChrColumn = strcmpi('CHR',DATA.RowAnnotationFields);
 % ChrPosColumn = strcmpi('MAPINFO',DATA.RowAnnotationFields);
-ChrColumn = strcmpi('CpG_chrm',DATA.RowAnnotationFields);
-ChrPosColumn = strcmpi('CpG_beg',DATA.RowAnnotationFields);
-GeneColumn = strcmpi('gene_HGNC',DATA.RowAnnotationFields);
 indx_Chr = strcmp(Chr,DATA.RowAnnotation(:,ChrColumn));
 ChrPos = DATA.RowAnnotation(indx_Chr,ChrPosColumn);
 FullAnnotation = DATA.RowAnnotation(indx_Chr,:);
@@ -107,7 +144,7 @@ end
 
 ChrPos = cell2mat(ChrPos);
 ChrPos = double(ChrPos);
-max(ChrPos)
+
 switch ChrUnit
     case 'bp'
         ChrPos = ChrPos ./ 1.00;
@@ -210,6 +247,7 @@ switch SizeType
 
 end
 SizeVal =  abs(SizeVal);
+% Select Range to plot. Do not work with CytoBand
 if ~isempty(PlotRange)
     plot_indx = ChrPos >= PlotRange(1) & ChrPos<=PlotRange(2);
     ChrPos = ChrPos(plot_indx);
@@ -283,8 +321,10 @@ for i=1:numel(GENES)
 end
 
 for i=1:size(REGION,1)
-    line([REGION{i,1}(1) REGION{i,1}(2)], [REGION{i,2}(1) REGION{i,2}(1)],'LineWidth',0.75,'Color','k','LineStyle','-');
-    text( (REGION{i,1}(1) + REGION{i,1}(2) )/2,REGION{i,2} ,REGION{i,3},'HorizontalAlignment','center','VerticalAlignment','bottom','FontSize',FontSize,'FontAngle','italic');
+    x = REGION{i,1};
+    y = REGION{i,2};
+    rectangle('Position',[x(1), y(1), x(2)-x(1), y(2)-y(1)],'LineWidth',0.75,'EdgeColor','k','LineStyle','-')
+    text( (x(1) + x(2) )/2,y(2) ,REGION{i,3},'HorizontalAlignment','center','VerticalAlignment','bottom','FontSize',FontSize,'FontAngle','italic');
 end
 
 if CytoBand
