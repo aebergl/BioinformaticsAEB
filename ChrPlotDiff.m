@@ -25,8 +25,11 @@ function fh = ChrPlotDiff(DATA,ChrPos,Chrfield,Chr,Y_Type,SizeType,ColorType,var
 %                   {[Xstart Xstop], [Ystart Xstop], LabelTxt} 
 %   'CytoBand'      Displays the Cytoband nased on HG38, give unit to be used, 'mb'
 %   'YValCutOff'    Selects points with abs(value) larger than YValCutOff [0]
-%   'SizeLegend'    Displays the Cytoband nased on HG38, give unit to be used, 'mb'
-%   'MarkSelected'  Displays the Cytoband nased on HG38, give unit to be used, 'mb'
+%   'SizeLegend'    Displays a size legend defined with the following input vectors:
+%                   Size cut-off for the different sizes  [1 0.05 0.01 0.001]
+%                   Marker size for the different cut-off [5 10 20 30]%
+%                   Y position for the different markers sizes = [2.5 3 3.5 4]
+%   'MarkSelected'  Highligh selected points
 %   'Print'         Do not transpose the input file
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,9 +57,11 @@ GENES = [];
 REGION = [];
 YValCutOff = 0;
 ColorValCutOff = 0;
+CytoBandfile = 'cytoBandIdeo_38.txt';
+SizeLegend = false;
 % Check Input
 
-SizeLegend = false;
+
 
 i=0;
 while i<numel(varargin)
@@ -64,7 +69,7 @@ while i<numel(varargin)
     if strcmpi(varargin{i},'GENES')
         i = i + 1;
         GeneField = varargin{i};
-        i = 1 + 1;
+        i = i + 1;
         GENES = varargin{i};
     elseif strcmpi(varargin{i},'REGION')
         i = i + 1;
@@ -99,7 +104,6 @@ while i<numel(varargin)
         LegendSizeVal = varargin{i};
         i = i + 1;
         LegendYPos = varargin{i};
-        i = i + 1;
         SizeLegend = true;
     end
 end
@@ -128,9 +132,8 @@ end
 %     ChipType='M450K';
 %     CytoBandfile = 'cytoBandIdeo_37.txt';
 % end
-CytoBandfile = 'cytoBandIdeo_38.txt';
-% ChrColumn = strcmpi('CHR',DATA.RowAnnotationFields);
-% ChrPosColumn = strcmpi('MAPINFO',DATA.RowAnnotationFields);
+
+
 indx_Chr = strcmp(Chr,DATA.RowAnnotation(:,ChrColumn));
 ChrPos = DATA.RowAnnotation(indx_Chr,ChrPosColumn);
 FullAnnotation = DATA.RowAnnotation(indx_Chr,:);
@@ -272,8 +275,6 @@ SizeValPlot = rescale(SizeVal,MinMaxSize(1),MinMaxSize(2));
 % LegendSizeValMat = sum(repmat(SizeLegendCutOff,nGroups,1) >= repmat(SizeVal,1,length(SizeLegendCutOff)),2);
 % SizeValPlot = LegendSizeVal(LegendSizeValMat);
 
-
-
 indx_selected = abs(Y_Val) > YValCutOff & ColorVal > ColorValCutOff;
 
 FullAnnotation_Selected = FullAnnotation(indx_selected,:);
@@ -323,7 +324,7 @@ end
 for i=1:size(REGION,1)
     x = REGION{i,1};
     y = REGION{i,2};
-    rectangle('Position',[x(1), y(1), x(2)-x(1), y(2)-y(1)],'LineWidth',0.75,'EdgeColor','k','LineStyle','-')
+    rectangle('Position',[x(1), y(1), x(2)-x(1), y(2)-y(1)],'LineWidth',0.5,'EdgeColor','k','LineStyle','-')
     text( (x(1) + x(2) )/2,y(2) ,REGION{i,3},'HorizontalAlignment','center','VerticalAlignment','bottom','FontSize',FontSize,'FontAngle','italic');
 end
 
@@ -352,9 +353,8 @@ ch = colorbar(ah,'Units','inches','FontSize',FontSize,...
 ch.Label.String=Colorlabel;
 ch.FontSize=FontSize;
 
-% SizeLegendCutOff = [1 0.05 0.01 0.001];
-% LegendSizeVal = [5 10 20 30];
-% YPos =  [0.25 0.4 0.55 0.7];
+
+
 if SizeLegend
 
     shl = scatter(ah,ah.XLim(2)+nudge_X*1.5,LegendYPos,LegendSizeVal,[0 0 0],'filled');
