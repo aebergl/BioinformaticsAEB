@@ -1,6 +1,39 @@
-function fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal,YTickText)
+function fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal,YTickText,varargin)
+% USAGE:
+%   fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal,YTickText)
+%   Add column annotation from file to DATA
+%
+% INPUTS:
+% * DATA: DATA structure with results
+% * nGroups: Number of entries to display [] shows all.
+% * fWidth: Figure width in inches
+% * fHight: Figure hight in inches
+% * LegendSizeVal: vector with ligend sizees [10 20 30]
+% * YTickText: Name variable to be used as size from ColId 'HR coxreg DSS'
+% * ColorType: Name variable to be used as size from ColId 'p coxreg DSS'
+%
+% OUTPUTS:
+%   fh: Figure handle to Chromosome figure
+%
+%   options ---------------------------------------
+%
+%   'FontSize'      FontSize for all text in figure [7]
+%   'REGION'        Highligth one or multiple regions cell structure with 
+%                   {[Xstart Xstop], [Ystart Xstop], LabelTxt} 
+%   'CytoBand'      Displays the Cytoband nased on HG38, give unit to be used, 'mb'
+%   'YValCutOff'    Selects points with abs(value) larger than YValCutOff [0]
+%   'SizeLegend'    Displays a size legend defined with the following input vectors:
+%                   Size cut-off for the different sizes  [1 0.05 0.01 0.001]
+%                   Marker size for the different cut-off [5 10 20 30]%
+%                   Y position for the different markers sizes = [2.5 3 3.5 4]
+%   'MarkSelected'  Highligh selected points
+%   'Print'         Do not transpose the input file
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% by Anders Berglund, 2025 aebergl at gmail.com                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FontSize = 10;
+FontSize = 7;
 minSize = 20;
 maxSize = 100;
 LineWidth = 0.5;

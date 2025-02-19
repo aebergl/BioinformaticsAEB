@@ -1,7 +1,7 @@
 function fh = ChrPlotDiff(DATA,ChrPos,Chrfield,Chr,Y_Type,SizeType,ColorType,varargin)
 % USAGE:
 %   fh = ChrPlotDiff(DATA,ChrPos,Chrfield,Chr,Y_Type,SizeType,ColorType,varargin)
-%   Add column annotation from file to DATA
+%   Chreates a Manhattan type of plot
 %
 % INPUTS:
 % * DATA: DATA structure with results
