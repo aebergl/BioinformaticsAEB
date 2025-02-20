@@ -1,4 +1,4 @@
-function fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal,YTickText,varargin)
+function fh  = GSEA_Dot_Plot(DATA,nGroups,YTickText,varargin)
 % USAGE:
 %   fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal,YTickText)
 %   Add column annotation from file to DATA
@@ -6,8 +6,6 @@ function fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal,YTickText,
 % INPUTS:
 % * DATA: DATA structure with results
 % * nGroups: Number of entries to display [] shows all.
-% * fWidth: Figure width in inches
-% * fHight: Figure hight in inches
 % * LegendSizeVal: vector with ligend sizees [10 20 30]
 % * YTickText: Name variable to be used as size from ColId 'HR coxreg DSS'
 % * ColorType: Name variable to be used as size from ColId 'p coxreg DSS'
@@ -18,14 +16,9 @@ function fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal,YTickText,
 %   options ---------------------------------------
 %
 %   'FontSize'      FontSize for all text in figure [7]
-%   'REGION'        Highligth one or multiple regions cell structure with 
-%                   {[Xstart Xstop], [Ystart Xstop], LabelTxt} 
-%   'CytoBand'      Displays the Cytoband nased on HG38, give unit to be used, 'mb'
-%   'YValCutOff'    Selects points with abs(value) larger than YValCutOff [0]
-%   'SizeLegend'    Displays a size legend defined with the following input vectors:
-%                   Size cut-off for the different sizes  [1 0.05 0.01 0.001]
-%                   Marker size for the different cut-off [5 10 20 30]%
-%                   Y position for the different markers sizes = [2.5 3 3.5 4]
+%   'FigSize'       Vector with figure width and hight in inches [5.2 2.5]
+%   'LegendSizeVal' Vector with legend sizees [10 20 30]
+%   'MinMaxSize'    Vector with min and max marker size [1 80]
 %   'MarkSelected'  Highligh selected points
 %   'Print'         Do not transpose the input file
 %
@@ -33,12 +26,43 @@ function fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal,YTickText,
 % by Anders Berglund, 2025 aebergl at gmail.com                           %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Defaults
+FigSize = [5.2 2.5];
 FontSize = 7;
+LegendSizeVal = [10 20 30];
 minSize = 20;
 maxSize = 100;
 LineWidth = 0.5;
 GridLines = 'on';
 RightMargin = 0.5;
+
+i=0;
+while i<numel(varargin)
+    i = i + 1;
+    if strcmpi(varargin{i},'FigSize')
+        i = i + 1;
+        FigSize = varargin{i};
+    elseif strcmpi(varargin{i},'FontSize')
+        i = i + 1;
+        FontSize = varargin{i};
+    elseif strcmpi(varargin{i},'ColorValCutOff')
+        i = i + 1;
+        ColorValCutOff = varargin{i};
+    elseif strcmpi(varargin{i},'MarkSelected')
+        MarkSelected = true;
+    elseif strcmpi(varargin{i},'SizeLegend')
+        i = i + 1;
+        SizeLegendCutOff = varargin{i};
+        i = i + 1;
+        LegendSizeVal = varargin{i};
+        i = i + 1;
+        LegendYPos = varargin{i};
+        SizeLegend = true;
+    end
+end
+
+
+
 % LegendSizeVal = [10; 20 30];
 % LegendSizeVal = [10 25 50];
 % fWidth = 7;
@@ -154,7 +178,7 @@ nudgeVal = rangeVal/20;
 
 
 fh=figure('Name','GSEA Plot','Color','w','Tag','GSEA Plot figure','Units','inches');
-fh.Position(3:4) = [fWidth fHight];
+fh.Position(3:4) = FigSize;
 ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','on','Layer','top','FontSize',FontSize,'Units','inches',...
     'PositionConstraint','outerposition','Clipping','off');
 Cmap = colormap('winter');
@@ -168,7 +192,7 @@ ah.YTickLabel = YtickLabelTxt;
 ah.Colormap = Cmap;
 ah.CLim = CLim;
 ah.XLim =[minVal-nudgeVal maxVal+nudgeVal];
-ah.OuterPosition(3:4) = [fWidth-RightMargin fHight];
+ah.OuterPosition(3:4) = [FigSize(1)-RightMargin FigSize(2)];
 ah.TickLength=[ 0.05/nGroups    0.0];
 xlabel(ah,xValTxt);
 
@@ -183,7 +207,7 @@ for i = 1:length(LegendSizeValPlot)
 end
 
 ch = colorbar(ah,'Units','inches','FontSize',FontSize,...
-    'Position',[ah.Position(1) + ah.Position(3)+0.1, ah.Position(2) 0.1, fHight/2.5]);
+    'Position',[ah.Position(1) + ah.Position(3)+0.1, ah.Position(2) 0.1, FigSize(2)/2.5]);
 ch.Label.String=ColorlabelTxt;
 ch.FontSize=FontSize;
 %ch.Position=[fWidth-RightMargin-0.4, ah.Position(2) 0.1, fHight/2.5];
