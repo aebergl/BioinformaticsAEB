@@ -17,10 +17,9 @@ function fh  = GSEA_Dot_Plot(DATA,nGroups,YTickText,varargin)
 %
 %   'FontSize'      FontSize for all text in figure [7]
 %   'FigSize'       Vector with figure width and hight in inches [5.2 2.5]
-%   'LegendSizeVal' Vector with legend sizees [10 20 30]
-%   'MinMaxSize'    Vector with min and max marker size [1 80]
-%   'MarkSelected'  Highligh selected points
-%   'Print'         Do not transpose the input file
+%   'LegendSizeVal' Vector with values for the different legend sizes [10 20 30]
+%   'MinMaxSize'    Vector with min and max marker size [20 100]
+%   'YTickText'     Sorce of Y Tick text, 'Description' (default) or 'Name'
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % by Anders Berglund, 2025 aebergl at gmail.com                           %
@@ -30,8 +29,8 @@ function fh  = GSEA_Dot_Plot(DATA,nGroups,YTickText,varargin)
 FigSize = [5.2 2.5];
 FontSize = 7;
 LegendSizeVal = [10 20 30];
-minSize = 20;
-maxSize = 100;
+MinMaxSize = [20 100];
+YTickText = 'Description';
 LineWidth = 0.5;
 GridLines = 'on';
 RightMargin = 0.5;
@@ -45,28 +44,18 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'FontSize')
         i = i + 1;
         FontSize = varargin{i};
-    elseif strcmpi(varargin{i},'ColorValCutOff')
-        i = i + 1;
-        ColorValCutOff = varargin{i};
-    elseif strcmpi(varargin{i},'MarkSelected')
-        MarkSelected = true;
-    elseif strcmpi(varargin{i},'SizeLegend')
-        i = i + 1;
-        SizeLegendCutOff = varargin{i};
+    elseif strcmpi(varargin{i},'LegendSizeVal')
         i = i + 1;
         LegendSizeVal = varargin{i};
+    elseif strcmpi(varargin{i},'MinMaxSize')
         i = i + 1;
-        LegendYPos = varargin{i};
-        SizeLegend = true;
+        MinMaxSize = varargin{i};
+    elseif strcmpi(varargin{i},'YTickText')
+        i = i + 1;
+        YTickText = varargin{i};
     end
 end
 
-
-
-% LegendSizeVal = [10; 20 30];
-% LegendSizeVal = [10 25 50];
-% fWidth = 7;
-% fHight = 2.5;
 
 if isempty(nGroups)
     nGroups = length(DATA.PATHWAYS.q);
@@ -168,8 +157,8 @@ Cmap = flipud(Cmap);
 
 %colormap(cmap);
 
-SizeValPlot = rescale(SizeVal,minSize,maxSize);
-LegendSizeValPlot = rescale(LegendSizeVal,minSize,maxSize);
+SizeValPlot = rescale(SizeVal,MinMaxSize(1),MinMaxSize(2));
+LegendSizeValPlot = rescale(LegendSizeVal,MinMaxSize(1),MinMaxSize(2));
 
 minVal=min(xVal);
 maxVal=max(xVal);
