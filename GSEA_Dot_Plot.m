@@ -1,11 +1,11 @@
-function fh  = GSEA_Dot_Plot(DATA,nGroups,YTickText,varargin)
+function fh  = GSEA_Dot_Plot(DATA,nGroups,varargin)
 % USAGE:
 %   fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal,YTickText)
 %   Add column annotation from file to DATA
 %
 % INPUTS:
 % * DATA: DATA structure with results
-% * nGroups: Number of entries to display [] shows all.
+% * nGroups: Number of entries to display, [] shows all.
 % * LegendSizeVal: vector with ligend sizees [10 20 30]
 % * YTickText: Name variable to be used as size from ColId 'HR coxreg DSS'
 % * ColorType: Name variable to be used as size from ColId 'p coxreg DSS'

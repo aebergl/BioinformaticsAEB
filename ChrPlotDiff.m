@@ -14,6 +14,7 @@ function fh = ChrPlotDiff(DATA,ChrPos,Chrfield,Chr,Y_Type,SizeType,ColorType,var
 %
 % OUTPUTS:
 % * fh: Figure handle to Chromosome figure
+%
 %   options ---------------------------------------
 %
 %   'GENES'         List of genes to mark and gene symbol field from RowAnnotationFields

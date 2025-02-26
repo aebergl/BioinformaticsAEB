@@ -8,7 +8,7 @@ cutoff_str = cell(length(cut_off),1);
 stat_str = cell(size(pval));
 stat_str(:) = {'N.S.'};
 star = '';
-for i =1:length(cut_off)
+for i = 1:length(cut_off)
     indx = (pval <= cut_off(i));
     if ~any(indx)
         i=i-1;

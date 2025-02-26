@@ -3,7 +3,7 @@ MarkerSize = 30;
 MarkerLineWidth = 1;
 BoxLineWidth = 1;
 FontSize = 10;
-FigureSize = [2,2.6];
+FigureSize = [2,3.5];
 BoxColor = [0 0 0];
 MarkerTypes = {'o'}';
 CMap = GetPalette('aeb01');
@@ -254,7 +254,7 @@ MAX_Y = max(y_var);
 Y_pos = MAX_Y;
 if CalcStats
     for i=1:size(CalcGroup,1)
-        if CalcGroupAllUnique && diff(CalcGroup(i,:)) == 1
+        if 0%CalcGroupAllUnique && diff(CalcGroup(i,:)) == 1
             max_y = max([y_var(SampleIndxMat(:,CalcGroup(i,1))); y_var(SampleIndxMat(:,CalcGroup(i,2)))]);
             Y_pos = max_y+(y_nudge/1.5);
         else
