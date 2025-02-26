@@ -1,4 +1,35 @@
 function fh = PlotBoxPlotDATA(DATA,VariableId,GroupVariableName,GroupsToUse,varargin)
+% USAGE:
+%   fh  = GSEA_DotPlot_MultiDataSets(DATA,nGroups,fWidth,fHight,LegendSizeVal,YTickText)
+%   creates a dot plot for GSEA results from multiple datasets
+%
+% INPUTS:
+% * DATA:       DATA structure with GSEA result datasets
+% * XAxisId:    Id to be used for groups along the X-axis from RowAnnotationFields.
+% * XGroups:    List of Groups to be used and order for the X-axis, [] uses all
+% * YAxisId:    Id to be used for groups along the Y-axis from RowAnnotationFields.
+% * YGroups:    List of Groups to be used and order for the Y-axis, [] uses all
+% * SizeVar:    Name of variable to be used for size from ColId, unless 'VarId' is defined 
+% * ColorVar:   Name of variable to be used for color from ColId, unless 'VarId' is defined
+%
+% OUTPUTS:
+%   fh: Figure handle to dot plot figure
+%
+%   options ---------------------------------------
+%
+%   'FontSize'      FontSize for all text in figure [7]
+%   'FigSize'       Vector with figure width and hight in inches [4 7.5]
+%   'LegendSizeVal' Two vectors defining marker size and cut-off values:
+%                   Size cut-off for the different sizes [1 0.05 0.01 0.001 0.0001]
+%                   Marker size for the different cut-off [5 20 40 60 80]
+% 
+%   'VarId'         Id for ColAnnotationFields to be used for SizeVar and ColorVar
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% by Anders Berglund, 2025 aebergl at gmail.com                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 MarkerSize = 30;
 MarkerLineWidth = 1;
 BoxLineWidth = 1;
@@ -17,25 +48,26 @@ CalcStats = false;
 CalcGroup = [];
 CalcGroupAllUnique = true;
 StatType = 't-test';
-%StatType = 'MW';
+StatType = 'MW';
 PlotStars = true;
 TargetAxes = false;
 XTickAngle = -45;
-Show_NS=false;
+Show_NS=true;
 
 % CMap = GetPalette('Lancet',[3 4 5]);
 
 % Radiation Methylation
 %*******************
-% MarkerSize = 10;
-% MarkerLineWidth = 0.5;
-% BoxLineWidth = 0.5;
-% FontSize = 6;
-% FigureSize = [3,2.6];
-% BoxWidths = 0.8;
-% XJitterWidth = 0.6;
-% StatType = 'MW';
-% PlotStars = true;
+MarkerSize = 10;
+MarkerLineWidth = 0.5;
+BoxLineWidth = 0.5;
+FontSize = 6;
+FigureSize = [3,2.6];
+BoxWidths = 0.8;
+XJitterWidth = 0.6;
+StatType = 'MW';
+PlotStars = true;
+Show_NS=true;
 %*******************
 
 
@@ -43,13 +75,16 @@ CMap = GetPalette('Science');
 
 SortData=false;
 %SortData='descend';
-
+varargin
 % Check input
 if nargin > 4
-    ArgsList = {'VariableIdentifier','FigureSize','Ylabel','TitleText','ColorMap','MarkerTypes','CalcStats','TargetAxes'};
+    ArgsList = {'VariableIdentifier','FigureSize','Ylabel','TitleText','ColorMap','MarkerTypes',...
+        'CalcStats','TargetAxes','MarkerSize','MarkerLineWidth','BoxLineWidth','FontSize',...
+        'BoxWidths','XJitterWidth','StatType','PlotStars','Show_NS','XTickAngle'};
     for j=1:2:numel(varargin)
-        ArgType = varargin{j};
-        ArgVal = varargin{j+1};
+
+        ArgType = varargin{j}
+        ArgVal = varargin{j+1}
         if ~strncmpi(ArgType,ArgsList,numel(ArgType))
             error('Invalid input option: %s', ArgType);
         else
@@ -72,6 +107,26 @@ if nargin > 4
                     CalcStats = true;
                case 'targetaxes'
                     TargetAxes = ArgVal;
+               case 'markersize'
+                    MarkerSize = ArgVal;
+                case 'markerlinewidth'
+                    MarkerLineWidth = ArgVal;
+                case 'boxlinewidth'
+                    BoxLineWidth = ArgVal;
+               case 'fontsize'
+                    FontSize = ArgVal;
+               case 'boxwidths'
+                    BoxWidths = ArgVal;
+               case 'xjitterwidth'
+                    XJitterWidth = ArgVal;
+               case 'stattype'
+                    StatType = ArgVal;
+               case 'plotstars'
+                    PlotStars = ArgVal;
+               case 'show_ns'
+                    Show_NS = true;
+               case 'xtickangle'
+                    XTickAngle = ArgVal;
 
             end
 
@@ -226,7 +281,7 @@ bh = boxchart(ah,GroupVariableNumber,y_var,'orientation','vertical','BoxWidth',B
 % set( s.Children,'LineWidth',BoxLineWidth)
 
 if isempty(YlabelTxt)
-    ylabel(sprintf('%s',VariableId),'FontSize',FontSize,'Interpreter','tex')
+    ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize,'Interpreter','tex')
     %ylabel(sprintf('\\it %s\\rm value',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it %s\\rm expression',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it%s',VariableId{1}),'FontSize',FontSize)
@@ -277,7 +332,7 @@ if CalcStats
                 FontSize = 12;
                 VerticalAlignment = 'middle';
             end
-            if ~Show_NS && p_val < 0.05
+            if Show_NS || p_val < 0.05
                 text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
             end
         else
