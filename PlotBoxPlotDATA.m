@@ -50,11 +50,14 @@ CalcGroupAllUnique = true;
 StatType = 't-test';
 StatType = 'MW';
 PlotStars = true;
+StatLineWidth = 0.5;
 TargetAxes = false;
 XTickAngle = -45;
 Show_NS=true;
-
-% CMap = GetPalette('Lancet',[3 4 5]);
+CMap = GetPalette('Science');
+SortData=false;
+MultipleY = 'Mean';
+DataTipId = 'RowId';
 
 % Radiation Methylation
 %*******************
@@ -71,20 +74,20 @@ Show_NS=true;
 %*******************
 
 
-CMap = GetPalette('Science');
 
-SortData=false;
+
 %SortData='descend';
-varargin
+
 % Check input
 if nargin > 4
     ArgsList = {'VariableIdentifier','FigureSize','Ylabel','TitleText','ColorMap','MarkerTypes',...
         'CalcStats','TargetAxes','MarkerSize','MarkerLineWidth','BoxLineWidth','FontSize',...
-        'BoxWidths','XJitterWidth','StatType','PlotStars','Show_NS','XTickAngle'};
+        'BoxWidths','XJitterWidth','StatType','PlotStars','Show_NS','XTickAngle','SortData',...
+        'MultipleY','DataTipId'};
     for j=1:2:numel(varargin)
 
-        ArgType = varargin{j}
-        ArgVal = varargin{j+1}
+        ArgType = varargin{j};
+        ArgVal = varargin{j+1};
         if ~strncmpi(ArgType,ArgsList,numel(ArgType))
             error('Invalid input option: %s', ArgType);
         else
@@ -127,7 +130,12 @@ if nargin > 4
                     Show_NS = true;
                case 'xtickangle'
                     XTickAngle = ArgVal;
-
+               case 'sortdata'
+                    SortData = ArgVal;
+                case 'multipley'
+                    MultipleY = ArgVal;
+                case 'datatipid'
+                    DataTipId = ArgVal;
             end
 
         end
@@ -210,18 +218,20 @@ y_var = DATA.X(:,indx);
 y_var(~SampleIndxToUse) = NaN;
 
 if size(y_var,2) > 1
-    %y_var = B2M(y_var);
-    y_var=mean(y_var,2,"omitnan");
-    % [PCA_Model] = NIPALS_PCA(y_var,'NumComp',1,'ScaleX',false);
-    % y_var = PCA_Model.T(:,1);
-    VariableId = "Average";
+    switch MultipleY
+        case 'mean'
+            y_var=mean(y_var,2,"omitnan");
+            VariableId = "Average";
+        case 'pca'           
+            [PCA_Model] = NIPALS_PCA(y_var,'NumComp',2,'ScaleX',false);
+            y_var = PCA_Model.T(:,1);
+            VariableId = "PC1";
+    end
 end
 
 % ColorMap
 CMap = repmat(CMap,ceil(nGroups/size(CMap,1)),1);
 CMap = CMap(1:nGroups,:);
-%[CMap, descriptorname, description] = colorcet('D8','N',nGroups,'reverse', true);
-
 
 % Marker Type
 if size(MarkerTypes,1) < size(MarkerTypes,2)
@@ -243,7 +253,6 @@ if SortData
         GroupVariableNumberNew(GroupVariableNumber == indx(i)) = i;
     end
     GroupVariableNumber= GroupVariableNumberNew;
-    %GroupVariableNumber = GroupVariableNumber(indx);
     SampleIndxMat = SampleIndxMat(:,indx);
     GroupName = GroupName(indx);
 end
@@ -262,8 +271,19 @@ else
 end
 ah.Colormap=CMap;
 
-% Select Sample Id
-SampleId = DATA.RowAnnotation(:,2);
+% Select Sample Id for data tip text
+DataTipId
+lower(DataTipId)
+switch lower(DataTipId)
+    case 'rowid'
+        SampleId = DATA.RowId;
+    case isnumeric(DataTipId)
+        SampleId = DATA.RowAnnotation(:,DataTipId);
+    otherwise
+
+        error()
+end
+
 %SampleId = DATA.RowId;
 for i=1:nGroups
     indx = SampleIndxMat(:,i);
@@ -273,7 +293,6 @@ for i=1:nGroups
 
 end
 
-%bh = boxplot(ah,y_var,GroupVariableNumber,'orientation','vertical','color',BoxColor,'Symbol','','Widths',BoxWidths);
 bh = boxchart(ah,GroupVariableNumber,y_var,'orientation','vertical','BoxWidth',BoxWidths,'BoxFaceColor','none','BoxEdgeColor',BoxColor,'MarkerStyle','none','LineWidth',BoxLineWidth);
 
 %s=findobj( ah.Children, 'Tag', 'boxchart' )
@@ -281,8 +300,8 @@ bh = boxchart(ah,GroupVariableNumber,y_var,'orientation','vertical','BoxWidth',B
 % set( s.Children,'LineWidth',BoxLineWidth)
 
 if isempty(YlabelTxt)
-    ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize,'Interpreter','tex')
-    %ylabel(sprintf('\\it %s\\rm value',VariableId{1}),'FontSize',FontSize)
+    %ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize,'Interpreter','tex')
+    ylabel(sprintf('\\it%s\\rm expression',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it %s\\rm expression',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it%s',VariableId{1}),'FontSize',FontSize)
 
@@ -315,7 +334,7 @@ if CalcStats
         else
             Y_pos = Y_pos+y_nudge;
         end
-        line(CalcGroup(i,:),[Y_pos Y_pos],'Color',[0 0 0],'Linewidth',0.75)
+        line(CalcGroup(i,:),[Y_pos Y_pos],'Color',[0 0 0],'Linewidth',StatLineWidth)
         switch lower(StatType)
             case 't-test'
                 [~,p_val] = ttest2(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),0.05,'both','unequal');
@@ -326,18 +345,16 @@ if CalcStats
         txt_p = pval2stars(p_val,[]);
         if PlotStars
             if p_val > 0.05
-                FontSize = FontSize;
+                FS = FontSize;
                 VerticalAlignment = 'bottom';
             else
-                FontSize = 12;
+                FS = 12;
                 VerticalAlignment = 'middle';
             end
             if Show_NS || p_val < 0.05
-                text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
+                text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FS);
             end
         else
-
-            FontSize = 6;
             VerticalAlignment = 'bottom';
             txt_p = num2str(p_val,2);
             text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
