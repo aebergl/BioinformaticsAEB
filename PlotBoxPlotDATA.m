@@ -15,28 +15,28 @@ function fh = PlotBoxPlotDATA(DATA,VariableId,GroupVariableName,GroupsToUse,vara
 %   options ---------------------------------------
 %
 %   'FontSize'          FontSize for all text in figure [7]
-%   'FigSize'           Vector with figure width and hight in inches [2 3.5]
+%   'FigSize'           Vector with figure width and hight in inches [ [2 3.5] ]
 %   'MarkerSize'        Marker size for scatter points [30]
 %   'MarkerLineWidth'   Marker line width for scatter points [1]
-%   'MarkerType'        Id for ColAnnotationFields to be used for SizeVar and ColorVar
-%   'MarkerFaceColor'   Marker types for scatter points,{'o','d','^'} [{'o'}]
+%   'MarkerType'        Marker types for scatter points,{'o','d','^'} [{'o'}]
+%   'MarkerFaceColor'   Marker edge color for scatter points ['none']
 %   'ColorMap'          Marker edge color for scatter points [GetPalette('Science')]
-%   'XJitterWidth'         Id for ColAnnotationFields to be used for SizeVar and ColorVar
-%   'BoxLineWidth'         Id for ColAnnotationFields to be used for SizeVar and ColorVar
-%   'BoxColor'         Id for ColAnnotationFields to be used for SizeVar and ColorVar
-%   'BoxWidth'         Id for ColAnnotationFields to be used for SizeVar and ColorVar
-%   'YlabelTxt'         Id for ColAnnotationFields to be used for SizeVar and ColorVar
-%   'TitleTxt'         Id for ColAnnotationFields to be used for SizeVar and ColorVar
-%   'CalcStats'         Id for ColAnnotationFields to be used for SizeVar and ColorVar
-%   'StatType'         Id for ColAnnotationFields to be used for SizeVar and ColorVar
-%   'PlotStars'             Id for ColAnnotationFields to be used for SizeVar and ColorVar
-%   'StatLineWidth'    Id for ColAnnotationFields to be used for SizeVar and ColorVar
-%   'Show_NS'         Id for ColAnnotationFields to be used for SizeVar and ColorVar
-%   'TargetAxes'         Id for ColAnnotationFields to be used for SizeVar and ColorVar
-%   'XTickAngle'         Id for ColAnnotationFields to be used for SizeVar and ColorVar
-%   'SortData'         Id for ColAnnotationFields to be used for SizeVar and ColorVar
-%   'MultipleY'         Id for ColAnnotationFields to be used for SizeVar and ColorVar
-%   'DataTipId'         Id for ColAnnotationFields to be used for SizeVar and ColorVar
+%   'XJitterWidth'      Width for scatter points [0.6]
+%   'BoxLineWidth'      LineWidth for boxes [1]
+%   'BoxColor'          Color for box lines [ [0 0 0] ]
+%   'BoxWidth'          Width for boxes [0.8]
+%   'YlabelTxt'         Text to be used for Y label, if not defined VariableId will be used
+%   'TitleTxt'          text for Title
+%   'CalcStats'         Calculate stats between groups, Nx2 matrix defines comparisons, [] all
+%   'StatType'          Type of comparison, Mann Whitney (MW) or T-test (t-test) ['MW']
+%   'PlotStars'         Use starts instead of p-values
+%   'StatLineWidth'     Line witth for line btween groups [0.5]
+%   'Show_NS'           Show not significant results [false]
+%   'TargetAxes'        Axes handle for target axist []
+%   'XTickAngle'        Angle for X ticks [-45]
+%   'SortData'          Sort group order based on median value
+%   'MultipleY'         How to summarize multiple y's Mean' or 'PCA' ['Mean']
+%   'DataTipId'         Id to be used for datatip 'RowId' or id from 'RowAnnotationFields' ['RowId']
 
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,7 +109,6 @@ if nargin > 4
                     MarkerType = ArgVal;
                 case 'markerfacecolor'
                     MarkerFaceColor = ArgVal;
-
                 case 'calcstats'
                     CalcGroup = ArgVal;
                     CalcStats = true;
@@ -245,21 +244,21 @@ end
 MarkerType = repmat(MarkerType,ceil(nGroups/size(MarkerType,1)),1);
 MarkerType = MarkerType(1:nGroups,:);
 
-
+% sort data
 if SortData
     MedianX = zeros(nGroups,1);
     for i=1:nGroups
-        indx = SampleIndxMat(:,i);
-        MedianX(i) = median(y_var(indx),'omitnan');
+        indx_sort = SampleIndxMat(:,i);
+        MedianX(i) = median(y_var(indx_sort),'omitnan');
     end
-    [~,indx] = sort(MedianX,SortData);
+    [~,indx_sort] = sort(MedianX,SortData);
     GroupVariableNumberNew = GroupVariableNumber;
     for i=1:nGroups
-        GroupVariableNumberNew(GroupVariableNumber == indx(i)) = i;
+        GroupVariableNumberNew(GroupVariableNumber == indx_sort(i)) = i;
     end
     GroupVariableNumber= GroupVariableNumberNew;
-    SampleIndxMat = SampleIndxMat(:,indx);
-    GroupName = GroupName(indx);
+    SampleIndxMat = SampleIndxMat(:,indx_sort);
+    GroupName = GroupName(indx_sort);
 end
 
 % Create Figure
