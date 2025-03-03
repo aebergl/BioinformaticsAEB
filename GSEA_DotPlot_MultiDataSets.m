@@ -1,20 +1,64 @@
-function fh = GSEA_DotPlot_MultiDataSets(DATA,GeneSetSource,XAxisId,XGroups,YAxisId,YGroups,SizeVar,ColorVar)
+function fh = GSEA_DotPlot_MultiDataSets(DATA,XAxisId,XGroups,YAxisId,YGroups,SizeVar,ColorVar,varargin)
+% USAGE:
+%   fh  = GSEA_DotPlot_MultiDataSets(DATA,nGroups,fWidth,fHight,LegendSizeVal,YTickText)
+%   creates a dot plot for GSEA results from multiple datasets
+%
+% INPUTS:
+% * DATA:       DATA structure with GSEA result datasets
+% * XAxisId:    Id to be used for groups along the X-axis from RowAnnotationFields.
+% * XGroups:    List of Groups to be used and order for the X-axis, [] uses all
+% * YAxisId:    Id to be used for groups along the Y-axis from RowAnnotationFields.
+% * YGroups:    List of Groups to be used and order for the Y-axis, [] uses all
+% * SizeVar:    Name of variable to be used for size from ColId, unless 'VarId' is defined 
+% * ColorVar:   Name of variable to be used for color from ColId, unless 'VarId' is defined
+%
+% OUTPUTS:
+%   fh: Figure handle to dot plot figure
+%
+%   options ---------------------------------------
+%
+%   'FontSize'      FontSize for all text in figure [7]
+%   'FigSize'       Vector with figure width and hight in inches [4 7.5]
+%   'LegendSizeVal' Two vectors defining marker size and cut-off values:
+%                   Size cut-off for the different sizes [1 0.05 0.01 0.001 0.0001]
+%                   Marker size for the different cut-off [5 20 40 60 80]
+% 
+%   'VarId'         Id for ColAnnotationFields to be used for SizeVar and ColorVar
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% by Anders Berglund, 2025 aebergl at gmail.com                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-VariableIdentifier=[];
+
+VariableIdentifier = false;
+FigSize = [4 7.5];
 FontSize = 8;
-minSize = 20;
-maxSize = 100;
 LineWidth = 0.5;
 GridLines = 'on';
 RightMargin = 0.7;
 SizeCutOffs =[1 0.05 0.01 0.001 0.0001];
 LegendSizeVal = [5 20 40 60 80];
 
-
 CMap = colorcet('D01');
 CLim = [-3 3];
-fWidth = 4;
-fHight = 7.5;
+
+i=0;
+while i<numel(varargin)
+    i = i + 1;
+    if strcmpi(varargin{i},'FigSize')
+        i = i + 1;
+        FigSize = varargin{i};
+    elseif strcmpi(varargin{i},'FontSize')
+        i = i + 1;
+        FontSize = varargin{i};
+    elseif strcmpi(varargin{i},'LegendSizeVal')
+        i = i + 1;
+        SizeCutOffs = varargin{i};
+        i = i + 1;
+        LegendSizeVal = varargin{i};
+    end
+end
+
 
 % Get groups for X-axis
 indx = strcmpi(XAxisId,DATA.RowAnnotationFields);
@@ -91,7 +135,7 @@ SizeValPlot = LegendSizeVal(LegendSizeValMat);
 
 
 fh=figure('Name','GSEA Plot','Color','w','Tag','GSEA Plot','Units','inches');
-fh.Position(3:4) = [fWidth fHight];
+fh.Position(3:4) = FigSize;
 ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','on','Layer','top','FontSize',FontSize,'Units','inches',...
     'PositionConstraint','outerposition','Clipping','off','YDir','reverse');
 
@@ -106,7 +150,7 @@ ah.XLim = [0.5 nXval+0.5];
 ah.XAxis.TickLabelRotation=-45;
 ah.Colormap = CMap;
 ah.CLim = CLim;
-ah.OuterPosition(3:4) = [fWidth-RightMargin fHight];
+ah.OuterPosition(3:4) = [FigSize(1)-RightMargin FigSize(2)];
 ah.TickLength=[ 0.05/nVal    0.0];
 
 % switch lower(X_value_name)
@@ -134,7 +178,7 @@ sh = scatter(XAxisDataPlot,YAxisData,SizeValPlot,ColorVal,'MarkerFaceColor','fla
 ah.XAxis.TickLabels = XAxisDatalabels;
 % Add color bar
 ch = colorbar(ah,'Units','inches','FontSize',FontSize,...
-    'Position',[ah.Position(1) + ah.Position(3)+0.1, ah.Position(2) 0.1, fHight/5]);
+    'Position',[ah.Position(1) + ah.Position(3)+0.1, ah.Position(2) 0.1, FigSize(2)/5]);
 ch.Label.String=ColorVar;
 ch.FontSize=FontSize;
 

@@ -1,15 +1,61 @@
-function fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal,YTickText)
+function fh  = GSEA_Dot_Plot(DATA,nGroups,varargin)
+% USAGE:
+%   fh  = GSEA_Dot_Plot(DATA,nGroups,fWidth,fHight,LegendSizeVal,YTickText)
+%   Add column annotation from file to DATA
+%
+% INPUTS:
+% * DATA: DATA structure with results
+% * nGroups: Number of entries to display, [] shows all.
+% * LegendSizeVal: vector with ligend sizees [10 20 30]
+% * YTickText: Name variable to be used as size from ColId 'HR coxreg DSS'
+% * ColorType: Name variable to be used as size from ColId 'p coxreg DSS'
+%
+% OUTPUTS:
+%   fh: Figure handle to Chromosome figure
+%
+%   options ---------------------------------------
+%
+%   'FontSize'      FontSize for all text in figure [7]
+%   'FigSize'       Vector with figure width and hight in inches [5.2 2.5]
+%   'LegendSizeVal' Vector with values for the different legend sizes [10 20 30]
+%   'MinMaxSize'    Vector with min and max marker size [20 100]
+%   'YTickText'     Sorce of Y Tick text, 'Description' (default) or 'Name'
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% by Anders Berglund, 2025 aebergl at gmail.com                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FontSize = 10;
-minSize = 20;
-maxSize = 100;
+% Defaults
+FigSize = [5.2 2.5];
+FontSize = 7;
+LegendSizeVal = [10 20 30];
+MinMaxSize = [20 100];
+YTickText = 'Description';
 LineWidth = 0.5;
 GridLines = 'on';
 RightMargin = 0.5;
-% LegendSizeVal = [10; 20 30];
-% LegendSizeVal = [10 25 50];
-% fWidth = 7;
-% fHight = 2.5;
+
+i=0;
+while i<numel(varargin)
+    i = i + 1;
+    if strcmpi(varargin{i},'FigSize')
+        i = i + 1;
+        FigSize = varargin{i};
+    elseif strcmpi(varargin{i},'FontSize')
+        i = i + 1;
+        FontSize = varargin{i};
+    elseif strcmpi(varargin{i},'LegendSizeVal')
+        i = i + 1;
+        LegendSizeVal = varargin{i};
+    elseif strcmpi(varargin{i},'MinMaxSize')
+        i = i + 1;
+        MinMaxSize = varargin{i};
+    elseif strcmpi(varargin{i},'YTickText')
+        i = i + 1;
+        YTickText = varargin{i};
+    end
+end
+
 
 if isempty(nGroups)
     nGroups = length(DATA.PATHWAYS.q);
@@ -111,8 +157,8 @@ Cmap = flipud(Cmap);
 
 %colormap(cmap);
 
-SizeValPlot = rescale(SizeVal,minSize,maxSize);
-LegendSizeValPlot = rescale(LegendSizeVal,minSize,maxSize);
+SizeValPlot = rescale(SizeVal,MinMaxSize(1),MinMaxSize(2));
+LegendSizeValPlot = rescale(LegendSizeVal,MinMaxSize(1),MinMaxSize(2));
 
 minVal=min(xVal);
 maxVal=max(xVal);
@@ -121,7 +167,7 @@ nudgeVal = rangeVal/20;
 
 
 fh=figure('Name','GSEA Plot','Color','w','Tag','GSEA Plot figure','Units','inches');
-fh.Position(3:4) = [fWidth fHight];
+fh.Position(3:4) = FigSize;
 ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','on','Layer','top','FontSize',FontSize,'Units','inches',...
     'PositionConstraint','outerposition','Clipping','off');
 Cmap = colormap('winter');
@@ -135,7 +181,7 @@ ah.YTickLabel = YtickLabelTxt;
 ah.Colormap = Cmap;
 ah.CLim = CLim;
 ah.XLim =[minVal-nudgeVal maxVal+nudgeVal];
-ah.OuterPosition(3:4) = [fWidth-RightMargin fHight];
+ah.OuterPosition(3:4) = [FigSize(1)-RightMargin FigSize(2)];
 ah.TickLength=[ 0.05/nGroups    0.0];
 xlabel(ah,xValTxt);
 
@@ -150,7 +196,7 @@ for i = 1:length(LegendSizeValPlot)
 end
 
 ch = colorbar(ah,'Units','inches','FontSize',FontSize,...
-    'Position',[ah.Position(1) + ah.Position(3)+0.1, ah.Position(2) 0.1, fHight/2.5]);
+    'Position',[ah.Position(1) + ah.Position(3)+0.1, ah.Position(2) 0.1, FigSize(2)/2.5]);
 ch.Label.String=ColorlabelTxt;
 ch.FontSize=FontSize;
 %ch.Position=[fWidth-RightMargin-0.4, ah.Position(2) 0.1, fHight/2.5];

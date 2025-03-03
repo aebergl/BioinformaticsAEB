@@ -1,53 +1,89 @@
 function fh = PlotBoxPlotDATA(DATA,VariableId,GroupVariableName,GroupsToUse,varargin)
+% USAGE:
+%   fh  = PlotBoxPlotDATA(DATA,VariableId,GroupVariableName,GroupsToUse,varargin)
+%   creates a scatter boxplot plot from DATA structure
+%
+% INPUTS:
+% * DATA:       DATA structure w
+% * VariableId: Id to be used for groups along the X-axis from RowAnnotationFields.
+% * GroupVariableName:    List of Groups to be used and order for the X-axis, [] uses all
+% * GroupsToUse:    Id to be used for groups along the Y-axis from RowAnnotationFields.
+%
+% OUTPUTS:
+%   fh: Figure handle to dot plot figure
+%
+%   options ---------------------------------------
+%
+%   'FontSize'          FontSize for all text in figure [7]
+%   'FigSize'           Vector with figure width and hight in inches [ [2 3.5] ]
+%   'MarkerSize'        Marker size for scatter points [30]
+%   'MarkerLineWidth'   Marker line width for scatter points [1]
+%   'MarkerType'        Marker types for scatter points,{'o','d','^'} [{'o'}]
+%   'MarkerFaceColor'   Marker edge color for scatter points ['none']
+%   'ColorMap'          Marker edge color for scatter points [GetPalette('Science')]
+%   'XJitterWidth'      Width for scatter points [0.6]
+%   'BoxLineWidth'      LineWidth for boxes [1]
+%   'BoxColor'          Color for box lines [ [0 0 0] ]
+%   'BoxWidth'          Width for boxes [0.8]
+%   'YlabelTxt'         Text to be used for Y label, if not defined VariableId will be used
+%   'TitleTxt'          text for Title
+%   'CalcStats'         Calculate stats between groups, Nx2 matrix defines comparisons, [] all
+%   'StatType'          Type of comparison, Mann Whitney (MW) or T-test (t-test) ['MW']
+%   'PlotStars'         Use starts instead of p-values
+%   'StatLineWidth'     Line witth for line btween groups [0.5]
+%   'Show_NS'           Show not significant results [false]
+%   'TargetAxes'        Axes handle for target axist []
+%   'XTickAngle'        Angle for X ticks [-45]
+%   'SortData'          Sort group order based on median value
+%   'MultipleY'         How to summarize multiple y's Mean' or 'PCA' ['Mean']
+%   'DataTipId'         Id to be used for datatip 'RowId' or id from 'RowAnnotationFields' ['RowId']
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% by Anders Berglund, 2025 aebergl at gmail.com                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FontSize = 10;
+FigSize = [2,3.5];
+
 MarkerSize = 30;
 MarkerLineWidth = 1;
-BoxLineWidth = 1;
-FontSize = 10;
-FigureSize = [2,2.6];
-BoxColor = [0 0 0];
-MarkerTypes = {'o'}';
-CMap = GetPalette('aeb01');
+MarkerType = {'o';}
 MarkerFaceColor = 'none';
-BoxWidths = 0.8;
+ColorMap = GetPalette('Science');
 XJitterWidth = 0.6;
+
+BoxLineWidth = 1;
+BoxColor = [0 0 0];
+BoxWidth = 0.8;
+
 YlabelTxt = [];
 TitleTxt = [];
 VariableIdentifier = false;
+
 CalcStats = false;
 CalcGroup = [];
 CalcGroupAllUnique = true;
-StatType = 't-test';
-%StatType = 'MW';
+StatType = 'MW';
 PlotStars = true;
+StatLineWidth = 0.5;
+Show_NS=true;
+
 TargetAxes = false;
 XTickAngle = -45;
-Show_NS=false;
-
-% CMap = GetPalette('Lancet',[3 4 5]);
-
-% Radiation Methylation
-%*******************
-% MarkerSize = 10;
-% MarkerLineWidth = 0.5;
-% BoxLineWidth = 0.5;
-% FontSize = 6;
-% FigureSize = [3,2.6];
-% BoxWidths = 0.8;
-% XJitterWidth = 0.6;
-% StatType = 'MW';
-% PlotStars = true;
-%*******************
-
-
-CMap = GetPalette('Science');
-
 SortData=false;
-%SortData='descend';
+MultipleY = 'Mean';
+DataTipId = 'RowId';
+
 
 % Check input
 if nargin > 4
-    ArgsList = {'VariableIdentifier','FigureSize','Ylabel','TitleText','ColorMap','MarkerTypes','CalcStats','TargetAxes'};
+    ArgsList = {'VariableIdentifier','FigSize','Ylabel','TitleText','ColorMap','MarkerTypes',...
+        'CalcStats','TargetAxes','MarkerSize','MarkerLineWidth','BoxLineWidth','FontSize',...
+        'BoxWidth','XJitterWidth','StatType','PlotStars','Show_NS','XTickAngle','SortData',...
+        'MultipleY','DataTipId','BoxColor','MarkerType','MarkerFaceColor'};
     for j=1:2:numel(varargin)
+
         ArgType = varargin{j};
         ArgVal = varargin{j+1};
         if ~strncmpi(ArgType,ArgsList,numel(ArgType))
@@ -57,22 +93,52 @@ if nargin > 4
 
                 case 'variableidentifier'
                     VariableIdentifier =ArgVal;
-                case 'figuresize'
-                    FigureSize = ArgVal;
+                case 'figsize'
+                    FigSize = ArgVal;
                 case 'ylabel'
                     YlabelTxt =ArgVal;
                 case 'titletext'
                     TitleTxt = ArgVal;
                 case 'colormap'
-                    CMap = ArgVal;
+                    ColorMap = ArgVal;
+                case 'markersize'
+                    MarkerSize = ArgVal;
+                case 'markerlinewidth'
+
                 case 'markertypes'
-                    MarkerTypes = ArgVal;
+                    MarkerType = ArgVal;
+                case 'markerfacecolor'
+                    MarkerFaceColor = ArgVal;
                 case 'calcstats'
                     CalcGroup = ArgVal;
                     CalcStats = true;
-               case 'targetaxes'
+                case 'targetaxes'
                     TargetAxes = ArgVal;
-
+                    MarkerLineWidth = ArgVal;
+                case 'boxlinewidth'
+                    BoxLineWidth = ArgVal;
+                case 'boxcolor'
+                    BoxColor = ArgVal;
+                case 'fontsize'
+                    FontSize = ArgVal;
+                case 'boxwidth'
+                    BoxWidth = ArgVal;
+                case 'xjitterwidth'
+                    XJitterWidth = ArgVal;
+                case 'stattype'
+                    StatType = ArgVal;
+                case 'plotstars'
+                    PlotStars = ArgVal;
+                case 'show_ns'
+                    Show_NS = true;
+                case 'xtickangle'
+                    XTickAngle = ArgVal;
+                case 'sortdata'
+                    SortData = ArgVal;
+                case 'multipley'
+                    MultipleY = ArgVal;
+                case 'datatipid'
+                    DataTipId = ArgVal;
             end
 
         end
@@ -137,15 +203,16 @@ if isempty(CalcGroup)
 end
 
 SampleIndxToUse = any(SampleIndxMat,2);
+
 % Selection of Y variable
 if VariableIdentifier
-    indx = strcmpi(VariableIdentifier,DATA.ColAnnotationFields);
-    if ~any(indx)
+    indx_VarId = strcmpi(VariableIdentifier,DATA.ColAnnotationFields);
+    if ~any(indx_VarId)
         error('Error. \n%s not found in DATA.ColAnnotationFields',VariableIdentifier);
-    elseif sum(indx) > 1
+    elseif sum(indx_VarId) > 1
         error('Warning. \nMultiple matches for %s found in DATA.ColAnnotationFields',VariableIdentifier);
     else
-        DATA_ID = DATA.ColAnnotation(:,indx);
+        DATA_ID = DATA.ColAnnotation(:,indx_VarId);
     end
 else
     DATA_ID = DATA.ColId;
@@ -155,42 +222,43 @@ y_var = DATA.X(:,indx);
 y_var(~SampleIndxToUse) = NaN;
 
 if size(y_var,2) > 1
-    %y_var = B2M(y_var);
-    y_var=mean(y_var,2,"omitnan");
-    % [PCA_Model] = NIPALS_PCA(y_var,'NumComp',1,'ScaleX',false);
-    % y_var = PCA_Model.T(:,1);
-    VariableId = "Average";
+    switch MultipleY
+        case 'mean'
+            y_var=mean(y_var,2,"omitnan");
+            VariableId = "Average";
+        case 'pca'
+            [PCA_Model] = NIPALS_PCA(y_var,'NumComp',2,'ScaleX',false);
+            y_var = PCA_Model.T(:,1);
+            VariableId = "PC1";
+    end
 end
 
 % ColorMap
-CMap = repmat(CMap,ceil(nGroups/size(CMap,1)),1);
-CMap = CMap(1:nGroups,:);
-%[CMap, descriptorname, description] = colorcet('D8','N',nGroups,'reverse', true);
-
+ColorMap = repmat(ColorMap,ceil(nGroups/size(ColorMap,1)),1);
+ColorMap = ColorMap(1:nGroups,:);
 
 % Marker Type
-if size(MarkerTypes,1) < size(MarkerTypes,2)
-    MarkerTypes = MarkerTypes';
+if size(MarkerType,1) < size(MarkerType,2)
+    MarkerType = MarkerType';
 end
-MarkerTypes = repmat(MarkerTypes,ceil(nGroups/size(MarkerTypes,1)),1);
-MarkerTypes = MarkerTypes(1:nGroups,:);
+MarkerType = repmat(MarkerType,ceil(nGroups/size(MarkerType,1)),1);
+MarkerType = MarkerType(1:nGroups,:);
 
-
+% sort data
 if SortData
     MedianX = zeros(nGroups,1);
     for i=1:nGroups
-        indx = SampleIndxMat(:,i);
-        MedianX(i) = median(y_var(indx),'omitnan');
+        indx_sort = SampleIndxMat(:,i);
+        MedianX(i) = median(y_var(indx_sort),'omitnan');
     end
-    [~,indx] = sort(MedianX,SortData);
+    [~,indx_sort] = sort(MedianX,SortData);
     GroupVariableNumberNew = GroupVariableNumber;
     for i=1:nGroups
-        GroupVariableNumberNew(GroupVariableNumber == indx(i)) = i;
+        GroupVariableNumberNew(GroupVariableNumber == indx_sort(i)) = i;
     end
     GroupVariableNumber= GroupVariableNumberNew;
-    %GroupVariableNumber = GroupVariableNumber(indx);
-    SampleIndxMat = SampleIndxMat(:,indx);
-    GroupName = GroupName(indx);
+    SampleIndxMat = SampleIndxMat(:,indx_sort);
+    GroupName = GroupName(indx_sort);
 end
 
 % Create Figure
@@ -198,36 +266,51 @@ if isgraphics(TargetAxes,'axes')
     ah = TargetAxes;
     fh = TargetAxes.Parent;
 else
-    fh = figure('Name','Box Plot','Color','w','Tag','Box Plot','Units','inches','Colormap',CMap);
-    fh.Position(3:4) = FigureSize;
+    fh = figure('Name','Box Plot','Color','w','Tag','Box Plot','Units','inches','Colormap',ColorMap);
+    fh.Position(3:4) = FigSize;
     fh.Renderer='painters';
     ah = axes(fh,'NextPlot','add','tag','Gene Sample Plot','Box','on','FontSize',FontSize,'Linewidth',0.5,...
         'ActivePositionProperty','outerposition','XGrid','on','YGrid','on');
     ah.LineWidth = 0.5;
 end
-ah.Colormap=CMap;
+ah.Colormap=ColorMap;
 
-% Select Sample Id
-SampleId = DATA.RowAnnotation(:,2);
-%SampleId = DATA.RowId;
+% Select Sample Id for data tip text
+
+switch lower(DataTipId)
+    case 'rowid'
+        SampleId = DATA.RowId;
+    otherwise
+        indx_SampleId = strcmpi(DataTipId,DATA.RowAnnotationFields);
+        if ~any(indx_SampleId)
+            error('Error. \n%s not found in DATA.RowAnnotationFields',DataTipId);
+        elseif sum(indx_VarId) > 1
+            error('Warning. \nMultiple matches for %s found in DATA.RowAnnotationFields',DataTipId);
+        else
+            SampleId = DATA.RowAnnotation(:,indx_SampleId);
+        end
+end
+
+% Create scatter points
 for i=1:nGroups
     indx = SampleIndxMat(:,i);
-    sh = scatter(ah,GroupVariableNumber(indx),y_var(indx),MarkerSize,CMap(i,:),MarkerTypes{i},'XJitter','density','XJitterWidth',XJitterWidth,'Linewidth',MarkerLineWidth,'MarkerFaceColor',MarkerFaceColor);
+    sh = scatter(ah,GroupVariableNumber(indx),y_var(indx),MarkerSize,ColorMap(i,:),MarkerType{i},'XJitter','density','XJitterWidth',XJitterWidth,'Linewidth',MarkerLineWidth,'MarkerFaceColor',MarkerFaceColor);
     row = dataTipTextRow('',SampleId(indx));
     sh.DataTipTemplate.DataTipRows = row;
 
 end
+% Create boxes
+bh = boxchart(ah,GroupVariableNumber,y_var,'orientation','vertical','BoxWidth',BoxWidth,'BoxFaceColor','none','BoxEdgeColor',BoxColor,'MarkerStyle','none','LineWidth',BoxLineWidth);
 
-%bh = boxplot(ah,y_var,GroupVariableNumber,'orientation','vertical','color',BoxColor,'Symbol','','Widths',BoxWidths);
-bh = boxchart(ah,GroupVariableNumber,y_var,'orientation','vertical','BoxWidth',BoxWidths,'BoxFaceColor','none','BoxEdgeColor',BoxColor,'MarkerStyle','none','LineWidth',BoxLineWidth);
+% Add title
+if ~isempty(TitleTxt)
+    title(ah,TitleTxt,'FontWeight','normal','FontSize',FontSize)
+end
 
-%s=findobj( ah.Children, 'Tag', 'boxchart' )
-% set( findobj( s.Children, 'LineStyle', '--' ),'LineStyle','-')
-% set( s.Children,'LineWidth',BoxLineWidth)
-
+% Add Y label
 if isempty(YlabelTxt)
-    ylabel(sprintf('%s',VariableId),'FontSize',FontSize,'Interpreter','tex')
-    %ylabel(sprintf('\\it %s\\rm value',VariableId{1}),'FontSize',FontSize)
+    %ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize,'Interpreter','tex')
+    ylabel(sprintf('\\it%s\\rm expression',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it %s\\rm expression',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it%s',VariableId{1}),'FontSize',FontSize)
 
@@ -237,10 +320,9 @@ else
     ylabel(YlabelTxt,'FontSize',FontSize)
 end
 
-if ~isempty(TitleTxt)
-    title(ah,TitleTxt,'FontWeight','normal','FontSize',FontSize)
-end
 
+
+% Adjust X-axis
 ah.XLim = [0.3 nGroups+0.7];
 ah.XTick = 1:nGroups;
 ah.XTickLabelRotation = XTickAngle;
@@ -250,39 +332,40 @@ y_nudge=range(y_var)/10;
 %ah.YLim = [min(y_var)-y_nudge max(y_var)+y_nudge*2];
 
 
+% calculate stats and add lines
 MAX_Y = max(y_var);
 Y_pos = MAX_Y;
 if CalcStats
     for i=1:size(CalcGroup,1)
-        if CalcGroupAllUnique && diff(CalcGroup(i,:)) == 1
+        if 0%CalcGroupAllUnique && diff(CalcGroup(i,:)) == 1
             max_y = max([y_var(SampleIndxMat(:,CalcGroup(i,1))); y_var(SampleIndxMat(:,CalcGroup(i,2)))]);
             Y_pos = max_y+(y_nudge/1.5);
         else
             Y_pos = Y_pos+y_nudge;
         end
-        line(CalcGroup(i,:),[Y_pos Y_pos],'Color',[0 0 0],'Linewidth',0.75)
+        
+        %Create line between the two croupd being compared
+        line(CalcGroup(i,:),[Y_pos Y_pos],'Color',[0 0 0],'Linewidth',StatLineWidth)
         switch lower(StatType)
             case 't-test'
                 [~,p_val] = ttest2(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),0.05,'both','unequal');
             case 'mw'
                 [p_val] = ranksum(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))));
         end
-        
+
         txt_p = pval2stars(p_val,[]);
         if PlotStars
             if p_val > 0.05
-                FontSize = FontSize;
+                FS = FontSize;
                 VerticalAlignment = 'bottom';
             else
-                FontSize = 12;
+                FS = 12;
                 VerticalAlignment = 'middle';
             end
-            if ~Show_NS && p_val < 0.05
-                text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
+            if Show_NS || p_val < 0.05
+                text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FS);
             end
         else
-
-            FontSize = 6;
             VerticalAlignment = 'bottom';
             txt_p = num2str(p_val,2);
             text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
@@ -292,24 +375,10 @@ if CalcStats
     end
 end
 try
-ah.YLim = [min(y_var)-y_nudge max([Y_pos,MAX_Y]) + y_nudge*2];
+    ah.YLim = [min(y_var)-y_nudge max([Y_pos,MAX_Y]) + y_nudge*2];
 catch
 
 end
 
-% UniqueLineObjects=gobjects(nGroups,1);
-% for i = 1:nGroups
-%     group_indx = find(SampleIndx(:,i));
-%     for j = 1:length(group_indx)
-%         [N,edges] = histcounts(DATA.X(group_indx(j),:),nBins);
-%         x = edges(1:end-1) + diff(edges)/2;
-%         UniqueLineObjects(i) = line(x,N,'Parent',ah,'LineWidth',LineWidth, 'LineStyle',MarkerTypes(i),'MarkerEdgeColor',[0 0 0],'Color',CMap(i,:),'MarkerFaceColor',CMap(i,:));
-%     end
-% end
-% if ~isempty(GroupName)
-%     lh=legend(UniqueLineObjects,GroupName,'Location','northeastoutside');
-%     lh.Interpreter='none';
-%     lh.Box='off';
-% end
-% ah.YTickLabel= [];
+
 

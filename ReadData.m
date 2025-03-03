@@ -1,5 +1,5 @@
 function DATA = ReadData(InputFile,varargin)
-%DATA = ReadData('GSE19188_tumor_iron_log2.txt','HeaderRows',1,'IdColumns',1)
+%  DATA = ReadData('GSE19188_tumor_iron_log2.txt','HeaderRows',1,'IdColumns',1)
 %  reads in a text file and creates a microarray data structure
 %  First row and column must be a probe/sample id
 %
