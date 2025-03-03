@@ -48,7 +48,7 @@ FigSize = [2,3.5];
 
 MarkerSize = 30;
 MarkerLineWidth = 1;
-MarkerType = {'o';
+MarkerType = {'o';}
 MarkerFaceColor = 'none';
 ColorMap = GetPalette('Science');
 XJitterWidth = 0.6;
