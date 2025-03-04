@@ -26,7 +26,7 @@ for i = 1:n
             RESULTS(i,3) = CelloDATA.CellLine(EntryNum).AC;
             RESULTS(i,4) = CelloDATA.CellLine(EntryNum).OX;
             RESULTS(i,5) = "Unique match to synonym";
-        elseif sum(indx) > 1
+        elseif sum(indx) > 1 % Multiple hits
             EntryNum = CelloDATA.SynonymsIndx(indx);
             % Check if only one is human
             OX = [CelloDATA.CellLine(EntryNum).OX]';
@@ -37,16 +37,16 @@ for i = 1:n
                 RESULTS(i,4) = CelloDATA.CellLine(EntryNum(indx_hum)).OX;
                 RESULTS(i,5) = "Multiple match to synonym, only one human";
             else
-                % Check if ID works with a cleaned is
+                % Check if ID works with a cleaned Primary ID
                 ID_tmp = [CelloDATA.CellLine(EntryNum).ID]';
-                ID_tmp = strrep(ID_tmp,'-','');
-                ID_tmp = strrep(ID_tmp,' ','');
+                ID_tmp = strrep(ID_tmp,'-',''); % Remove hyphens
+                ID_tmp = strrep(ID_tmp,' ',''); % Remove spaces
                 indx_id = strcmp(Id,ID_tmp);
                 if sum(indx_id) == 1
                     RESULTS(i,2) = CelloDATA.CellLine(EntryNum(indx_id)).ID;
                     RESULTS(i,3) = CelloDATA.CellLine(EntryNum(indx_id)).AC;
                     RESULTS(i,4) = CelloDATA.CellLine(EntryNum(indx_id)).OX;
-                    RESULTS(i,5) = "Multiple match to synonym, One matche cleaned primary Id";
+                    RESULTS(i,5) = "Multiple match to synonym, one match cleaned primary Id";
                 else
                     RESULTS(i,5) = "MULTIPLE MATCHES!";
 
@@ -54,17 +54,20 @@ for i = 1:n
 
             end
         else
-            indx = strcmpi(Id,CelloDATA.Synonyms);        if sum(indx) == 1 % Only one unique Hit
+            indx = strcmpi(Id,CelloDATA.Synonyms); % Case insensative
+            if sum(indx) == 1 % Only one unique Hit
                 EntryNum = CelloDATA.SynonymsIndx(indx);
                 RESULTS(i,2) = CelloDATA.CellLine(EntryNum).ID;
                 RESULTS(i,3) = CelloDATA.CellLine(EntryNum).AC;
                 RESULTS(i,4) = CelloDATA.CellLine(EntryNum).OX;
-                RESULTS(i,5) = "----------";
+                RESULTS(i,5) = "Unique match to synonym, ignoring case";
+            else
+                RESULTS(i,5) = "NO MATCH FOUND";
             end
+            
+
 
         end
-
-
     end
 
 
