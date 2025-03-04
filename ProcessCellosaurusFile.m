@@ -1,22 +1,27 @@
 function DATA = ProcessCellosaurusFile(FileIn) 
 Terminator = '//';
-
+DATA.DateDownloaded = "";
 %Read already downloaded 'EBPlusPlusAdjustPANCAN_IlluminaHiSeq_RNASeqV2.geneExp.tsv'
-if ~isfile(FileIn) || isempty(FileIn)
+if isempty(FileIn) || ~isfile(FileIn)
     try
         warning('Could not find cellosaurus.txt in this directory')
         warning('Starting to download it now, will probably take a couple of minutes')
         websave('cellosaurus.txt','https://ftp.expasy.org/databases/cellosaurus/cellosaurus.txt');
         
     catch
-        error('Could not load EBPlusPlusAdjustPANCAN_IlluminaHiSeq_RNASeqV2.geneExp.tsv from https://gdc.cancer.gov/about-data/publications/pancanatlas')
+        error('Could not load cellosaurus.txt from https://ftp.expasy.org/databases/cellosaurus/save ')
     end
     L = readlines('cellosaurus.txt');
+    DATA.DateDownloaded = string(date);
 else
     L = readlines(FileIn);
 
 end
-fprintf('Processing cellosaurus_test.txt\n');
+DATA.Version = L(7);
+DATA.LastUpdate = L(8);
+
+
+fprintf('Processing cellosaurus.txt\n');
 nRow = length(L);
 
 % Get number of Cell lines
@@ -49,7 +54,7 @@ S = repmat(struct( 'ID',"",'AC',"",'AS',"",'SY',"",'DR',"",'RX',"",'WW',"",'CC',
 FN = fieldnames(S);
 CellCounter = 0;
 RowCounter = 0;
-while RowCounter < nRow;
+while RowCounter < nRow
     RowCounter = RowCounter + 1;
     tmp = L(RowCounter);
     if strncmp(tmp,'ID',2) %Starts an Entry
