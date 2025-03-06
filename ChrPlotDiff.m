@@ -24,7 +24,7 @@ function fh = ChrPlotDiff(DATA,ChrPos,Chrfield,Chr,Y_Type,SizeType,ColorType,var
 %   'FigSize'       Vector with figure width and hight in inches [6 2]
 %   'REGION'        Highligth one or multiple regions cell structure with 
 %                   {[Xstart Xstop], [Ystart Xstop], LabelTxt} 
-%   'CytoBand'      Displays the Cytoband nased on HG38, give unit to be used, 'mb'
+%   'CytoBand'      Displays the Cytoband based on HG38, give unit to be used, 'mb' Requires Bioinformatics toolbox
 %   'YValCutOff'    Selects points with abs(value) larger than YValCutOff [0]
 %   'SizeLegend'    Displays a size legend defined with the following input vectors:
 %                   Size cut-off for the different sizes  [1 0.05 0.01 0.001]
@@ -38,6 +38,8 @@ function fh = ChrPlotDiff(DATA,ChrPos,Chrfield,Chr,Y_Type,SizeType,ColorType,var
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+% https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cytoBandIdeo.txt.gz
+% https://hgdownload.soe.ucsc.edu/goldenpath/hg19/database/cytoBandIdeo.txt.gz
 % Defaults
 PlotRange = [];
 FigSize = [6 2];
