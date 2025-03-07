@@ -12,7 +12,7 @@ function DATA = AddColAnnotationFromFile(DATA,FileName,varargin)
 % * DATA: DATA structure
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% by Anders Berglund, 2020 aebergl at gmail.com                           %
+% by Anders Berglund, 2025 aebergl at gmail.com                           %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
