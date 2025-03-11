@@ -145,7 +145,9 @@ if TransposeX
     DATA = TransposeData(DATA);
 end
 
-
+if (numel(DATA.RowId) ~= DATA.nRow)
+    error('There are only %i RowIds, while there are %i data rows! Check file and inputs, could be that it is a R file and the ''R'' flag needs to be used',numel(DATA.RowId) ,DATA.nRow)
+end
 
 % Check for unique identifiers
 

@@ -74,7 +74,7 @@ end
 
 FieldNames(SameValIndx) = [];
 SampleInfo(:,SameValIndx) = [];
-
+numSamples
 %Write results to a text file
 if ~isempty(FileOut)
     [fid,message] = fopen(FileOut,'w');

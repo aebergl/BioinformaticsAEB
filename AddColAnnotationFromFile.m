@@ -165,7 +165,7 @@ switch lower(AddReplace)
        end
    
         DATA.ColAnnotation = [DATA.ColAnnotation Annotation];
-        DATA.ColAnnotationFields = [DATA.ColAnnotationFields; SelectedVariables'];
+        DATA.ColAnnotationFields(end+1:end+length(SelectedVariables)) = SelectedVariables;
 end
 
 end

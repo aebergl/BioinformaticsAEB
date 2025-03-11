@@ -87,6 +87,13 @@ L = L(:,indx_Annotation);
 indx_Annotation = indx_Annotation(indx_Annotation>0);
 Annotation(indx_DATA,:) = L(indx_Annotation,:);
 
+if any(~indx_DATA)
+    warning('Not all ColIds fund in given annotation file. Some Columns will be missing annotation','backtrace','off')
+end
+
+if isempty(DATA.ColAnnotation)
+    AddReplace = 'replace';
+end
 
 switch lower(AddReplace)
     case 'add'
