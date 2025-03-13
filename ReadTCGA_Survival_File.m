@@ -57,7 +57,7 @@ SURVIVAL.SurvEvent(cellfun(@(x) x==0, SurvEvent_RAW(:,2)),2) = {'NoProgression'}
 SURVIVAL.SurvEvent(cellfun(@(x) x==1, SurvEvent_RAW(:,3)),3) = {'Dead'};
 SURVIVAL.SurvEvent(cellfun(@(x) x==0, SurvEvent_RAW(:,3)),3) = {'Alive'};
 
-% Convert DSS events
+% Convert DFI events
 SURVIVAL.SurvEvent(cellfun(@(x) x==1, SurvEvent_RAW(:,4)),4) = {'Relapsed'};
 SURVIVAL.SurvEvent(cellfun(@(x) x==0, SurvEvent_RAW(:,4)),4) = {'NotRelapsed'};
 

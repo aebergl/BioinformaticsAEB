@@ -140,7 +140,11 @@ end
 indx_Chr = strcmp(Chr,DATA.RowAnnotation(:,ChrColumn));
 ChrPos = DATA.RowAnnotation(indx_Chr,ChrPosColumn);
 FullAnnotation = DATA.RowAnnotation(indx_Chr,:);
+DATA.X(isinf(DATA.X)) = NaN;
+
 Full_X_Data = DATA.X(indx_Chr,:);
+
+
 
 % Remove if EPIC
 try
@@ -238,8 +242,9 @@ end
 
 switch SizeType
     case 'q t-test'
+        MinNonZeroVal = min(SizeVal(SizeVal>0));
+        SizeVal(SizeVal == 0) = MinNonZeroVal;
         SizeVal = -log10(SizeVal);
-        SizeVal(SizeVal>pCeil) = pCeil;
     case 'Delta Average'
         SizeVal =  abs(SizeVal);
     case 'HR coxreg OS'
@@ -249,9 +254,12 @@ switch SizeType
     case 'HR coxreg PFI'
         SizeVal =  abs(log2(SizeVal));
     case 'p Spearman'
+        MinNonZeroVal = min(SizeVal(SizeVal>0));
+        SizeVal(SizeVal == 0) = MinNonZeroVal;
         SizeVal = -log10(SizeVal);
 
 end
+
 SizeVal =  abs(SizeVal);
 % Select Range to plot. Do not work with CytoBand
 if ~isempty(PlotRange)
@@ -272,9 +280,9 @@ ColorVal = ColorVal(sort_indx);
 FullAnnotation = FullAnnotation(sort_indx,:);
 Full_X_Data = Full_X_Data(sort_indx,:);
 
-SizeVal(SizeVal<0) = 0; % make sure there is no negative values
-SizeValPlot = rescale(SizeVal,MinMaxSize(1),MinMaxSize(2));
+SizeVal(SizeVal<0) = 0; % make sure there is no negative valuesMinMaxSize(1),MinMaxSize(2)
 
+SizeValPlot = rescale(SizeVal,MinMaxSize(1),MinMaxSize(2));
 % LegendSizeValMat = sum(repmat(SizeLegendCutOff,nGroups,1) >= repmat(SizeVal,1,length(SizeLegendCutOff)),2);
 % SizeValPlot = LegendSizeVal(LegendSizeValMat);
 
@@ -294,6 +302,7 @@ ah = axes(fh,'NextPlot','add','tag','Dot plot','Box','on','FontSize',FontSize,'L
     'Units','normalized','PositionConstraint','outerposition','Clipping','off');
 cmap = colormap(colorcet('L17'));
 colormap(cmap);
+
 
 sh=scatter(ChrPos,Y_Val,SizeValPlot,ColorVal,'filled');
 if MarkSelected
