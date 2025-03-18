@@ -141,7 +141,7 @@ indx_File = indx_File(indx_File>0);
 
 
 %Create Annotation object
-Annotation = cell(DATA.nRow-1,size(C,2));
+Annotation = cell(DATA.nRow,size(C,2));
 Annotation(:) = {'---'};
 
 Annotation(indx_DATA,:) = C(indx_File,:);
