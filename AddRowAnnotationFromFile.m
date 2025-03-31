@@ -16,7 +16,8 @@ function DATA = AddRowAnnotationFromFile(DATA,FileName,varargin)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-SheetName = '';
+SheetName = [];
+NumHeaderLines = 0;
 DATA_IdName = [];
 File_IdName = [];
 ColumnsToAdd = [];
@@ -41,18 +42,20 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'Delimiter')
         i = i + 1;
         Delimiter = varargin{i};
-
     elseif strcmpi(varargin{i},'SheetName')
         i = i + 1;
         SheetName = varargin{i};
+    elseif strcmpi(varargin{i},'NumHeaderLines')
+        i = i + 1;
+        NumHeaderLines = varargin{i};
     elseif strcmpi(varargin{i},'Truncate')
         i = i + 1;
-        Truncate = varargin{i};        
+        Truncate = varargin{i};
     elseif strcmpi(varargin{i},'Replace')
         AddReplace = 'Replace';
     elseif strcmpi(varargin{i},'Add')
-        AddReplace = 'Add';     
-        
+        AddReplace = 'Add';
+
     else
         error('%s not a valid input option',varargin{i})
     end
@@ -67,7 +70,7 @@ else
         DATA_Id = DATA.RowAnnotation(:,indx);
     else
         error('Could not find the given Id in the DATA strcuture')
-    end   
+    end
 end
 
 % Get info for the annotation file
@@ -78,11 +81,29 @@ catch
 end
 
 % Get info for annotation file
-try
-    opts = detectImportOptions(FileName,'Sheet',SheetName,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true);
-    opts.DataRange='A2';
-catch
-    opts = detectImportOptions(FileName,'FileType','text','Delimiter',Delimiter,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true);
+
+if NumHeaderLines
+    try
+        if isempty(SheetName)
+            opts = detectImportOptions(FileName,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true,'NumHeaderLines',NumHeaderLines);
+        else
+            opts = detectImportOptions(FileName,'Sheet',SheetName,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true,'NumHeaderLines',NumHeaderLines);
+        end
+    catch
+        opts = detectImportOptions(FileName,'FileType','text','Delimiter',Delimiter,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true,'NumHeaderLines',NumHeaderLines);
+    end
+else
+    try
+        if isempty(SheetName)
+            opts = detectImportOptions(FileName,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true);
+        else
+            opts = detectImportOptions(FileName,'Sheet',SheetName,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true);
+        end
+    catch
+        opts = detectImportOptions(FileName,'FileType','text','Delimiter',Delimiter,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true);
+    end
+
+
 end
 
 %Select variables to import
@@ -98,7 +119,7 @@ opts.VariableTypes(:) = {'char'};
 if isempty(File_IdName)
     File_IdColumn = 1;
 else
-    File_IdColumn = find(strcmp(File_IdName, opts.SelectedVariableNames));  
+    File_IdColumn = find(strcmp(File_IdName, opts.SelectedVariableNames));
 end
 %opts = setvartype(opts,opts.SelectedVariableNames,'char');
 switch lower(fExt)
@@ -130,9 +151,9 @@ indx_missing = ~cellfun(@(x) ischar(x),File_Id);
 C(indx_missing,:) = [];
 File_Id(indx_missing,:) = [];
 
-if Truncate    
+if Truncate
     File_Id = cellfun(@(x) x(1:Truncate), File_Id, 'UniformOutput', false);
-    DATA_Id = cellfun(@(x) x(1:Truncate), DATA_Id, 'UniformOutput', false);    
+    DATA_Id = cellfun(@(x) x(1:Truncate), DATA_Id, 'UniformOutput', false);
 end
 
 
@@ -158,7 +179,7 @@ switch lower(AddReplace)
 
             DATA.RowAnnotationFields = [DATA.RowAnnotationFields; SelectedVariables'];
         end
-        
+
 end
 
 end
