@@ -18,7 +18,9 @@ RemoveMasked    = false;
 RemoveX         = false;
 RemoveY         = false;
 MaskedColToUse  = "MASK_general";
+
 i=0;
+% Check input arguments
 while i<numel(varargin)
     i = i + 1;
     if strcmpi(varargin{i},'KeepCgOnly')
@@ -37,17 +39,18 @@ while i<numel(varargin)
     end
 end
 
+% Set column Ids to check for
 ChrColumnId     = ["CHR","Chromosome_36","CpG_chrm"];
 ChrX            = ["X","chrX"];
 ChrY            = ["Y","chrY"];
 
-% Only Keep cg probesKeepCgOnly
+% Only Keep cg probes
 if KeepCgOnly
     indx_cg = strncmpi("cg",DATA.ColId,2);
     DATA =  EditVariablesDATA(DATA,DATA.ColId(indx_cg),'Keep');
 end
 
-% Remove chromosome X cpg-probes
+% Remove chromosome X probes
 if RemoveX
     indx_ChrCol = ismember(DATA.ColAnnotationFields,ChrColumnId);
     ChrData = DATA.ColAnnotation(:,indx_ChrCol);
@@ -56,6 +59,7 @@ if RemoveX
     DATA =  EditVariablesDATA(DATA,DATA.ColId(indx_X),'Remove');
 end
 
+% Remove chromosome Y probes
 if RemoveY
     indx_ChrCol = ismember(DATA.ColAnnotationFields,ChrColumnId);
     ChrData = DATA.ColAnnotation(:,indx_ChrCol);
@@ -64,6 +68,7 @@ if RemoveY
     DATA =  EditVariablesDATA(DATA,DATA.ColId(indx_Y),'Remove');
 end
 
+% Remove Masked probes
 if RemoveMasked
     L=readlines(MaskedFile);
     indx = L == ""; % Remove emty rows
@@ -79,9 +84,6 @@ if RemoveMasked
     indx_M = any(indx_M,2);
     CpG_remove = CpgIds(indx_M);
     DATA =  EditVariablesDATA(DATA,CpG_remove,'Remove');
-
-
-
 end
 
 
