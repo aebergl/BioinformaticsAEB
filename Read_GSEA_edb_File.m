@@ -1,5 +1,7 @@
 function DATA_out = Read_GSEA_edb_File(InputFile,ResultName,GeneSetType)
 
+
+
 % Check if File exists
 if ~isfile(InputFile)
     error('Could not open %s',InputFile)
@@ -9,9 +11,13 @@ end
 % Read the file
 S = readstruct(InputFile,'FileType','xml');
 
-
 % Define variable names
 VarName = {'SIZE','ES','NES','NOM p-val','FDR q-val','FWER p-val','RANK AT MAX','RANK SCORE'};
+AttributesToKeep = ["ESAttribute" "NESAttribute" "NPAttribute" "FDRAttribute" "FWERAttribute" "RANK_AT_ESAttribute" "RANK_SCORE_AT_ESAttribute"];
+[~, indx_ToKeep] = ismember(AttributesToKeep,fieldnames(S.DTG));
+
+
+
 
 %Get the size of the data
 nRow = length(S.DTG);
@@ -24,7 +30,7 @@ DATA_out.Title = S.DTG(1).RANKED_LISTAttribute;
 
 % Convert data into a matrix
 C = struct2cell(S.DTG);
-DATA_out.X(:,2:end)=squeeze(cell2mat(C([4:8 13:14],1,:)))';
+DATA_out.X(:,2:end)=squeeze(cell2mat(C([indx_ToKeep],1,:)))';
 
 % Get number of genes in each pathway
 nGenes = squeeze((C(11,1,:)));

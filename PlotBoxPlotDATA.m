@@ -48,7 +48,7 @@ FigSize = [2,3.5];
 
 MarkerSize = 30;
 MarkerLineWidth = 1;
-MarkerType = {'o';}
+MarkerType = {'o'};
 MarkerFaceColor = 'none';
 ColorMap = GetPalette('Science');
 XJitterWidth = 0.6;
@@ -104,7 +104,7 @@ if nargin > 4
                 case 'markersize'
                     MarkerSize = ArgVal;
                 case 'markerlinewidth'
-
+                    MarkerLineWidth = ArgVal;
                 case 'markertypes'
                     MarkerType = ArgVal;
                 case 'markerfacecolor'
@@ -114,7 +114,6 @@ if nargin > 4
                     CalcStats = true;
                 case 'targetaxes'
                     TargetAxes = ArgVal;
-                    MarkerLineWidth = ArgVal;
                 case 'boxlinewidth'
                     BoxLineWidth = ArgVal;
                 case 'boxcolor'
