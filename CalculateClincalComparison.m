@@ -1,6 +1,16 @@
-function CalculateClincalComparison(DATA_A,DATA_B,ClinicalIds,ClinicalType)
+function CalculateClincalComparison(DATA_A,DATA_B,ClinicalIds,ClinicalType,FileName)
 
 RemVar = {'[Not Available]','[Unknown]','[Discrepancy]','Missing','NA','---'};
+
+if isempty(FileName)
+    fid = 1;
+else
+    [fid,Msg] = fopen(FileName,'w');
+    if fid == -1
+        error('Could not create %s, reason: %s',FileName,Msg)
+    end
+end
+
 
 x1=cell(DATA_A.nRow,1);
 x2=cell(DATA_B.nRow,1);
@@ -13,8 +23,8 @@ Clinical=[DATA_A.RowAnnotation(:,ia);DATA_B.RowAnnotation(:,ib)];
 nA=DATA_A.nRow;
 nB=DATA_B.nRow;
 
-fprintf('\n')
-fprintf('\tA(n=%u)\tB(n=%u)\tp-value\n',nA,nB)
+
+fprintf(fid,'\t%s(n=%u)\t%s(n=%u)\tp-value\n',inputname(1),nA,inputname(2),nB);
 
 
 for i=1:numel(ClinicalIds)
@@ -36,9 +46,9 @@ for i=1:numel(ClinicalIds)
             Tmp = cell(size(Y));
             Tmp(~isnan(Y)) = Cat(Y(~isnan(Y)));
             Tmp(isnan(Y)) = {'Missing'};
-            fprintf('%s\n',ClinicalIds{i})
+            fprintf(fid,'%s\n',ClinicalIds{i});
 
-            [tbl,chi2,p,labels] = crosstab(Tmp,Group);
+            [tbl,~,p,labels] = crosstab(Tmp,Group);
 
             [lab,sort_indx ]= sort(labels(:,1));
             tbl=tbl(sort_indx,:);
@@ -50,11 +60,11 @@ for i=1:numel(ClinicalIds)
             else
                 p_txt = sprintf('%.4f',p);
             end
-            fprintf('%s\t%u (%.1g%%)\t%u (%.1g%%)\t%s\n',lab{1},tbl(1,1),tbl(1,1)/nA*100,tbl(1,2),tbl(1,2)/nB*100,p_txt)
+            fprintf(fid,'%s\t%u (%.1g%%)\t%u (%.1g%%)\t%s\n',lab{1},tbl(1,1),tbl(1,1)/nA*100,tbl(1,2),tbl(1,2)/nB*100,p_txt);
             for j=2:length(sort_indx)
-                fprintf('%s\t%u (%.1g%%)\t%u (%.1g%%)\n',lab{j},tbl(j,1),tbl(j,1)/nA*100,tbl(j,2),tbl(j,2)/nB*100)
+                fprintf(fid,'%s\t%u (%.1g%%)\t%u (%.1g%%)\n',lab{j},tbl(j,1),tbl(j,1)/nA*100,tbl(j,2),tbl(j,2)/nB*100);
             end
-            fprintf('\n')
+            fprintf(fid,'\n');
 
 
 
@@ -76,12 +86,12 @@ for i=1:numel(ClinicalIds)
                     else
                         p_txt = sprintf('%.4f',p_tt);
                     end
-                    fprintf('%s\t%.1f ± %.1f\t%.1f ± %.1f\t%s\n',ClinicalIds{i},mean(x_A,"omitnan"),std(x_A,"omitnan"),mean(x_B,"omitnan"),std(x_B,"omitnan"),p_txt)
-                    fprintf('\n')
+                    fprintf(fid,'%s\t%.1f ± %.1f\t%.1f ± %.1f\t%s\n',ClinicalIds{i},mean(x_A,"omitnan"),std(x_A,"omitnan"),mean(x_B,"omitnan"),std(x_B,"omitnan"),p_txt);
+                    fprintf(fid,'\n');
                 case {'categorical','cat'}
 
-                    fprintf('%s\n',ClinicalIds{i})
-                    [tbl,chi2,~,labels] = crosstab(Clinical(:,indx),Group);
+                    fprintf(fid,'%s\n',ClinicalIds{i});
+                    [tbl,~,~,labels] = crosstab(Clinical(:,indx),Group);
                     % Calc p using only real values
                     TmpClin = Clinical(:,indx);
                     TmpGroup = Group;
@@ -89,9 +99,6 @@ for i=1:numel(ClinicalIds)
                     TmpClin(indx_rem) = [];
                     TmpGroup(indx_rem) = [];
                     [~,~,p,~] = crosstab(TmpClin,TmpGroup);
-
-
-
                     [lab,sort_indx ]= sort(labels(:,1));
                     tbl=tbl(sort_indx,:);
                     if length(sort_indx) == 2
@@ -102,11 +109,11 @@ for i=1:numel(ClinicalIds)
                     else
                         p_txt = sprintf('%.4f',p);
                     end
-                    fprintf('%s\t%u (%.1f%%)\t%u (%.1f%%)\t%s\n',lab{1},tbl(1,1),tbl(1,1)/nA*100,tbl(1,2),tbl(1,2)/nB*100,p_txt)
+                    fprintf(fid,'%s\t%u (%.1f%%)\t%u (%.1f%%)\t%s\n',lab{1},tbl(1,1),tbl(1,1)/nA*100,tbl(1,2),tbl(1,2)/nB*100,p_txt);
                     for j=2:length(sort_indx)
-                        fprintf('%s\t%u (%.1f%%)\t%u (%.1f%%)\n',lab{j},tbl(j,1),tbl(j,1)/nA*100,tbl(j,2),tbl(j,2)/nB*100)
+                        fprintf(fid,'%s\t%u (%.1f%%)\t%u (%.1f%%)\n',lab{j},tbl(j,1),tbl(j,1)/nA*100,tbl(j,2),tbl(j,2)/nB*100);
                     end
-                    fprintf('\n')
+                    fprintf(fid,'\n');
             end
 
         end
