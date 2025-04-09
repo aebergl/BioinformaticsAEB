@@ -81,30 +81,35 @@ catch
 end
 
 % Get info for annotation file
-
 if NumHeaderLines
-    try
-        if isempty(SheetName)
-            opts = detectImportOptions(FileName,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true,'NumHeaderLines',NumHeaderLines);
-        else
-            opts = detectImportOptions(FileName,'Sheet',SheetName,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true,'NumHeaderLines',NumHeaderLines);
-        end
-    catch
-        opts = detectImportOptions(FileName,'FileType','text','Delimiter',Delimiter,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true,'NumHeaderLines',NumHeaderLines);
+    switch lower(fExt)
+        case {'.xls','.xlsb','.xlsm','.xlsx','.xltm','.xltx'}
+            if isempty(SheetName)
+                opts = detectImportOptions(FileName,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true,'NumHeaderLines',NumHeaderLines);
+            else
+                opts = detectImportOptions(FileName,'Sheet',SheetName,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true,'NumHeaderLines',NumHeaderLines);
+            end
+        case {'.txt','.tsv','.csv'}
+            opts = detectImportOptions(FileName,'FileType','text','Delimiter',Delimiter,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true,'NumHeaderLines',NumHeaderLines);
+        otherwise  % Under all circumstances SWITCH gets an OTHERWISE!
+            error('Unexpected file extension: %s', fExt);
     end
+
 else
-    try
-        if isempty(SheetName)
-            opts = detectImportOptions(FileName,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true);
-        else
-            opts = detectImportOptions(FileName,'Sheet',SheetName,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true);
-        end
-    catch
-        opts = detectImportOptions(FileName,'FileType','text','Delimiter',Delimiter,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true);
+    switch lower(fExt)
+        case {'.xls','.xlsb','.xlsm','.xlsx','.xltm','.xltx'}
+            if isempty(SheetName)
+                opts = detectImportOptions(FileName,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true);
+            else
+                opts = detectImportOptions(FileName,'Sheet',SheetName,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true);
+            end
+        case {'.txt','.tsv','.csv'}
+            opts = detectImportOptions(FileName,'FileType','text','Delimiter',Delimiter,'VariableNamingRule',VariableNamingRule,'ReadVariableNames',true);
+        otherwise  % Under all circumstances SWITCH gets an OTHERWISE!
+            error('Unexpected file extension: %s', fExt);
     end
-
-
 end
+
 
 %Select variables to import
 if isempty(ColumnsToAdd)
