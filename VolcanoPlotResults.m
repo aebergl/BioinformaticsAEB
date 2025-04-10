@@ -81,9 +81,14 @@ end
 % Not a perfect solution but it works
 switch X_Variable
     case 'Delta Average'
-        XLabel = {'\Delta \beta-value'};
-        %XLabel = {'\Delta M-value'};
-        %XLabel = {'Log_2 FC'};
+        if strcmp('M-value',DATA.Info.DataType)
+            XLabel = {'\Delta M-value'};
+        elseif strcmp('beta-value',DATA.Info.DataType)
+            XLabel = {'\Delta \beta-value'};
+        else
+        XLabel = {'Log_2 FC'};
+        end
+
     case 'Delta Median'
         XLabel = {'\Delta \beta-value'};
     case 'HR logrank DSS'

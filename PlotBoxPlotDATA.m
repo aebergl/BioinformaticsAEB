@@ -220,11 +220,16 @@ indx = ismember(DATA_ID,VariableId);
 y_var = DATA.X(:,indx);
 y_var(~SampleIndxToUse) = NaN;
 
+
 if size(y_var,2) > 1
-    switch MultipleY
+    switch lower(MultipleY)
         case 'mean'
             y_var=mean(y_var,2,"omitnan");
             VariableId = "Average";
+        case 'median'
+            y_var=median(y_var,2,"omitnan");
+            VariableId = "Median";
+
         case 'pca'
             [PCA_Model] = NIPALS_PCA(y_var,'NumComp',2,'ScaleX',false);
             y_var = PCA_Model.T(:,1);
