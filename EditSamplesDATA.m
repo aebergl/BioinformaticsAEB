@@ -20,6 +20,10 @@ Truncate = false;
 SampleIdentifier = false;
 Stable = false;
 
+if ischar(InputIds) | isstring(InputIds)
+    InputIds = cellstr(InputIds);
+end
+
 i=0;
 while i<numel(varargin)
     i = i + 1;
