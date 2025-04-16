@@ -17,7 +17,9 @@ KeepCgOnly      = false;
 RemoveMasked    = false;
 RemoveX         = false;
 RemoveY         = false;
+RemoveMV        = false;
 MaskedColToUse  = "MASK_general";
+PercMVtol         = 0;
 
 i=0;
 % Check input arguments
@@ -36,6 +38,11 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'MaskedColumnToUse')
         i = i + 1;
         MaskedColToUse = varargin{i};
+        elseif strcmpi(varargin{i},'RemoveMV')
+        RemoveMV = true;    
+        i = i + 1;
+        PercMVtol = varargin{i};
+
     end
 end
 
@@ -70,7 +77,7 @@ end
 
 % Remove Masked probes
 if RemoveMasked
-    L=readlines(MaskedFile);
+    L = readlines(MaskedFile);
     indx = L == ""; % Remove emty rows
     L(indx) = [];
     L = split(L);
@@ -78,13 +85,19 @@ if RemoveMasked
     MASK = L(2:end,2:end);
     CpgIds = L(2:end,1);
     indx_MaskCol = ismember(ColHead,MaskedColToUse);
-
     MASK = MASK(:,indx_MaskCol);
     indx_M = contains(MASK,"TRUE");
     indx_M = any(indx_M,2);
     CpG_remove = CpgIds(indx_M);
     DATA =  EditVariablesDATA(DATA,CpG_remove,'Remove');
 end
+
+if RemoveMV
+    PercMV = sum(isnan(DATA.X),1) / DATA.nRow * 100;
+    indx_MV = PercMV > PercMVtol;
+    DATA =  EditVariablesDATA(DATA,DATA.ColId(indx_MV),'Remove');
+end
+
 
 
 end

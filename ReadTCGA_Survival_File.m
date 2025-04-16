@@ -1,5 +1,4 @@
-function SURVIVAL = ReadTCGA_Survival_File
-
+function SURVIVAL = ReadTCGA_Survival_File(varargin)
 % OS: overall survival event, 1 for death from any cause, 0 for alive.
 % OS.time: overall survival time in days, last_contact_days_to or death_days_to, whichever is larger.
 
@@ -12,8 +11,13 @@ function SURVIVAL = ReadTCGA_Survival_File
 % PFI: progression-free interval event, 1 for patient having new tumor event whether it was a progression of disease, local recurrence, distant metastasis, new primary tumors all sites , or died with the cancer without new tumor event, including cases with a new tumor event whose type is N/A.
 % PFI.time: progression-free interval time in days, for events, either new_tumor_event_dx_days_to or death_days_to,  whichever is applicable; or for censored cases, either last_contact_days_to or death_days_to, whichever is applicable.
 % 
+SurvivalFile = 'TCGA-CDR-SupplementalTableS1.xlsx';
+if nargin>0
+    SurvivalFile = varargin{1};
+end
 
-if ~isfile('TCGA-CDR-SupplementalTableS1.xlsx')
+
+if ~isfile(SurvivalFile)
     try
         warning('Could not find TCGA-CDR-SupplementalTableS1.xls in this directory')
         warning('Starting to download it now, will probably take a couple of minutes')
@@ -23,7 +27,7 @@ if ~isfile('TCGA-CDR-SupplementalTableS1.xlsx')
     end
 end
 fprintf('Reading TCGA-CDR-SupplementalTableS1.xlsx\n')
-C = readcell('TCGA-CDR-SupplementalTableS1.xlsx','Sheet','TCGA-CDR','NumHeaderLines',0);
+C = readcell(SurvivalFile,'Sheet','TCGA-CDR','NumHeaderLines',0);
 
 %Remove first column with just numbers
 C(:,1) = [];
