@@ -40,7 +40,7 @@ DATA  = EditSamplesDATA(DATA,IdsToRemove,'Remove');
 % Add basic Sample info based on TCGA sample Id
 fprintf('Converting TCGA Id to sample info\n')
 
-[SampleInfo,SampleFields] = ConvertTCGAId(DATA.RowId);
+[SampleInfo,SampleFields] = ConvertTCGAId(cellstr(DATA.RowId));
 DATA.RowAnnotation = SampleInfo;
 DATA.RowAnnotationFields = SampleFields;
 
@@ -70,10 +70,7 @@ end
 List = {'bcr_patient_barcode','gender','age_at_initial_pathologic_diagnosis',...
 'tumor_tissue_site','new_tumor_event_after_initial_treatment','radiation_therapy',...
 'race','histological_type','pathologic_T','pathologic_M','clinical_M','pathologic_N',...
-'clinical_stage','clinical_T','clinical_N','breast_carcinoma_progesterone_receptor_status',...
-'breast_carcinoma_estrogen_receptor_status','lab_proc_her2_neu_immunohistochemistry_receptor_status',...
-'distant_metastasis_anatomic_site','days_to_first_biochemical_recurrence',...
-'secondary_pattern','primary_pattern','biochemical_recurrence','tumor_tissue_site_1'};
+'clinical_stage','clinical_T','clinical_N'};
 
 DATA = AddRowAnnotationFromFile(DATA,'clinical_PANCAN_patient_with_followup.tsv','File_Id','bcr_patient_barcode','ColumnsToAdd',List,'Truncate',12);
 
