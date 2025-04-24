@@ -31,8 +31,8 @@ TransposeX = true;
 BetaValueExt = '_b';
 DetectionPvalExt = '_p';
 DATA=[];
-R_Input = true;
-Detection_Pval_CutOff = 0.01;
+R_Input = false;
+Detection_Pval_CutOff = 0.1;
 
 % Check Input
 i=0;
@@ -53,12 +53,15 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'DetectionPvalExt')
         i = i + 1;
         DetectionPvalExt = varargin{i};
+    elseif strcmpi(varargin{i},'Detection_Pval_CutOff')
+        i = i + 1;
+        Detection_Pval_CutOff = varargin{i};
     elseif strcmpi(varargin{i},'Delimiter')
         i = i + 1;
-        DelimiterType = varargin{i};      
-    elseif strcmpi(varargin{i},'T')        
+        DelimiterType = varargin{i};
+    elseif strcmpi(varargin{i},'T')
         TransposeX = true;
-   elseif strcmpi(varargin{i},'NoT')
+    elseif strcmpi(varargin{i},'NoT')
         TransposeX = false;
     elseif strcmpi(varargin{i},'R')
         R_Input = 1;
@@ -107,7 +110,7 @@ numRead =numel(S{2});
 if numRead < numDataRows
 
     warning('WARNING!!! %u lines read but there should have been %u',numRead,numDataRows);
-    
+
 end
 
 DATA = CreateDataStructure(numRead,numXColumns/2,numIdColumns,numHeaderRows);
@@ -115,20 +118,30 @@ DATA = CreateDataStructure(numRead,numXColumns/2,numIdColumns,numHeaderRows);
 
 if numHeaderRows > 0
     [tmp,~] = textscan(HeaderData{1},'%q','delimiter',DelimiterType);
-    tmp = tmp{1}
+    tmp = tmp{1};
     if R_Input
         tmp = [{'SampleId'};tmp];
     end
-    beta_indx = strfind(tmp,BetaValueExt);
-    BetaAvg_Columns = (~cellfun('isempty',beta_indx));
     pval_indx = strfind(tmp,DetectionPvalExt);
     PVal_Columns = (~cellfun('isempty',pval_indx));
 
+    if isempty(BetaValueExt)
+        BetaAvg_Columns = ~PVal_Columns;
+        BetaAvg_Columns(1) = false;
+    else
+        beta_indx = strfind(tmp,BetaValueExt);
+        BetaAvg_Columns = (~cellfun('isempty',beta_indx));
+    end
+
     tmp_names=tmp(BetaAvg_Columns);
-    for i=1:numel(tmp_names)
-        tmp_txt=strsplit(tmp_names{i},BetaValueExt);
-        tmp_txt =   deblank(tmp_txt{1});
-        DATA.ColId(i)=tmp_txt;
+    if isempty(BetaValueExt)
+        DATA.ColId = tmp_names;
+    else
+        for i=1:numel(tmp_names)
+            tmp_txt=strsplit(tmp_names{i},BetaValueExt);
+            tmp_txt =   deblank(tmp_txt{1});
+            DATA.ColId(i)=tmp_txt;
+        end
     end
     %DATA.ColId = string(DATA.ColId);
     if numIdColumns > 1
@@ -147,8 +160,9 @@ if numHeaderRows > 0
     end
 else
 
-    
+
 end
+
 P = cell2mat(S(PVal_Columns));
 
 DATA.X = cell2mat(S(BetaAvg_Columns));
@@ -164,7 +178,7 @@ DATA.Info.Source = InputFile;
 DATA.Info.Type = 'Methylation';
 
 
-    
+
 
 % Check for unique identifiers
 
@@ -181,7 +195,7 @@ end
 
 % transpose DATA
 if TransposeX
-    DATA = TransposeData(DATA);  
+    DATA = TransposeData(DATA);
 end
 
 
