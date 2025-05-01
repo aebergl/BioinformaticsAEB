@@ -1,7 +1,7 @@
 function fh = PlotScatterDATA(DATA,VariableId_x,VariableId_y,GroupVariableName,GroupsToUse,varargin)
-MarkerSize = 100;
+MarkerSize = 50;
 MarkerEdgeLineWidth = 0.5;
-AlphaValue=0.8;
+AlphaValue=0.5;
 AlphaValueMarkerLine = 0.95;
 MarkerEdgeColor = [0.1 0.1 0.1];
 FontSize = 10;
@@ -10,9 +10,8 @@ MarkerTypes = {'o','v','^','<','>','d'}';
 CMap = GetPalette('aeb01');
 AxisType = 'normal';
 VariableIdentifier = false;
-AddCorr = false;
+AddCorr = true;
 CorrType = 'Pearson';
-
 i=0;
 while i<numel(varargin)
     i = i + 1;
@@ -150,7 +149,7 @@ end
 
 if AddCorr
     [r p_val] = corr(x_var, y_var,'Type','Spearman','Rows','pairwise')
-    [r p_val] = corr(x_var, y_var,'Type','Pearson','Rows','pairwise')
+    %[r p_val] = corr(x_var, y_var,'Type','Pearson','Rows','pairwise')
     txt_str{1} = sprintf('r=%.2f',r);
     txt_str{2} = sprintf('p=%.2g',p_val);
 

@@ -35,8 +35,6 @@ if isfield(DATA,'SURVIVAL')
     RESULTS_DATA.SURVIVAL = DATA.SURVIVAL;
 end
 %
-% DATA.X=B2M(DATA.X);
-% DATA_Median.X=B2M(DATA_Median.X);
 
 if isempty(DATA_Median)
     median_x = zeros(1,sum(indx_ToUse));
