@@ -363,7 +363,7 @@ if CalcStats
                 FS = FontSize;
                 VerticalAlignment = 'bottom';
             else
-                FS = 12;
+                FS = FontSize + 4;
                 VerticalAlignment = 'middle';
             end
             if Show_NS || p_val < 0.05
