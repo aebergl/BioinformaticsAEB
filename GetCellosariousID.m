@@ -92,7 +92,7 @@ for i = 1:n
     Id_Clean = replace(Id,CleanChar,ReplaceChar);
     RESULTS(i,1) = Id;
 
-    % Cheick if Id is in Manual Correction array
+    % Check if Id is in Manual Correction array
     if ~isempty(ManualCorrection)
         indx_MC = strcmp(Id,ManualCorrection(:,1));
         if any(indx_MC)

@@ -33,11 +33,12 @@ function fh = GSEA_DotPlot_MultiDataSets(DATA,XAxisId,XGroups,YAxisId,YGroups,Si
 VariableIdentifier = false;
 FigSize = [4 7.5];
 FontSize = 8;
-LineWidth = 0.5;
+LineWidth = 0.3;
 GridLines = 'on';
-RightMargin = 0.7;
+RightMargin = 0.25;
 SizeCutOffs =[1 0.05 0.01 0.001 0.0001];
 LegendSizeVal = [5 20 40 60 80];
+StepVal = 1.5;
 
 CMap = colorcet('D01');
 CLim = [-3 3];
@@ -161,7 +162,7 @@ ah.TickLength=[ 0.05/nVal    0.0];
 % end
 % xlabel(ah,XlabelTxt);
 
-sh = scatter(XAxisDataPlot,YAxisData,SizeValPlot,ColorVal,'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
+sh = scatter(XAxisDataPlot,YAxisData,SizeValPlot,ColorVal,'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1],'LineWidth',LineWidth);
 %ah.XLimMode = 'manual';
 % switch lower(GeneSetSource)
 %     case 'hallmark'
@@ -183,7 +184,7 @@ ch.Label.String=ColorVar;
 ch.FontSize=FontSize;
 
 % Add size legend
-StepVal = 1;
+
 nudgeVal = 0.1;
 YPos_Size = 1:StepVal:StepVal*length(LegendSizeVal);
 
