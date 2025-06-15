@@ -10,7 +10,7 @@ MarkerTypes = {'o','v','^','<','>','d'}';
 CMap = GetPalette('aeb01');
 AxisType = 'normal';
 VariableIdentifier = false;
-AddCorr = true;
+AddCorr = false;
 CorrType = 'Pearson';
 i=0;
 while i<numel(varargin)
