@@ -355,6 +355,13 @@ if CalcStats
                 [~,p_val] = ttest2(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),0.05,'both','unequal');
             case 'mw'
                 [p_val] = ranksum(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))));
+            case 'f-test'
+                [~,p_val] = vartest2(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),0.05);
+            case 'bartlett'
+                x = y_var(SampleIndxMat(:,CalcGroup(i,1)));
+                y = y_var(SampleIndxMat(:,CalcGroup(i,2)));
+                p_val = vartestn([x;y],[ones(size(x));ones(size(y))*2],'Display','off','TestType','Bartlett');
+
         end
 
         txt_p = pval2stars(p_val,[]);
