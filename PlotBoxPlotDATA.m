@@ -92,7 +92,7 @@ if nargin > 4
             switch lower(ArgType)
 
                 case 'variableidentifier'
-                    VariableIdentifier =ArgVal;
+                    VariableIdentifier = ArgVal;
                 case 'figsize'
                     FigSize = ArgVal;
                 case 'ylabel'

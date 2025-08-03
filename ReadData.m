@@ -130,7 +130,7 @@ if numHeaderRows > 0
     DATA.RowId  = S{1};
     if numIdColumns > 1
         DATA.RowAnnotation  = [S{2:numIdColumns}];
-
+        DATA.RowAnnotation=string(DATA.RowAnnotation);
     end
 else
     error('There need to be at least one header Ropw')
