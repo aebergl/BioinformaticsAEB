@@ -1,4 +1,5 @@
-function [RES] = PanCan_Survival_All(DATA,VariableId)% USAGE:
+function [] = PanCan_Survival_All(DATA,VariableId,varargin)
+% USAGE:
 %   fh  = PlotBoxPlotDATA(DATA,VariableId,GroupVariableName,GroupsToUse,varargin)
 %   creates a scatter boxplot plot from DATA structure
 %
@@ -42,14 +43,13 @@ function [RES] = PanCan_Survival_All(DATA,VariableId)% USAGE:
 
 VariableIdentifier = false;
 TumorTypesToUse = [];
-TumorTypeColumnId = "TCGA_Code";
-RemoveNormalTissue = true;
-NormalTissueName = {'Solid Tissue Normal'};
-NormalTissueColumnId = "Sample_Type";
+TumorTypeColumnId = 'TCGA_Code';
+SurvivalTypes = [];
+TissueColumnId = "Sample_Type";
 
 % Check input
-if nargin > 4
-    ArgsList = {'VariableIdentifier','TumorTypesToUse'};
+if nargin > 2
+    ArgsList = {'VariableIdentifier','TumorTypesToUse','SurvivalTypes'};
     for j=1:2:numel(varargin)
 
         ArgType = varargin{j};
@@ -60,16 +60,13 @@ if nargin > 4
             switch lower(ArgType)
                 case 'variableidentifier'
                     VariableIdentifier = ArgVal;
-                case 'tumortypestotse'
+                case 'tumortypestouse'
                     TumorTypesToUse = ArgVal;
+                case 'survivaltypes'
+                    SurvivalTypes = ArgVal;
             end
         end
     end
-end
-
-% Remove Normal samples
-if RemoveNormalTissue
-    DATA  = EditSamplesDATA(DATA,NormalTissueName,'Remove','SampleIdentifier',NormalTissueColumnId);
 end
 
 % Get Tumor Types To Use
@@ -83,8 +80,9 @@ else
         TumorTypesToUse = unique(DATA.RowAnnotation(:,indx_TumorType));
     end
 end
-DATA = EditSamplesDATA(DATA,TumorTypesToUse,'Keep','SampleIdentifier',TumorTypeColumnId);
 
+DATA = EditSamplesDATA(DATA,TumorTypesToUse,'Keep','SampleIdentifier',TumorTypeColumnId);
+nTumorTypes = length(TumorTypesToUse);
 
 % Selection of Y variable
 if VariableIdentifier
@@ -100,3 +98,54 @@ else
     DATA = EditVariablesDATA(DATA,VariableId,'Keep');
 end
 
+if isempty(SurvivalTypes)
+    SurvivalTypes = DATA.SURVIVAL.SurvivalTypes;
+end
+nSurvivalTypes = length(SurvivalTypes);
+fprintf('\n')
+fprintf('Tumor Type')
+fprintf('\t%s',SurvivalTypes{:})
+fprintf('\n')
+for i = 1:nTumorTypes
+    fprintf('%s',TumorTypesToUse{i})
+    DATA_Calc = EditSamplesDATA(DATA,TumorTypesToUse(i),'Keep','SampleIdentifier',TumorTypeColumnId);
+
+    switch lower(TumorTypesToUse{i})
+        case 'skcm'
+            DATA_Calc = EditSamplesDATA(DATA_Calc,{'Primary solid Tumor','Metastatic'},'Keep','SampleIdentifier',TissueColumnId);
+        case 'laml'
+            DATA_Calc = EditSamplesDATA(DATA_Calc,{'Primary Blood Derived Cancer - Peripheral Blood'},'Keep','SampleIdentifier',TissueColumnId);
+        otherwise
+            DATA_Calc = EditSamplesDATA(DATA_Calc,{'Primary solid Tumor'},'Keep','SampleIdentifier',TissueColumnId);
+    end
+
+    for j = 1:nSurvivalTypes
+
+        indx_SurvivalType = strcmp(SurvivalTypes(j),DATA_Calc.SURVIVAL.SurvivalTypes);
+        TimeVar = DATA_Calc.SURVIVAL.SurvTime(:,indx_SurvivalType);
+        EventVar = DATA_Calc.SURVIVAL.SurvEvent(:,indx_SurvivalType);
+        switch lower(DATA_Calc.Info.Type)
+            case 'gistic'
+                x = DATA_Calc.X;
+                x = num2cell(x);
+                x = cellfun(@(x) num2str(x), x,'UniformOutput',false);
+                try 
+                [p,fH,stats] = MatSurv( TimeVar, EventVar,x,'Timeunit','Months','NoPlot',1,'NoWarnings',1,'Print',0);
+                catch 
+                    p=NaN;
+                end
+                fprintf('\t%g',p)
+            case 'geneexpression'
+                 x = DATA_Calc.X;
+                 try 
+                [p,fH,stats] = MatSurv( TimeVar, EventVar,x,'Timeunit','Months','NoPlot',1,'NoWarnings',1,'Print',0,'CutPoint','median');
+                 catch
+                     p=NaN;
+                 end
+                fprintf('\t%g',p)
+            otherwise
+        end
+        
+    end
+fprintf('\n')
+end

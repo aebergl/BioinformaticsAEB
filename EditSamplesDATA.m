@@ -17,7 +17,7 @@ function DATA  = EditSamplesDATA(DATA,InputIds,KeepRemove,varargin)
 
 
 Truncate = false;
-SampleIdentifier = false;
+SampleIdentifier = [];
 Stable = false;
 
 if ischar(InputIds) | isstring(InputIds)
@@ -38,7 +38,7 @@ while i<numel(varargin)
     end
 end
 
-if SampleIdentifier
+if ~isempty(SampleIdentifier)
     indx = strcmpi(SampleIdentifier,DATA.RowAnnotationFields);
     if ~any(indx)
         error('Error. \n%s not found in DATA.RowAnnotationFields',SampleIdentifier);
