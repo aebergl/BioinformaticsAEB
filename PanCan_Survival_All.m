@@ -46,10 +46,11 @@ TumorTypesToUse = [];
 TumorTypeColumnId = 'TCGA_Code';
 SurvivalTypes = [];
 TissueColumnId = "Sample_Type";
+CutPoint = 'median';
 
 % Check input
 if nargin > 2
-    ArgsList = {'VariableIdentifier','TumorTypesToUse','SurvivalTypes'};
+    ArgsList = {'VariableIdentifier','TumorTypesToUse','SurvivalTypes','CutPoint'};
     for j=1:2:numel(varargin)
 
         ArgType = varargin{j};
@@ -64,6 +65,9 @@ if nargin > 2
                     TumorTypesToUse = ArgVal;
                 case 'survivaltypes'
                     SurvivalTypes = ArgVal;
+               case 'cutpoint'
+                    CutPoint = ArgVal;
+
             end
         end
     end
@@ -102,6 +106,8 @@ if isempty(SurvivalTypes)
     SurvivalTypes = DATA.SURVIVAL.SurvivalTypes;
 end
 nSurvivalTypes = length(SurvivalTypes);
+
+CutPoint
 fprintf('\n')
 fprintf('Tumor Type')
 fprintf('\t%s',SurvivalTypes{:})
@@ -138,7 +144,7 @@ for i = 1:nTumorTypes
             case 'geneexpression'
                  x = DATA_Calc.X;
                  try 
-                [p,fH,stats] = MatSurv( TimeVar, EventVar,x,'Timeunit','Months','NoPlot',1,'NoWarnings',1,'Print',0,'CutPoint','median');
+                [p,fH,stats] = MatSurv( TimeVar, EventVar,x,'Timeunit','Months','NoPlot',1,'NoWarnings',1,'Print',0,'CutPoint',CutPoint);
                  catch
                      p=NaN;
                  end
