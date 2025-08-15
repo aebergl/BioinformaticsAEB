@@ -120,7 +120,7 @@ end
 if SurvivalFlag & SampleAnnotationFlag
     if  isfield(DATA,'SURVIVAL')
         for i=1:length(DATA.SURVIVAL.SurvivalTypes)
-            fprintf(fid,'%s (Event)\t%s Time (%s)\t',DATA.SURVIVAL.SurvivalTypes{i},DATA.SURVIVAL.SurvivalTypes{i},DATA.SURVIVAL.Units{i});
+            fprintf(fid,'\t%s (Event)\t%s Time (%s)',DATA.SURVIVAL.SurvivalTypes{i},DATA.SURVIVAL.SurvivalTypes{i},DATA.SURVIVAL.Units{i});
         end
     end
 end
@@ -143,7 +143,7 @@ for i=1:DATA.nRow
     end
     if SurvivalFlag & SampleAnnotationFlag
         for j=1:length(DATA.SURVIVAL.SurvivalTypes)
-            fprintf(fid,'%s\t%g\t',DATA.SURVIVAL.SurvEvent{i,j},DATA.SURVIVAL.SurvTime(i,j));
+            fprintf(fid,'\t%s\t%g',DATA.SURVIVAL.SurvEvent{i,j},DATA.SURVIVAL.SurvTime(i,j));
         end
     end
 

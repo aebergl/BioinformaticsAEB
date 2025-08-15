@@ -107,7 +107,6 @@ if isempty(SurvivalTypes)
 end
 nSurvivalTypes = length(SurvivalTypes);
 
-CutPoint
 fprintf('\n')
 fprintf('Tumor Type')
 fprintf('\t%s',SurvivalTypes{:})
