@@ -40,6 +40,7 @@ VariableIdentifier = false;
 FontSize = 12;
 FigSize = [5,5];
 AxisType = 'square';
+SortOrder = 'sorted';
 
 MarkerSize = 50;
 MarkerLineWidth = 0.2;
@@ -52,7 +53,7 @@ XlabelTxt = [];
 YlabelTxt = [];
 TitleTxt = [];
 
-CalcCorr = true;
+CalcCorr = false;
 CorrType = 'Spearman';
 CorrLine = false;
 CorrLineWidth = 1;
@@ -100,9 +101,9 @@ if nargin > 5
                 case 'markercolors'
                     MarkerColors = ArgVal;
                 case 'xlabel'
-                    XlabelTxt =ArgVal;
+                    XlabelTxt = ArgVal;
                 case 'ylabel'
-                    YlabelTxt =ArgVal;
+                    YlabelTxt = ArgVal;
                 case 'titletext'
                     TitleTxt = ArgVal;
                 case 'calccorr'
@@ -141,7 +142,7 @@ else
         GroupData = DATA.RowAnnotation(:,indx);
     end
     if isempty(GroupsToUse)
-        GroupsToUse = unique(GroupData,'stable');
+        GroupsToUse = unique(GroupData,SortOrder);
     end
     nGroups = length(GroupsToUse);
     numValuesPerGroup = zeros(nGroups,1);
@@ -280,8 +281,8 @@ end
 
 % Add Y label
 if isempty(XlabelTxt)
-    %xlabel(sprintf('%s',VariableId_x),'FontSize',FontSize,'Interpreter','tex')
-    xlabel(sprintf('\\it%s\\rm expression',VariableId_x),'FontSize',FontSize)
+    xlabel(sprintf('%s',VariableId_x),'FontSize',FontSize,'Interpreter','tex')
+    %xlabel(sprintf('\\it%s\\rm expression',VariableId_x),'FontSize',FontSize)
 else
     xlabel(YlabelTxt,'FontSize',FontSize)
 end
