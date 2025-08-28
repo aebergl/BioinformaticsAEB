@@ -54,7 +54,7 @@ YlabelTxt = [];
 TitleTxt = [];
 
 CalcCorr = false;
-CorrType = 'Spearman';
+CorrType = 'Pearson';
 CorrLine = false;
 CorrLineWidth = 1;
 CorrLineColor = [0 0 0];
@@ -177,7 +177,7 @@ switch lower(DataTipId)
         indx_SampleId = strcmpi(DataTipId,DATA.RowAnnotationFields);
         if ~any(indx_SampleId)
             error('Error. \n%s not found in DATA.RowAnnotationFields',DataTipId);
-        elseif sum(indx_VarId) > 1
+        elseif sum(indx_SampleId) > 1
             error('Warning. \nMultiple matches for %s found in DATA.RowAnnotationFields',DataTipId);
         else
             SampleId = DATA.RowAnnotation(:,indx_SampleId);
@@ -281,8 +281,8 @@ end
 
 % Add Y label
 if isempty(XlabelTxt)
-    xlabel(sprintf('%s',VariableId_x),'FontSize',FontSize,'Interpreter','tex')
-    %xlabel(sprintf('\\it%s\\rm expression',VariableId_x),'FontSize',FontSize)
+    %xlabel(sprintf('%s',VariableId_x),'FontSize',FontSize,'Interpreter','tex')
+    xlabel(sprintf('\\it%s\\rm expression',VariableId_x),'FontSize',FontSize)
 else
     xlabel(YlabelTxt,'FontSize',FontSize)
 end

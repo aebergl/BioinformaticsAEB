@@ -129,6 +129,11 @@ if any(indx_Y_Val)
 else
     error('%s not found',Y_Variable)
 end
+indx_Zero = y_data == 0;
+minVal = min(y_data(~indx_Zero));
+y_data(indx_Zero) = minVal;
+
+
 % Not a perfect solution but it works
 switch Y_Variable
     case 'p logrank PFS'

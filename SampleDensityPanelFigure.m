@@ -1,10 +1,11 @@
 function [fh RESULTS_DATA] = SampleDensityPanelFigure(DATA,IdColumn,Refsample,nRow,nCol,varargin)
 
+FontSize = 10;
+FigSize = [16 4];
+TitleTxt = inputname(1);
 
-PageWidth = 8.9;
-PageHight = 8;
 ShowFigure = true;
-FontSize = 6;
+FontSize = 10;
 ExportPlot = false;
 ExportDir = pwd;
 MatchedSamplePairs = [];
@@ -14,7 +15,7 @@ PointsToExclude = [];
 if nargin > 5
     [varargin{:}] = convertStringsToChars(varargin{:});
 end
-ResolutionValue = 600;
+ResolutionValue = 400;
 LineWidth = 0.5;
 
 DataType = "GeneExpression";
@@ -24,7 +25,8 @@ end
 
 % Check input
 if nargin > 5
-    ArgsList = {'DisplayFigure', 'ExportPlot','ExportDir','MatchedSamplePairs','ALLvsALL','PointsToExclude'};
+    ArgsList = {'FontSize','FigSize','TitleTxt','DisplayFigure','ExportPlot','ExportDir',...
+        'MatchedSamplePairs','ALLvsALL','PointsToExclude'};
     for j=1:2:numel(varargin)
         ArgType = varargin{j};
         ArgVal = varargin{j+1};
@@ -32,6 +34,12 @@ if nargin > 5
             error('Invalid input option: %s', ArgType);
         else
             switch lower(ArgType)
+                case 'fontsize'
+                    FontSize = ArgVal;
+                case 'figsize'
+                    FigSize = ArgVal;
+                case 'titletxt'
+                    TitleTxt = ArgVal;
                 case 'displayfigure'
                     ShowFigure = ArgVal;
                 case 'exportplot'
@@ -44,7 +52,6 @@ if nargin > 5
                     ALLvsALL = ArgVal;
                 case 'pointstoexclude'
                     PointsToExclude = ArgVal;
-
             end
         end
     end
@@ -108,7 +115,9 @@ RESULTS_DATA = CreateDataStructure(nArrays,nVar,[],[]);
 RESULTS_DATA.Title = 'Sample Density';
 
 RESULTS_DATA.ColId=VarNames;
-%RESULTS_DATA.RowId = SampleIds(OtherSampleIndx);
+RESULTS_DATA.RowAnnotation = strings(nArrays,2);
+RESULTS_DATA.RowAnnotation(:,2) = TitleTxt;
+RESULTS_DATA.RowAnnotationFields = {'Name','Title'};
 
 
 
@@ -116,14 +125,8 @@ RESULTS_DATA.ColId=VarNames;
 for i = 1:nImages
     fh(i) = figure('Name','Array Image','Color','w','Tag','Array Image',...
         'Visible',ShowFigure,'Units','inches','Colormap',turbo);
-    fh(i).Position(3) = PageWidth;
-    %fh(i).Position(4) = PageWidth*nRow/nCol;
-     fh(i).Position(4) = PageHight;
+    fh(i).Position(3:4) = FigSize;
     th = tiledlayout(fh(i),nRow,nCol,'TileSpacing','tight','padding','tight');
-    %th.Title.String = Refsample;
-    %th.Title.FontWeight = 'bold';
-    %th.Title.Interpreter = 'None';
-    %th.Title.FontSize = FontSize;
     CurrentPane = 0;
     while CurrentPane < nPanes && counter < nArrays
         counter = counter + 1;
@@ -139,12 +142,14 @@ for i = 1:nImages
             DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',mSize,'PointsToExclude', PointsToExclude);
             xlabel(MatchedSamplePairs(counter,1),'FontSize',FontSize+2,'Interpreter','none');
             ylabel(MatchedSamplePairs(counter,2), 'FontSize',FontSize+2,'Interpreter','none')
+            RESULTS_DATA.RowId(counter) = strcat(MatchedSamplePairs(counter,2)," vs. ",MatchedSamplePairs(counter,1));
 
         else
             y_sample=DATA.X(OtherSampleIndx(counter),:);
             DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',mSize,'PointsToExclude', PointsToExclude);
             xlabel(Refsample,'FontSize',FontSize+2,'Interpreter','none');
             ylabel(SampleIds(OtherSampleIndx(counter)), 'FontSize',FontSize+2,'Interpreter','none')
+            RESULTS_DATA.RowId(counter) = strcat(MatchedSamplePairs(counter,2)," vs. ",Refsample);
         end
         ah.FontSize = FontSize;
         ah.XLim = [minX maxX];
@@ -187,15 +192,24 @@ for i = 1:nImages
         RESULTS_DATA.X(counter,3) = c{1}.est;
         RESULTS_DATA.X(counter,4) = nDiff_1;
         RESULTS_DATA.X(counter,5) = nDiff_2;
-        drawnow
+        RESULTS_DATA.RowAnnotation(:,1) = RESULTS_DATA.RowId;
+        drawnow 
     end
+        if TitleTxt
+        title(th,TitleTxt,{'',''})
+        th.Title.FontWeight = 'bold';
+        th.Title.Interpreter = 'None';
+        th.Title.FontSize = FontSize;
+    end
+
     if ExportPlot
         if nImages > 1
             [~,name,ext] = fileparts(ExportPlot);
             tmpName = sprintf('%s_%u%s',name,i,ext);
             FullFileExport=fullfile(ExportDir,tmpName);
         else
-            FullFileExport=fullfile(ExportDir,ExportPlot);
+            %FullFileExport=fullfile(ExportDir,ExportPlot);
+            FullFileExport=fullfile(ExportDir,strcat(TitleTxt,".png"));
         end
 
         exportgraphics(th,FullFileExport,'Resolution',ResolutionValue)

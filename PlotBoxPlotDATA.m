@@ -378,7 +378,7 @@ if CalcStats
             end
         else
             VerticalAlignment = 'bottom';
-            txt_p = num2str(p_val,2);
+            txt_p = num2str(p_val,5);
             text(ah,mean(CalcGroup(i,:)),Y_pos+(y_nudge/12),txt_p,'VerticalAlignment',VerticalAlignment,'HorizontalAlignment', 'center','FontSize',FontSize);
         end
 
@@ -390,6 +390,5 @@ try
 catch
 
 end
-
 
 
