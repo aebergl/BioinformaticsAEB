@@ -18,6 +18,11 @@ LineWidth = 0.5;
 DataTipVariableName = [];
 XlimCrop = false;
 
+MarkerLineWidth = 0.1;
+MarkerEdgeColor = [0 0 0];
+MarkerLineAlphaValue = 0.8;
+
+
 i=0;
 %Check input options
 while i<numel(varargin)
@@ -302,10 +307,13 @@ SampleId_neg = SampleId(indx_neg);
 
 if any(indx_pos_scatter)
     DensScat(x_data_pos(~indx_pos_scatter),y_data_pos(~indx_pos_scatter),'TargetAxes',ah,'ColorBar',false,'ColorMap',cMap,'mSize',25,'AxisType','auto');
-    sh_pos = scatter(ah,x_data_pos(indx_pos_scatter),y_data_pos(indx_pos_scatter),dist_pos_size(indx_pos_scatter),Cmap_UpDn(1,:),'filled');
+    sh_pos = scatter(ah,x_data_pos(indx_pos_scatter),y_data_pos(indx_pos_scatter),dist_pos_size(indx_pos_scatter),Cmap_UpDn(1,:),'MarkerFaceColor','flat','MarkerEdgeColor',MarkerEdgeColor);
     sh_pos.AlphaDataMapping = 'none';
     sh_pos.AlphaData = dist_pos_alpha(indx_pos_scatter);
     sh_pos.MarkerFaceAlpha = 'flat';
+    sh_pos.MarkerEdgeAlpha = MarkerLineAlphaValue;
+    sh_pos.LineWidth = MarkerLineWidth;
+
     row = dataTipTextRow('',SampleId_pos(indx_pos_scatter));
     sh_pos.DataTipTemplate.DataTipRows = row;
     sh_pos.DataTipTemplate.FontSize = FontSize;
@@ -315,10 +323,13 @@ end
 
 if any(indx_neg_scatter)
     DensScat(x_data_neg(~indx_neg_scatter),y_data_neg(~indx_neg_scatter),'TargetAxes',ah,'ColorBar',false,'ColorMap',cMap,'mSize',25,'AxisType','auto');
-    sh_neg = scatter(ah,x_data_neg(indx_neg_scatter),y_data_neg(indx_neg_scatter),dist_neg_size(indx_neg_scatter),Cmap_UpDn(2,:),'filled');
+    sh_neg = scatter(ah,x_data_neg(indx_neg_scatter),y_data_neg(indx_neg_scatter),dist_neg_size(indx_neg_scatter),Cmap_UpDn(2,:),'MarkerFaceColor','flat','MarkerEdgeColor',MarkerEdgeColor);
     sh_neg.AlphaDataMapping = 'none';
     sh_neg.AlphaData = dist_neg_alpha(indx_neg_scatter);
     sh_neg.MarkerFaceAlpha = 'flat';
+    sh_neg.MarkerEdgeAlpha = MarkerLineAlphaValue;
+    sh_neg.LineWidth = MarkerLineWidth;
+
     row = dataTipTextRow('',SampleId_neg(indx_neg_scatter));
     sh_neg.DataTipTemplate.DataTipRows = row;
     sh_neg.DataTipTemplate.FontSize = FontSize;
