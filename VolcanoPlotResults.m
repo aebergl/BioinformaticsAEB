@@ -406,7 +406,7 @@ switch PlotType
         end
 end
 ah.Position([1 3]) = [0.15 0.7];
-
+ah.Position([4]) = [0.78];
     indx  = find(abs(x_data) > X_CutOff & y_data > Y_CutOff);
 
 if nargout == 2

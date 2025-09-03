@@ -9,7 +9,7 @@ RightMargin = 0.8;
 
 NameField = "NAME";
 SizeCutOffs =[1 0.05 0.01 0.001 0.0001];
-LegendSizeVal = [5 20 40 60 80];1
+LegendSizeVal = [5 20 40 60 80];
 % SizeCutOffs =[1 0.2 0.05 0.01 0.001];
 % LegendSizeVal = [5 20 40 60 80];
 
@@ -20,7 +20,7 @@ LegendSizeVal = [5 20 40 60 80];1
 
 FlipNeg = true;
 ColorBy = "Enrichment";
-ColorBy = "Type";
+%ColorBy = "Type";
 
 xVal_pos = [];
 SizeVal_pos = [];
@@ -138,7 +138,6 @@ switch lower(CollectionType)
             'HALLMARK_XENOBIOTIC_METABOLISM','Xenobiotic Metabolism','metabolic';
             };
         [~,indx_new]=ismember(YtickLabelTxt,GSEA_Name(:,1));
-
         YtickLabelTxt = GSEA_Name(indx_new,2);
         ColorGroups = GSEA_Name(indx_new,3);
         AllTypes = {'cellular component','development','DNA damage','immune','metabolic','pathway','proliferation','signaling'};
@@ -151,6 +150,17 @@ switch lower(CollectionType)
         YtickLabelTxt = strrep(YtickLabelTxt,'_',' ');
         YtickLabelTxt = lower(YtickLabelTxt);
         YtickLabelTxt = upper(extractBefore(YtickLabelTxt,2)) + extractAfter(YtickLabelTxt,1);
+    case 'gobp'
+        YtickLabelTxt = strrep(YtickLabelTxt,'GOBP_','');
+        YtickLabelTxt = strrep(YtickLabelTxt,'_',' ');
+        YtickLabelTxt = lower(YtickLabelTxt);
+        YtickLabelTxt = upper(extractBefore(YtickLabelTxt,2)) + extractAfter(YtickLabelTxt,1);
+    case 'gomf'
+        YtickLabelTxt = strrep(YtickLabelTxt,'GOMF_','');
+        YtickLabelTxt = strrep(YtickLabelTxt,'_',' ');
+        YtickLabelTxt = lower(YtickLabelTxt);
+        YtickLabelTxt = upper(extractBefore(YtickLabelTxt,2)) + extractAfter(YtickLabelTxt,1);
+
 end
 
 
@@ -217,8 +227,8 @@ end
 
 sh = scatter(xVal,1:nGroups,SizeValPlot,ColorVal,'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
 
-StepVal = 1.1;
-StepVal = 0.6;
+StepVal = 1.5;
+
 
 % Add color legend
 YPos_Size = 0;
@@ -229,19 +239,24 @@ YPos_Text = 1:StepVal:StepVal*4;
 
 
 text(ah.XLim(2)+1.8*nudgeVal,YPos_Text(1),CollectionType,'HorizontalAlignment','center','VerticalAlignment','middle','FontSize',FontSize,'FontWeight','bold')
-text(ah.XLim(2)+1.8*nudgeVal,YPos_Text(2),'Up-regulated','HorizontalAlignment','center','VerticalAlignment','middle','FontSize',FontSize,'Color','red')
-text(ah.XLim(2)+1.8*nudgeVal,YPos_Text(3),'Down-regulated','HorizontalAlignment','center','VerticalAlignment','middle','FontSize',FontSize,'Color','blue')
-
+% 
 
 switch lower(ColorBy)
 
     case 'enrichment'
-        text(ah.XLim(2)+1.4*nudgeVal,YPos_Size(end)+1+(2*StepVal),'Enrichment','HorizontalAlignment','center','VerticalAlignment','middle','FontSize',FontSize)
-        scatter(ah,ah.XLim(2)+nudgeVal,YPos_Size(end)+1+(3*StepVal),LegendSizeVal(end),Cmap(1,:),'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
-        text(ah.XLim(2)+1.6*nudgeVal,YPos_Size(end)+1+(3*StepVal),'Up-regulated','HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
-        scatter(ah,ah.XLim(2)+nudgeVal,YPos_Size(end)+1+(4.2*StepVal),LegendSizeVal(end),Cmap(2,:),'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
-        text(ah.XLim(2)+1.6*nudgeVal,YPos_Size(end)+1+(4.2*StepVal),'Down-regulated','HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
+        YPos_Color = 1:StepVal:StepVal*3;
+        YPos_Color = YPos_Color + YPos_Text(end) ;
+
+
+%        text(ah.XLim(2)+1.4*nudgeVal,YPos_Size(end)+1+(2*StepVal),'Enrichment','HorizontalAlignment','center','VerticalAlignment','middle','FontSize',FontSize)
+        scatter(ah,ah.XLim(2)+nudgeVal*0.9,YPos_Text(2),LegendSizeVal(end),Cmap(1,:),'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
+        text(ah.XLim(2)+1.3*nudgeVal,YPos_Text(2),'Up-regulated','HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
+        scatter(ah,ah.XLim(2)+nudgeVal*0.9,YPos_Text(3),LegendSizeVal(end),Cmap(2,:),'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
+        text(ah.XLim(2)+1.3*nudgeVal,YPos_Text(3),'Down-regulated','HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
     case 'type'
+        text(ah.XLim(2)+1.8*nudgeVal,YPos_Text(2),'Up-regulated','HorizontalAlignment','center','VerticalAlignment','middle','FontSize',FontSize,'Color','red')
+        text(ah.XLim(2)+1.8*nudgeVal,YPos_Text(3),'Down-regulated','HorizontalAlignment','center','VerticalAlignment','middle','FontSize',FontSize,'Color','blue')
+
         ColorGroupslegend = unique(ColorGroups,'stable');
         ColorValLegend = unique(ColorVal,'stable','rows');
 %        ColorValLegend = double(ColorValLegend);
