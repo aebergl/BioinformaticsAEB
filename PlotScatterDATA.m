@@ -281,8 +281,8 @@ end
 
 % Add Y label
 if isempty(XlabelTxt)
-    %xlabel(sprintf('%s',VariableId_x),'FontSize',FontSize,'Interpreter','tex')
-    xlabel(sprintf('\\it%s\\rm expression',VariableId_x),'FontSize',FontSize)
+    xlabel(sprintf('%s',VariableId_x),'FontSize',FontSize,'Interpreter','tex')
+    %xlabel(sprintf('\\it%s\\rm expression',VariableId_x),'FontSize',FontSize)
 else
     xlabel(YlabelTxt,'FontSize',FontSize)
 end
