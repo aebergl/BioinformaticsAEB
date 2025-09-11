@@ -102,13 +102,16 @@ switch DataType
     case 'GeneExpression'
         minX=min(DATA.X,[],'all')-0.3;
         maxX=max(DATA.X,[],'all')+0.3;
+        VarNames = ["r Pearson" "r Spearman" "CCC" "n > 1.5-fold" "n > 2-fold" "% > 1.5-fold" "% > 2-fold"]';
+
     case 'Methylation'
         minX=min(DATA.X,[],'all')-0.01;
         maxX=max(DATA.X,[],'all')+0.01;
+        VarNames = ["r Pearson" "r Spearman" "CCC" "n > 0.1" "n > 0.2" "% > 0.1" "% > 0.2"]';
 
 end
 
-VarNames = ["r Pearson" "r Spearman" "CCC" "n > 2-fold" "n > 1.5-fold"]';
+
 nVar = length(VarNames);
 RESULTS_DATA = CreateDataStructure(nArrays,nVar,[],[]);
 % Add Info
@@ -138,7 +141,6 @@ for i = 1:nImages
             RefSampleIndx_y = strcmp(MatchedSamplePairs(counter,2),SampleIds);
             x_ref=DATA.X(RefSampleIndx_x,:);
             y_sample=DATA.X(RefSampleIndx_y,:);
-            
             DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',mSize,'PointsToExclude', PointsToExclude);
             xlabel(MatchedSamplePairs(counter,1),'FontSize',FontSize+2,'Interpreter','none');
             ylabel(MatchedSamplePairs(counter,2), 'FontSize',FontSize+2,'Interpreter','none')
@@ -151,6 +153,7 @@ for i = 1:nImages
             ylabel(SampleIds(OtherSampleIndx(counter)), 'FontSize',FontSize+2,'Interpreter','none')
             RESULTS_DATA.RowId(counter) = strcat(MatchedSamplePairs(counter,2)," vs. ",Refsample);
         end
+        nVAL = sum(isreal(x_ref) & isreal(y_sample));
         ah.FontSize = FontSize;
         ah.XLim = [minX maxX];
         %ah.XTick = ceil(minX):2:floor(maxX);
@@ -177,7 +180,7 @@ for i = 1:nImages
                 nDiff_1 = sum(abs(x_ref-y_sample) > 0.1);
                 nDiff_2 = sum(abs(x_ref-y_sample) > 0.2);
                 Str(1) = {sprintf('rp=%.4f rs=%.4f ccc=%.4f',r_Pearson,r_Spearman,c{1}.est)};
-                Str(2) = {sprintf('n > 0.1: %u   n > 0.2-fold: %u',nDiff_1,nDiff_2)};
+                Str(2) = {sprintf('n > 0.1: %u   n > 0.2: %u',nDiff_1,nDiff_2)};
                 text(ah.XLim(1)+0.01,ah.YLim(2)+0.01,Str,'FontSize',FontSize,'VerticalAlignment','bottom','HorizontalAlignment','Left','Color','k');
                 line([ah.XLim(1) ah.XLim(2)],[ah.YLim(1) ah.YLim(2)],'Linewidth',LineWidth,'LineStyle','-','color','k')
                 line([ah.XLim(1) ah.XLim(2)-0.1],[ah.YLim(1)+0.1 ah.YLim(2)],'Linewidth',LineWidth,'LineStyle',':','color','k')
@@ -192,6 +195,9 @@ for i = 1:nImages
         RESULTS_DATA.X(counter,3) = c{1}.est;
         RESULTS_DATA.X(counter,4) = nDiff_1;
         RESULTS_DATA.X(counter,5) = nDiff_2;
+        RESULTS_DATA.X(counter,4) = nDiff_1/nVal*100;
+        RESULTS_DATA.X(counter,5) = nDiff_2/nVal*100;
+
         RESULTS_DATA.RowAnnotation(:,1) = RESULTS_DATA.RowId;
         drawnow 
     end
