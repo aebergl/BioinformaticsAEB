@@ -78,7 +78,7 @@ DataTipId = 'RowId';
 
 % Check input
 if nargin > 4
-    ArgsList = {'VariableIdentifier','FigSize','YlabelTxt','TitleText','ColorMap','MarkerTypes',...
+    ArgsList = {'VariableIdentifier','FigSize','YlabelTxt','TitleTxt','ColorMap','MarkerTypes',...
         'CalcStats','TargetAxes','MarkerSize','MarkerLineWidth','BoxLineWidth','FontSize',...
         'BoxWidth','XJitterWidth','StatType','PlotStars','Show_NS','XTickAngle','SortData',...
         'MultipleY','DataTipId','BoxColor','MarkerType','MarkerFaceColor'};
@@ -97,7 +97,7 @@ if nargin > 4
                     FigSize = ArgVal;
                 case 'ylabel'
                     YlabelTxt =ArgVal;
-                case 'titletext'
+                case 'titletxt'
                     TitleTxt = ArgVal;
                 case 'colormap'
                     ColorMap = ArgVal;
@@ -231,7 +231,7 @@ if size(y_var,2) > 1
             VariableId = "Median";
 
         case 'pca'
-            [PCA_Model] = NIPALS_PCA(y_var,'NumComp',2,'ScaleX',false);
+            [PCA_Model] = NIPALS_PCA(y_var,'NumComp',2,'ScaleX',false,'MVTolRow',50);
             y_var = PCA_Model.T(:,1);
             VariableId = "PC1";
     end
@@ -313,8 +313,8 @@ end
 
 % Add Y label
 if isempty(YlabelTxt)
-    %ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize,'Interpreter','tex')
-    ylabel(sprintf('\\it%s\\rm expression',VariableId{1}),'FontSize',FontSize)
+    ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize,'Interpreter','tex')
+    %ylabel(sprintf('\\it%s\\rm expression',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it %s\\rm expression',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it%s',VariableId{1}),'FontSize',FontSize)
 

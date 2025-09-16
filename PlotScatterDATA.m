@@ -225,7 +225,7 @@ if isgraphics(TargetAxes,'axes')
     ah = TargetAxes;
     fh = TargetAxes.Parent;
 else
-    fh = figure('Name','Box Plot','Color','w','Tag','Box Plot','Units','inches','Colormap',MarkerColors);
+    fh = figure('Name','Scatter Plot','Color','w','Tag','Box Plot','Units','inches','Colormap',MarkerColors);
     fh.Position(3:4) = FigSize;
     fh.Renderer='painters';
     ah = axes(fh,'NextPlot','add','tag','Gene Sample Plot','Box','on','FontSize',FontSize,'Linewidth',0.5,...
