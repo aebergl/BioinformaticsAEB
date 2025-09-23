@@ -42,10 +42,10 @@ FigSize = [5,5];
 AxisType = 'square';
 SortOrder = 'sorted';
 
-MarkerSize = 50;
+MarkerSize = 100;
 MarkerLineWidth = 0.2;
 MarkerTypes = {'o','v','^','<','>','d'}';
-AlphaValue = 0.5;
+AlphaValue = 0.9;
 MarkerLineAlphaValue = 0.95;
 MarkerColors = GetPalette('aeb01');
 MarkerEdgeColor = [0 0 0];

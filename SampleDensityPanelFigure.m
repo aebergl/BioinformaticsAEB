@@ -153,7 +153,7 @@ for i = 1:nImages
             ylabel(SampleIds(OtherSampleIndx(counter)), 'FontSize',FontSize+2,'Interpreter','none')
             RESULTS_DATA.RowId(counter) = strcat(MatchedSamplePairs(counter,2)," vs. ",Refsample);
         end
-        nVAL = sum(isreal(x_ref) & isreal(y_sample));
+        nVal = sum(isreal(x_ref) & isreal(y_sample));
         ah.FontSize = FontSize;
         ah.XLim = [minX maxX];
         %ah.XTick = ceil(minX):2:floor(maxX);
