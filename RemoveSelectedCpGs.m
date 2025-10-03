@@ -18,7 +18,7 @@ RemoveMasked    = false;
 RemoveX         = false;
 RemoveY         = false;
 RemoveMV        = false;
-MaskedColToUse  = "MASK_general";
+MaskedColToUse  = {'MASK_general','M_general'};
 PercMVtol         = 0;
 
 i=0;

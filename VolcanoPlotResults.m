@@ -86,9 +86,9 @@ end
 % Not a perfect solution but it works
 switch X_Variable
     case 'Delta Average'
-        if strcmp('M-value',DATA.Info.DataType)
+        if strcmpi('M-value',DATA.Info.DataType)
             XLabel = {'\Delta M-value'};
-        elseif strcmp('beta-value',DATA.Info.DataType)
+        elseif strcmpi('Beta-value',DATA.Info.DataType)
             XLabel = {'\Delta \beta-value'};
         else
         XLabel = {'Log_2 FC'};
