@@ -44,7 +44,7 @@ function fh = ChrPlotDiff(DATA,ChrPos,Chrfield,Chr,Y_Type,SizeType,ColorType,var
 PlotRange = [];
 FigSize = [6 2];
 MinMaxSize = [1 80];
-FontSize = 6;
+FontSize = 8;
 RightMargin = 0.4;
 TopMargin = 0;
 printResults=false;
@@ -316,7 +316,7 @@ ah.XAxis.TickDirection ='out';
 ah.XAxis.TickLabelRotation = 0;
 ah.XAxis.TickLength = [0.00500 0.0250];
 
-
+drawnow
 for i=1:numel(GENES)
     gene=GENES{i};
     indx_1=strcmp(gene,FullAnnotation(:,GeneColumn));
@@ -326,8 +326,8 @@ for i=1:numel(GENES)
     chr_pos_gene = ChrPos(indx);
     Y_Val_gene = Y_Val(indx);
     SizeValPlot_Gene = SizeValPlot(indx);
-    y_line_val = max(Y_Val) + nudge_Y;
-    y_line_val = max(Y_Val_gene) + nudge_Y;
+    [~,indx_y] = max(abs(Y_Val_gene));
+    y_line_val = Y_Val_gene(indx_y) + nudge_Y * sign(Y_Val_gene(indx_y));
     line([min(chr_pos_gene) max(chr_pos_gene)], [y_line_val y_line_val],'LineWidth',0.75,'Color','k','LineStyle','-');
     text((min(chr_pos_gene)+max(chr_pos_gene))/2,y_line_val ,gene,'HorizontalAlignment','left','VerticalAlignment','bottom','FontSize',FontSize-1,'FontAngle','italic')
     sh_sel=scatter(chr_pos_gene,Y_Val_gene,SizeValPlot_Gene,[0 0 0]);
