@@ -151,7 +151,7 @@ for i = 1:nImages
             DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',mSize,'PointsToExclude', PointsToExclude);
             xlabel(Refsample,'FontSize',FontSize+2,'Interpreter','none');
             ylabel(SampleIds(OtherSampleIndx(counter)), 'FontSize',FontSize+2,'Interpreter','none')
-            RESULTS_DATA.RowId(counter) = strcat(MatchedSamplePairs(counter,2)," vs. ",Refsample);
+            %RESULTS_DATA.RowId(counter) = strcat(MatchedSamplePairs(counter,2)," vs. ",Refsample);
         end
         nVal = sum(isreal(x_ref) & isreal(y_sample));
         ah.FontSize = FontSize;

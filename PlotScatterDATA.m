@@ -39,7 +39,7 @@ function fh = PlotScatterDATA(DATA,VariableId_x,VariableId_y,GroupVariableName,G
 VariableIdentifier = false; 
 FontSize = 12;
 FigSize = [5,5];
-AxisType = 'equal';
+AxisType = 'padded';
 SortOrder = 'sorted';
 
 MarkerSize = 100;

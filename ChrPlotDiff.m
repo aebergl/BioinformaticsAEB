@@ -216,6 +216,10 @@ switch Y_Type
 end
 
 switch ColorType
+    case 'p t-test'
+        ColorVal =  -log10(ColorVal);
+        Colorlabel = {'-log_1_0(p-value)'};
+
     case 'q t-test'
         ColorVal =  -log10(ColorVal);
         Colorlabel = {'-log_1_0(q-value)'};
