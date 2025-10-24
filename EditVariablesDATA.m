@@ -65,7 +65,7 @@ end
 
 
 if Stable
-    if length(IdUnique) == DATA.nCol && strcmpi('keep',KeepRemove) % Simple if there is unique list of IDs
+    if (length(IdUnique) == DATA.nCol && strcmpi('keep',KeepRemove))  ||  (length(IdUnique) == length(InputIds) && length(DATA_ID) == length(unique(DATA_ID)))% Simple if there is unique list of IDs
 
         [~,~,indx] = intersect(InputIds,DATA_ID,'Stable');
         DATA.X = DATA.X(:,indx);
