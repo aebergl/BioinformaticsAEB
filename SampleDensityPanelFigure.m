@@ -1,7 +1,7 @@
 function [fh RESULTS_DATA] = SampleDensityPanelFigure(DATA,IdColumn,Refsample,nRow,nCol,varargin)
 
 FontSize = 10;
-FigSize = [16 4];
+FigSize = [12 12];
 TitleTxt = inputname(1);
 
 ShowFigure = true;
@@ -118,7 +118,7 @@ RESULTS_DATA = CreateDataStructure(nArrays,nVar,[],[]);
 RESULTS_DATA.Title = 'Sample Density';
 
 RESULTS_DATA.ColId=VarNames;
-RESULTS_DATA.RowAnnotation = strings(nArrays,2);
+RESULTS_DATA.RowAnnotation = strings(nArrays,1);
 RESULTS_DATA.RowAnnotation(:,2) = TitleTxt;
 RESULTS_DATA.RowAnnotationFields = {'Name','Title'};
 
@@ -151,6 +151,7 @@ for i = 1:nImages
             DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',mSize,'PointsToExclude', PointsToExclude);
             xlabel(Refsample,'FontSize',FontSize+2,'Interpreter','none');
             ylabel(SampleIds(OtherSampleIndx(counter)), 'FontSize',FontSize+2,'Interpreter','none')
+            RESULTS_DATA.RowId(counter) = SampleIds(OtherSampleIndx(counter));
             %RESULTS_DATA.RowId(counter) = strcat(MatchedSamplePairs(counter,2)," vs. ",Refsample);
         end
         nVal = sum(isreal(x_ref) & isreal(y_sample));

@@ -20,7 +20,7 @@ LegendSizeVal = [5 20 40 60 80];
 
 FlipNeg = true;
 ColorBy = "Enrichment";
-%ColorBy = "Type";
+ColorBy = "Type";
 
 xVal_pos = [];
 SizeVal_pos = [];

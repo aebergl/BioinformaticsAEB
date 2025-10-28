@@ -68,7 +68,7 @@ DataTipId = 'RowId';
 if nargin > 5
     ArgsList = {'VariableIdentifier','FontSize','FigSize','AxisType',...
         'MarkerSize','MarkerLineWidth','MarkerTypes','AlphaValue','MarkerLineAlphaValue',...
-        'MarkerColors','MarkerEdgeColor','YlabelTxt','YlabelTxt','TitleText',...
+        'MarkerColors','MarkerEdgeColor','Xlabel','Ylabel','TitleText',...
         'CalcCorr','CorrType','CorrLine','CorrLineWidth','CorrLineColor','CorrLineType',...
         'TargetAxes','DataTipId'};
     for j=1:2:numel(varargin)
@@ -284,7 +284,7 @@ if isempty(XlabelTxt)
     xlabel(sprintf('%s',VariableId_x),'FontSize',FontSize,'Interpreter','tex')
     %xlabel(sprintf('\\it%s\\rm expression',VariableId_x),'FontSize',FontSize)
 else
-    xlabel(YlabelTxt,'FontSize',FontSize)
+    xlabel(XlabelTxt,'FontSize',FontSize)
 end
 
 if isempty(YlabelTxt)
