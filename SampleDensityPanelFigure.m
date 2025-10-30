@@ -135,7 +135,7 @@ for i = 1:nImages
         counter = counter + 1;
         CurrentPane = CurrentPane + 1;
         ah = nexttile(th);
-        
+
         if ~isempty(MatchedSamplePairs)
             RefSampleIndx_x = strcmp(MatchedSamplePairs(counter,1),SampleIds);
             RefSampleIndx_y = strcmp(MatchedSamplePairs(counter,2),SampleIds);
@@ -200,9 +200,9 @@ for i = 1:nImages
         RESULTS_DATA.X(counter,5) = nDiff_2/nVal*100;
 
         RESULTS_DATA.RowAnnotation(:,1) = RESULTS_DATA.RowId;
-        drawnow 
+        drawnow
     end
-        if TitleTxt
+    if TitleTxt
         title(th,TitleTxt,{'',''})
         th.Title.FontWeight = 'bold';
         th.Title.Interpreter = 'None';
@@ -220,6 +220,7 @@ for i = 1:nImages
         end
 
         exportgraphics(th,FullFileExport,'Resolution',ResolutionValue)
+        close(fh(i))
     end
 
 
