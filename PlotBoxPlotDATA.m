@@ -216,6 +216,7 @@ if VariableIdentifier
 else
     DATA_ID = DATA.ColId;
 end
+VariableId = ConvertStr(VariableId,'string');
 indx = ismember(DATA_ID,VariableId);
 y_var = DATA.X(:,indx);
 y_var(~SampleIndxToUse) = NaN;
