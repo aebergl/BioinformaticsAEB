@@ -39,7 +39,7 @@ function fh = PlotScatterDATA(DATA,VariableId_x,VariableId_y,GroupVariableName,G
 VariableIdentifier = false; 
 FontSize = 12;
 FigSize = [5,5];
-AxisType = 'padded';
+AxisType = 'normal';
 SortOrder = 'sorted';
 
 MarkerSize = 100;
@@ -238,7 +238,7 @@ nudgeX=range(x_var)/20;
 ah.XLim = [min(x_var,[],"omitnan")-nudgeX  max(x_var,[],"omitnan") + nudgeX];
 nudgeY=range(y_var)/20;
 ah.YLim = [min(y_var,[],"omitnan")-nudgeY  max(y_var,[],"omitnan") + nudgeY];
-
+AxisType
 axis(AxisType)
 
 for i=1:nGroups
