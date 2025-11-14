@@ -76,7 +76,7 @@ if isempty(ColumnsToUse)
         	'OpenChromatin_NAME','OpenChromatin_Evidence_Count',...
             'Methyl450_Loci','Methyl27_Loci','EPICv1_Loci'...
         	'Manifest_probe_match','SNP_ID','SNP_DISTANCE','SNP_MinorAlleleFrequency'};
-    disp('Adding EPICv1 Annotation') 
+    disp('Adding EPICv2 Annotation') 
     end
 end
 
