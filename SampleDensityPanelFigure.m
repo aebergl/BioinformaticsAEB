@@ -10,7 +10,7 @@ ExportPlot = false;
 ExportDir = pwd;
 MatchedSamplePairs = [];
 ALLvsALL = false;
-mSize = 10;
+mSize = 30;
 PointsToExclude = [];
 if nargin > 5
     [varargin{:}] = convertStringsToChars(varargin{:});
