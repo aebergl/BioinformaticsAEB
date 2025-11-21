@@ -243,6 +243,7 @@ end
 %Create Figure
 fh=figure('Name','Volcano Plot','Color','w','Tag','Volcano Plot figure','Units','inches');
 fh.Position(3:4) = FigureSize;
+fh.Renderer = "painters";
 %Create Axis
 ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','off','Layer','top','FontSize',FontSize,'YAxisLocation','origin','PositionConstraint','outerposition');
 

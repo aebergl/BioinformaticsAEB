@@ -1,6 +1,7 @@
 function fh = Plot_Upset(Data,setName,varargin)
 
 mode = 'distinct';
+mode = 'interseciton';
 
 nSets = length(setName);
 
@@ -19,12 +20,16 @@ end
 
 
 
-bar1Color=[66,182,195]./255;
-bar2Color=[253,255,228;
+bar1Color=[0,182,195]./255;
+
+
+bar2Color=[ 0,0,228;
           164,218,183;
           68,181,197;
           44,126,185;
           35,51,154]./255;
+bar2Color = GetPalette('Tab20',[5 6 4 9 3 7]);
+
 lineColor=[61,58,61]./255;
 % bar1Color=[0,0,245;245,0,0]./255;
 % bar2Color=cool;
