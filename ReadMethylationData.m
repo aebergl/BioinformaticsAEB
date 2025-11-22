@@ -32,7 +32,7 @@ BetaValueExt = '_b';
 DetectionPvalExt = '_p';
 DATA=[];
 R_Input = false;
-Detection_Pval_CutOff = 0.1;
+Detection_Pval_CutOff = 0.01;
 
 % Check Input
 i=0;
@@ -162,7 +162,7 @@ else
 
 
 end
-
+whos
 P = cell2mat(S(PVal_Columns));
 
 DATA.X = cell2mat(S(BetaAvg_Columns));

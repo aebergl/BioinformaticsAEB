@@ -16,6 +16,7 @@ function DATA  = AddIlluminaManifestAnnotation(DATA,AnnotationFile,varargin)
 AddReplace      = "Add";
 CpG_Id          = "IlmnID";
 ColumnsToUse    = [];
+Type = [];
 
 i=0;
 while i<numel(varargin)
@@ -27,6 +28,10 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'ColumnsToAdd')
         i = i + 1;
         ColumnsToUse = varargin{i};
+    elseif strcmpi(varargin{i},'Type')
+        i = i + 1;
+        Type = varargin{i};
+
     end
 
 end
