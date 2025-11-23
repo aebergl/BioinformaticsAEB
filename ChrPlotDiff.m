@@ -22,8 +22,8 @@ function fh = ChrPlotDiff(DATA,ChrPos,Chrfield,Chr,Y_Type,SizeType,ColorType,var
 %   'PlotRange'     Vector with start and stop position to to show in figure [203000000 226100000]
 %   'MinMaxSize'    Vector with min and max marker size [1 80]
 %   'FigSize'       Vector with figure width and hight in inches [6 2]
-%   'REGION'        Highligth one or multiple regions cell structure with 
-%                   {[Xstart Xstop], [Ystart Xstop], LabelTxt} 
+%   'REGION'        Highligth one or multiple regions cell structure with
+%                   {[Xstart Xstop], [Ystart Xstop], LabelTxt}
 %   'CytoBand'      Displays the Cytoband based on HG38, give unit to be used, 'mb' Requires Bioinformatics toolbox
 %   'YValCutOff'    Selects points with abs(value) larger than YValCutOff [0]
 %   'SizeLegend'    Displays a size legend defined with the following input vectors:
@@ -62,9 +62,9 @@ YValCutOff = 0;
 ColorValCutOff = 0;
 CytoBandfile = 'cytoBandIdeo_38.txt';
 SizeLegend = false;
+ColorMap = colorcet('L17');
+ColorMap = colorcet('D1');
 % Check Input
-
-
 
 i=0;
 while i<numel(varargin)
@@ -76,10 +76,10 @@ while i<numel(varargin)
         GENES = varargin{i};
     elseif strcmpi(varargin{i},'REGION')
         i = i + 1;
-        REGION = varargin{i};           
+        REGION = varargin{i};
     elseif strcmpi(varargin{i},'PlotRange')
         i = i + 1;
-        PlotRange = varargin{i};          
+        PlotRange = varargin{i};
     elseif strcmpi(varargin{i},'MinMaxSize')
         i = i + 1;
         MinMaxSize = varargin{i};
@@ -121,10 +121,10 @@ if ~any(ChrColumn)
     error('Given value for Chrfield not found, %s not found in RowAnnotationFields',ChrColumn{1})
 end
 if ~isempty(GENES)
-GeneColumn = strcmpi(GeneField,DATA.RowAnnotationFields);
-if ~any(ChrColumn)
-    error('Given value for GeneField not found, %s not found in RowAnnotationFields',ChrColumn{1})
-end
+    GeneColumn = strcmpi(GeneField,DATA.RowAnnotationFields);
+    if ~any(ChrColumn)
+        error('Given value for GeneField not found, %s not found in RowAnnotationFields',ChrColumn{1})
+    end
 end
 
 %
@@ -213,6 +213,9 @@ switch Y_Type
         YLabel = {'log_2(HR PFI)'};
     case 'r Spearman'
         YLabel = {'Spearman''s \rho'};
+    otherwise
+        YLabel = Y_Type;
+
 end
 
 switch ColorType
@@ -241,7 +244,8 @@ switch ColorType
         Colorlabel = {'-log_1_0(p Spearman)'};
     case 'Range'
         Colorlabel = {'Range'};
-
+    otherwise
+        Colorlabel = ColorType;
 end
 
 switch SizeType
@@ -261,7 +265,8 @@ switch SizeType
         MinNonZeroVal = min(SizeVal(SizeVal>0));
         SizeVal(SizeVal == 0) = MinNonZeroVal;
         SizeVal = -log10(SizeVal);
-
+    otherwise
+        SizeVal =  abs(SizeVal);
 end
 
 SizeVal =  abs(SizeVal);
@@ -304,8 +309,8 @@ fh = figure('Name','Chr. plot','Color','w','Tag','Chr. plot','GraphicsSmoothing'
 fh.Position(3:4) = FigSize;
 ah = axes(fh,'NextPlot','add','tag','Dot plot','Box','on','FontSize',FontSize,'Linewidth',0.5,'YGrid','on',...
     'Units','normalized','PositionConstraint','outerposition','Clipping','off');
-cmap = colormap(colorcet('L17'));
-colormap(cmap);
+
+colormap(ColorMap);
 
 
 sh=scatter(ChrPos,Y_Val,SizeValPlot,ColorVal,'filled');
