@@ -267,10 +267,11 @@ if CalcCorr
     text(ah,(ah.XLim(1))+nudgeX,ah.YLim(2)-nudgeY/2,txt_str,'VerticalAlignment','Top','HorizontalAlignment', 'Left','FontSize',FontSize);
 end
 if CorrLine
-    p = polyfit(x_var,y_var,1);
-    f = polyval(p,x_var);
+    mv_indx = isnan(x_var) | isnan(y_var);
+    p = polyfit(x_var(~mv_indx),y_var(~mv_indx),1);
+    f = polyval(p,x_var(~mv_indx));
 %    hold on
-    line(ah,x_var,f,'Color',CorrLineColor,'LineStyle',CorrLineStyle,'LineWidth',CorrLineWidth);
+    line(ah,x_var(~mv_indx),f,'Color',CorrLineColor,'LineStyle',CorrLineStyle,'LineWidth',CorrLineWidth);
 end
 
 
@@ -281,14 +282,14 @@ end
 
 % Add Y label
 if isempty(XlabelTxt)
-    xlabel(sprintf('%s',VariableId_x),'FontSize',FontSize,'Interpreter','tex')
+    xlabel(sprintf('%s',VariableId_x),'FontSize',FontSize,'Interpreter','none')
     %xlabel(sprintf('\\it%s\\rm expression',VariableId_x),'FontSize',FontSize)
 else
     xlabel(XlabelTxt,'FontSize',FontSize)
 end
 
 if isempty(YlabelTxt)
-    ylabel(sprintf('%s',VariableId_y),'FontSize',FontSize,'Interpreter','tex')
+    ylabel(sprintf('%s',VariableId_y),'FontSize',FontSize,'Interpreter','none')
     %ylabel(sprintf('\\it%s\\rm expression',VariableId_y),'FontSize',FontSize)
 
 else

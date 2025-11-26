@@ -314,7 +314,7 @@ end
 
 % Add Y label
 if isempty(YlabelTxt)
-    ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize,'Interpreter','tex')
+    ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize,'Interpreter','none')
     %ylabel(sprintf('\\it%s\\rm expression',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it %s\\rm expression',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it%s',VariableId{1}),'FontSize',FontSize)
