@@ -90,6 +90,7 @@ switch X_Variable
             XLabel = {'\Delta M-value'};
         elseif strcmpi('Beta-value',DATA.Info.DataType)
             XLabel = {'\Delta \beta-value'};
+            XLabel = {'Log_2 FC'};
         else
         XLabel = {'Log_2 FC'};
         end
@@ -245,7 +246,8 @@ fh=figure('Name','Volcano Plot','Color','w','Tag','Volcano Plot figure','Units',
 fh.Position(3:4) = FigureSize;
 fh.Renderer = "painters";
 %Create Axis
-ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','off','Layer','top','FontSize',FontSize,'YAxisLocation','origin','PositionConstraint','outerposition');
+ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','off','Layer','top','FontSize',FontSize,'YAxisLocation','origin',...
+    'PositionConstraint','outerposition','Clipping','off');
 
 ah.LineWidth = LineWidth;
 switch PlotType
@@ -363,7 +365,7 @@ else
 end
 
 if EqualXLim
-    ah.XLim = [-max(ah.XLim), max(ah.XLim)];
+    ah.XLim = [-max(abs(ah.XLim)), max(abs(ah.XLim))];
 end
 
 min_y=0;
