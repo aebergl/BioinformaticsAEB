@@ -15,20 +15,19 @@ end
 
 indx_gene = false(DATA.nCol,1);
 for i=1:length(GeneIdColumnNames)
-    if length(GeneId) > 1
-        GeneIdToUse = GeneId(i);
-    else
-        GeneIdToUse = GeneId;
+    for j=1:length(GeneId)
+        GeneIdToUse = GeneId(j);
+        indx_col = strcmp(GeneIdColumnNames(i),DATA.ColAnnotationFields);
+        str_cell = cellfun(@(x) strsplit(x,';'), DATA.ColAnnotation(:,indx_col), 'UniformOutput', 0);
+        indx_cell = cellfun(@(x) matches(x,GeneIdToUse), str_cell, 'UniformOutput', 0);
+        indx = cellfun(@(x) any(x), indx_cell, 'UniformOutput', 1);
+        indx_gene = indx_gene | indx;
     end
-    indx_col = strcmp(GeneIdColumnNames(i),DATA.ColAnnotationFields);
-    indx_1 = strcmp(GeneIdToUse,DATA.ColAnnotation(:,indx_col));
-    indx_2 = contains(DATA.ColAnnotation(:,indx_col),strcat(";",GeneIdToUse));
-    indx_3 = contains(DATA.ColAnnotation(:,indx_col),strcat(GeneIdToUse,";"));
-    indx = indx_1 | indx_2 | indx_3;
-    indx_gene = indx_gene | indx;
 end
 if ~any(indx_gene)
-    error('No CpG probes found %s',join(GeneId))
+    warning('No CpG probes found %s',join(GeneId))
+    DATA = [];
+    return
 end
 
 DATA =  EditVariablesDATA(DATA,DATA.ColId(indx_gene),'Keep');

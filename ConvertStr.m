@@ -1,5 +1,9 @@
 function StrOut = ConvertStr(StrIn,OutPutType)
 
+if isempty(StrIn)
+    StrOut = [];
+
+else
 
 switch class(StrIn)
     case 'string'
@@ -36,3 +40,4 @@ switch class(StrIn)
         error('Wrong input type')
 end
 
+end
