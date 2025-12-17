@@ -264,7 +264,11 @@ if CalcCorr
     [r, p_val] = corr(x_var, y_var,'Type',CorrType,'Rows','pairwise');
     txt_str{1} = sprintf('r=%.3f',r);
     txt_str{2} = sprintf('p=%.3g',p_val);
+    if r > 0
     text(ah,(ah.XLim(1))+nudgeX,ah.YLim(2)-nudgeY/2,txt_str,'VerticalAlignment','Top','HorizontalAlignment', 'Left','FontSize',FontSize);
+    else
+        text(ah,(ah.XLim(2))-nudgeX,ah.YLim(2)-nudgeY/2,txt_str,'VerticalAlignment','Top','HorizontalAlignment', 'right','FontSize',FontSize);
+    end
 end
 if CorrLine
     mv_indx = isnan(x_var) | isnan(y_var);
