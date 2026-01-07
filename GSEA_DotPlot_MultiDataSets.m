@@ -127,6 +127,10 @@ nYval = length(unique(YAxisData));
 XAxisDataPlot = double(XAxisData);
 XAxisDatalabels = categories(XAxisData);
 
+% Make numeric for plotting
+YAxisDataPlot = double(YAxisData);
+YAxisDatalabels = categories(YAxisData);
+
 
 % Scale according to Legend Size
 % SizeValPlot = rescale(SizeVal,minSize,maxSize);
@@ -163,7 +167,7 @@ ah.TickLength=[ 0.05/nVal    0.0];
 % end
 % xlabel(ah,XlabelTxt);
 
-sh = scatter(XAxisDataPlot,YAxisData,SizeValPlot,ColorVal,'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1],'LineWidth',LineWidth);
+sh = scatter(XAxisDataPlot,YAxisDataPlot,SizeValPlot,ColorVal,'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1],'LineWidth',LineWidth);
 %ah.XLimMode = 'manual';
 % switch lower(GeneSetSource)
 %     case 'hallmark'
@@ -178,6 +182,8 @@ sh = scatter(XAxisDataPlot,YAxisData,SizeValPlot,ColorVal,'MarkerFaceColor','fla
 
 
 ah.XAxis.TickLabels = XAxisDatalabels;
+ah.YAxis.TickLabels = YAxisDatalabels;
+
 % Add color bar
 ch = colorbar(ah,'Units','inches','FontSize',FontSize,...
     'Position',[ah.Position(1) + ah.Position(3)+0.1, ah.Position(2) 0.1, FigSize(2)/5]);
