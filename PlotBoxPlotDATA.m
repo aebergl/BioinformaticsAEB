@@ -70,7 +70,7 @@ StatLineWidth = 0.5;
 Show_NS=true;
 
 TargetAxes = false;
-XTickAngle = -45;
+XTickAngle = 0;
 SortData=false;
 MultipleY = 'Mean';
 DataTipId = 'RowId';
