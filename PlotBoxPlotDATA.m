@@ -67,7 +67,8 @@ CalcGroupAllUnique = true;
 StatType = 'MW';
 PlotStars = true;
 StatLineWidth = 0.5;
-Show_NS=true;
+Show_NS=false;
+ShowAllLines=false;
 
 TargetAxes = false;
 XTickAngle = 0;
@@ -342,15 +343,15 @@ MAX_Y = max(y_var);
 Y_pos = MAX_Y;
 if CalcStats
     for i=1:size(CalcGroup,1)
-        if 0%CalcGroupAllUnique && diff(CalcGroup(i,:)) == 1
-            max_y = max([y_var(SampleIndxMat(:,CalcGroup(i,1))); y_var(SampleIndxMat(:,CalcGroup(i,2)))]);
-            Y_pos = max_y+(y_nudge/1.5);
-        else
-            Y_pos = Y_pos+y_nudge;
-        end
+        % if 0%CalcGroupAllUnique && diff(CalcGroup(i,:)) == 1
+        %     max_y = max([y_var(SampleIndxMat(:,CalcGroup(i,1))); y_var(SampleIndxMat(:,CalcGroup(i,2)))]);
+        %     Y_pos = max_y+(y_nudge/1.5);
+        % else
+        %     Y_pos = Y_pos+y_nudge;
+        % end
         
         %Create line between the two croupd being compared
-        line(CalcGroup(i,:),[Y_pos Y_pos],'Color',[0 0 0],'Linewidth',StatLineWidth)
+        
         switch lower(StatType)
             case 't-test'
                 [~,p_val] = ttest2(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),0.05,'both','unequal');
@@ -364,7 +365,11 @@ if CalcStats
                 p_val = vartestn([x;y],[ones(size(x));ones(size(y))*2],'Display','off','TestType','Bartlett');
 
         end
-
+        if p_val < 0.05 | ShowAllLines
+            Y_pos = Y_pos+y_nudge;
+            line(CalcGroup(i,:),[Y_pos Y_pos],'Color',[0 0 0],'Linewidth',StatLineWidth)
+            
+        end
         txt_p = pval2stars(p_val,[]);
         if PlotStars
             if p_val > 0.05
