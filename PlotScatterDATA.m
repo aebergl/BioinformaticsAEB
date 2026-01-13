@@ -36,7 +36,7 @@ function fh = PlotScatterDATA(DATA,VariableId_x,VariableId_y,GroupVariableName,G
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % by Anders Berglund, 2025 aebergl at gmail.com                           %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-VariableIdentifier = false; 
+VariableIdentifier = false;
 FontSize = 12;
 FigSize = [5,5];
 AxisType = 'normal';
@@ -63,6 +63,11 @@ CorrLineStyle = '-';
 TargetAxes = false;
 DataTipId = 'RowId';
 
+ContinuousId = [];
+
+PlotType = 'group';
+
+%PlotType = 'Continuous';
 
 % Check input
 if nargin > 5
@@ -70,7 +75,7 @@ if nargin > 5
         'MarkerSize','MarkerLineWidth','MarkerTypes','AlphaValue','MarkerLineAlphaValue',...
         'MarkerColors','MarkerEdgeColor','Xlabel','Ylabel','TitleText',...
         'CalcCorr','CorrType','CorrLine','CorrLineWidth','CorrLineColor','CorrLineType',...
-        'TargetAxes','DataTipId'};
+        'TargetAxes','DataTipId','Continuous'};
     for j=1:2:numel(varargin)
         ArgType = varargin{j};
         ArgVal = varargin{j+1};
@@ -80,7 +85,7 @@ if nargin > 5
             switch lower(ArgType)
                 case 'variableidentifier'
                     VariableIdentifier = ArgVal;
-                 case 'fontsize'
+                case 'fontsize'
                     FontSize = ArgVal;
                 case 'figsize'
                     FigSize = ArgVal;
@@ -120,6 +125,10 @@ if nargin > 5
                     TargetAxes = ArgVal;
                 case 'datatipid'
                     DataTipId = ArgVal;
+                case 'continuous'
+                    ContinuousId = ArgVal;
+                    PlotType = 'continuous';
+
             end
 
         end
@@ -217,6 +226,13 @@ end
 MarkerTypes = repmat(MarkerTypes,ceil(nGroups/size(MarkerTypes,1)),1);
 MarkerTypes = MarkerTypes(1:nGroups,:);
 
+if strcmpi(PlotType,'Continuous')
+    if isempty(ContinuousId)
+        ColorValue = 1:length(x_var);
+
+
+end
+end
 
 % Create Figure
 
@@ -225,7 +241,7 @@ if isgraphics(TargetAxes,'axes')
     ah = TargetAxes;
     fh = TargetAxes.Parent;
 else
-    fh = figure('Name','Scatter Plot','Color','w','Tag','Box Plot','Units','inches','Colormap',MarkerColors);
+    fh = figure('Name','Scatter Plot','Color','w','Tag','Box Plot','Units','inches');
     fh.Position(3:4) = FigSize;
     fh.Renderer='painters';
     ah = axes(fh,'NextPlot','add','tag','Gene Sample Plot','Box','on','FontSize',FontSize,'Linewidth',0.5,...
@@ -241,23 +257,40 @@ ah.YLim = [min(y_var,[],"omitnan")-nudgeY  max(y_var,[],"omitnan") + nudgeY];
 
 axis(AxisType)
 
-for i=1:nGroups
-    indx = SampleIndxMat(:,i);
-    sh(i) = scatter(ah,x_var(indx),y_var(indx),MarkerSize,MarkerColors(i,:),MarkerTypes{i},'MarkerFaceColor','flat','MarkerEdgeColor',MarkerEdgeColor);
-    row = dataTipTextRow('',SampleId(indx));
-    sh(i).DataTipTemplate.DataTipRows = row;
-    sh(i).DataTipTemplate.Interpreter='none';
-    sh(i).MarkerEdgeAlpha = MarkerLineAlphaValue;
-    sh(i).MarkerFaceAlpha = AlphaValue;
-        sh(i).LineWidth = MarkerLineWidth;
+switch lower(PlotType)
+    case 'group'
+
+        for i=1:nGroups
+            indx = SampleIndxMat(:,i);
+            sh(i) = scatter(ah,x_var(indx),y_var(indx),MarkerSize,MarkerColors(i,:),MarkerTypes{i},'MarkerFaceColor','flat','MarkerEdgeColor',MarkerEdgeColor);
+            row = dataTipTextRow('',SampleId(indx));
+            sh(i).DataTipTemplate.DataTipRows = row;
+            sh(i).DataTipTemplate.Interpreter='none';
+            sh(i).MarkerEdgeAlpha = MarkerLineAlphaValue;
+            sh(i).MarkerFaceAlpha = AlphaValue;
+            sh(i).LineWidth = MarkerLineWidth;
 
 
-end
-if ~isempty(GroupName)
-    lh=legend(ah,GroupName,'Location','northeastoutside');
-    lh.Interpreter='none';
-    lh.Box='off';
-    lh.AutoUpdate='off';
+        end
+        if ~isempty(GroupName)
+            lh=legend(ah,GroupName,'Location','northeastoutside');
+            lh.Interpreter='none';
+            lh.Box='off';
+            lh.AutoUpdate='off';
+        end
+
+    case 'continuous'
+        colormap(colorcet('L20'))
+            sh = scatter(ah,x_var,y_var,MarkerSize,ColorValue,'filled','MarkerEdgeColor',MarkerEdgeColor);
+            row = dataTipTextRow('',SampleId);
+            sh.DataTipTemplate.DataTipRows = row;
+            sh.DataTipTemplate.Interpreter='none';
+            sh.MarkerEdgeAlpha = MarkerLineAlphaValue;
+            sh.MarkerFaceAlpha = AlphaValue;
+            sh.LineWidth = MarkerLineWidth;
+
+
+
 end
 
 if CalcCorr
@@ -265,7 +298,7 @@ if CalcCorr
     txt_str{1} = sprintf('r=%.3f',r);
     txt_str{2} = sprintf('p=%.3g',p_val);
     if r > 0
-    text(ah,(ah.XLim(1))+nudgeX,ah.YLim(2)-nudgeY/2,txt_str,'VerticalAlignment','Top','HorizontalAlignment', 'Left','FontSize',FontSize);
+        text(ah,(ah.XLim(1))+nudgeX,ah.YLim(2)-nudgeY/2,txt_str,'VerticalAlignment','Top','HorizontalAlignment', 'Left','FontSize',FontSize);
     else
         text(ah,(ah.XLim(2))-nudgeX,ah.YLim(2)-nudgeY/2,txt_str,'VerticalAlignment','Top','HorizontalAlignment', 'right','FontSize',FontSize);
     end
@@ -274,7 +307,7 @@ if CorrLine
     mv_indx = isnan(x_var) | isnan(y_var);
     p = polyfit(x_var(~mv_indx),y_var(~mv_indx),1);
     f = polyval(p,x_var(~mv_indx));
-%    hold on
+    %    hold on
     line(ah,x_var(~mv_indx),f,'Color',CorrLineColor,'LineStyle',CorrLineStyle,'LineWidth',CorrLineWidth);
 end
 
