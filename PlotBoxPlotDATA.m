@@ -279,8 +279,6 @@ else
         'ActivePositionProperty','outerposition','XGrid','on','YGrid','on');
     ah.LineWidth = 0.5;
 end
-ah.Colormap=ColorMap;
-
 % Select Sample Id for data tip text
 
 switch lower(DataTipId)
@@ -332,7 +330,10 @@ end
 ah.XLim = [0.3 nGroups+0.7];
 ah.XTick = 1:nGroups;
 ah.XTickLabelRotation = XTickAngle;
+
+
 ah.XTickLabel = GroupName;
+ah.XTickLabel = strrep(GroupName,'_',' ');
 
 y_nudge=range(y_var)/10;
 %ah.YLim = [min(y_var)-y_nudge max(y_var)+y_nudge*2];
