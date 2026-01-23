@@ -313,8 +313,8 @@ end
 
 % Add Y label
 if isempty(YlabelTxt)
-    ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize,'Interpreter','none')
-    %ylabel(sprintf('\\it%s\\rm expression',VariableId{1}),'FontSize',FontSize)
+    %ylabel(sprintf('%s',VariableId{1}),'FontSize',FontSize,'Interpreter','none')
+    ylabel(sprintf('\\it%s\\rm expression',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it %s\\rm expression',VariableId{1}),'FontSize',FontSize)
     %ylabel(sprintf('\\it%s',VariableId{1}),'FontSize',FontSize)
 
@@ -355,7 +355,7 @@ if CalcStats
         
         switch lower(StatType)
             case 't-test'
-                [~,p_val] = ttest2(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),0.05,'both','unequal');
+                [~,p_val] = ttest2(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),0.05,'both','equal');
             case 'mw'
                 [p_val] = ranksum(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))));
             case 'f-test'

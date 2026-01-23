@@ -54,7 +54,7 @@ YlabelTxt = [];
 TitleTxt = [];
 
 CalcCorr = false;
-CorrType = 'Pearson';
+CorrType = 'Spearman';
 CorrLine = false;
 CorrLineWidth = 1;
 CorrLineColor = [0 0 0];
