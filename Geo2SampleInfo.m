@@ -38,7 +38,9 @@ counter = 0;
 for i = 1:numSamplefields
     Val = S{i}';
     nVal = size(Val,2);
+Val
 
+pause
     if nVal == 1
         counter = counter + 1;
         FieldNames(counter) = Samplefields(i);
@@ -51,12 +53,20 @@ for i = 1:numSamplefields
                 Val_1 = Val{k,j};
                 if ~isempty(Val_1)
                     indx=strfind(Val_1,':');
-                    if ~AddNameFlag
-                        FieldNames{counter} = Val_1(1:indx-1);
-                        AddNameFlag = true;
+                    if ~isempty(indx)
+                        if ~AddNameFlag
+                            FieldNames{counter} = Val_1(1:indx-1);
+                            AddNameFlag = true;
+                        end
+                        Val_1 =  Val_1(indx+1:end);
+                        Val_1 = strtrim(Val_1);
+                    else
+                        if ~AddNameFlag
+                            FieldNames{counter} = Val_1;
+                            AddNameFlag = true;
+                        end
+
                     end
-                    Val_1 =  Val_1(indx+1:end);
-                    Val_1 = strtrim(Val_1);
                     SampleInfo{k,counter} = Val_1;
                 end
             end
@@ -88,7 +98,7 @@ if ~isempty(FileOut)
     for i=1:numSamples
         fprintf(fid,'%s\t',SampleInfo{i,1:end-1});
         fprintf(fid,'%s\n',SampleInfo{i,end});
-        
+
     end
     fclose(fid);
 end

@@ -63,7 +63,7 @@ CorrLineStyle = '-';
 TargetAxes = false;
 DataTipId = 'RowId';
 
-ContinuousId = [];
+ContinousId = [];
 
 PlotType = 'group';
 
@@ -126,7 +126,7 @@ if nargin > 5
                 case 'datatipid'
                     DataTipId = ArgVal;
                 case 'continuous'
-                    ContinuousId = ArgVal;
+                    ContinousId = ArgVal;
                     PlotType = 'continuous';
 
             end
@@ -227,11 +227,13 @@ MarkerTypes = repmat(MarkerTypes,ceil(nGroups/size(MarkerTypes,1)),1);
 MarkerTypes = MarkerTypes(1:nGroups,:);
 
 if strcmpi(PlotType,'Continuous')
-    if isempty(ContinuousId)
+    if isempty(ContinousId)
         ColorValue = 1:length(x_var);
+    elseif isvector('ContinousId')
+        ColorValue = ContinousId;
 
 
-end
+    end
 end
 
 % Create Figure
@@ -281,13 +283,13 @@ switch lower(PlotType)
 
     case 'continuous'
         colormap(colorcet('L20'))
-            sh = scatter(ah,x_var,y_var,MarkerSize,ColorValue,'filled','MarkerEdgeColor',MarkerEdgeColor);
-            row = dataTipTextRow('',SampleId);
-            sh.DataTipTemplate.DataTipRows = row;
-            sh.DataTipTemplate.Interpreter='none';
-            sh.MarkerEdgeAlpha = MarkerLineAlphaValue;
-            sh.MarkerFaceAlpha = AlphaValue;
-            sh.LineWidth = MarkerLineWidth;
+        sh = scatter(ah,x_var,y_var,MarkerSize,ColorValue,'filled','MarkerEdgeColor',MarkerEdgeColor);
+        row = dataTipTextRow('',SampleId);
+        sh.DataTipTemplate.DataTipRows = row;
+        sh.DataTipTemplate.Interpreter='none';
+        sh.MarkerEdgeAlpha = MarkerLineAlphaValue;
+        sh.MarkerFaceAlpha = AlphaValue;
+        sh.LineWidth = MarkerLineWidth;
 
 
 
