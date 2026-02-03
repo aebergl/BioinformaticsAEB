@@ -1,5 +1,5 @@
 
-function [fh, pMV] = MethylationPlotMV(DATA)
+function [fh, pMV] = MethylationPlotMV(DATA,VariableIdentifier)
 
 
 
@@ -30,14 +30,14 @@ end
 
 % Calculate amount of missing values for each sample
 nMV = sum(isnan(DATA.X),2);
-pMVorig = nMV / DATA.nCol * 100;
+pMV = nMV / DATA.nCol * 100;
 
 
 switch lower(SortOrder)
     case 'chip'
         [~,SortIndx] = sort(ChipBarcode,'Ascend');
     case 'pmv'
-        [~,SortIndx] = sort(ChipBarcode,'Descend')
+        [~,SortIndx] = sort(ChipBarcode,'Descend');
     otherwise
         SortIndx = 1:DATA.nROW;
 end
@@ -91,3 +91,16 @@ ylabel('% Missing Values');
 ah.XTick = 1:DATA.nRow;
 ah.XLim = [0.5 DATA.nRow + 0.5];
 ah.XTickLabel = ChipId;
+
+
+            row = dataTipTextRow('',DATA_n200_cg.RowId);
+            bh.DataTipTemplate.DataTipRows = row;
+            bh.DataTipTemplate.Interpreter='none';
+
+bh.FaceColor='flat'
+indx_orange=bh.YData>5;
+indx_red=bh.YData>10;
+bh.CData(indx_orange,:) = repmat(GetPalette('Tab10',2),sum(indx_orange),1);
+bh.CData(indx_red,:) = repmat(GetPalette('Tab10',4),sum(indx_red),1);
+yline(ah,[5 5],'color','k','Linewidth',1)
+yline(ah,[10 10],'color','k','Linewidth',1)
