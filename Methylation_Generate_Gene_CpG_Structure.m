@@ -1,4 +1,4 @@
-function DATA_Out = Methylation_Generate_Gene_CpG_Structure(DATA,GeneList)
+function DATA_Out = Methylation_Generate_Gene_CpG_Structure(DATA,GeneList,GeneColumnName)
 
 DATA_Out = [];
 
@@ -39,7 +39,7 @@ end
 
 GeneListOut = strings(length(GeneList),1);
 CpGProbes = cell(length(GeneList),1);
-IndxFound = zeros(length(GeneList),1);
+
 parfor j=1:length(GeneList)
     GeneIdToUse = GeneList(j);
     indx_gene = false(DATA.nCol,1);
@@ -53,24 +53,27 @@ parfor j=1:length(GeneList)
     if any(indx_gene)
         % Check that all the CpG are on the same Chromosome
         Chr = DATA.ColAnnotation(indx_gene,ChrNameColumn);
-        if length(unique(Chr)) > 1
+        if length(unique(Chr)) == 1
+            ChrPos = DATA.ColAnnotation(indx_gene,ChrPosColumn);
+            ChrPos = cellfun(@(x) str2double(x), ChrPos, 'UniformOutput', 0);
+            ChrPos = cell2mat(ChrPos);
+            ChrPos = double(ChrPos);
+            [~,sortindx] = sort(ChrPos);
+            CpGs = DATA.ColId(indx_gene);
+            CpGs = CpGs(sortindx);
+            GeneListOut(j) = GeneIdToUse;
+            CpGProbes{j} = string(CpGs);
+        else
             GeneIdToUse
             Chr
         end
-        ChrPos = DATA.ColAnnotation(indx_gene,ChrPosColumn);
-        ChrPos = cellfun(@(x) str2double(x), ChrPos, 'UniformOutput', 0);
-        ChrPos = cell2mat(ChrPos);
-        ChrPos = double(ChrPos);
-        [~,sortindx] = sort(ChrPos);
-        CpGs = DATA.ColId(indx_gene);
-        CpGs = CpGs(sortindx);
-        GeneListOut(j) = GeneIdToUse;
-        CpGProbes{j} = string(CpGs);
+
     else
         %fprintf('%s Not found\n',GeneIdToUse)
     end
 end
 indx = ~matches(GeneListOut,"");
+DATA_Out.GeneColumnName = GeneColumnName;
 DATA_Out.GeneList = GeneListOut(indx);
 DATA_Out.CpGProbes = CpGProbes(indx);
 

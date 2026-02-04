@@ -8,7 +8,7 @@ if ~any(VariableIdColumn)
 end
 
 
-Pattern = ["NA" "---" "" "RNU5E-1" "RPL21P28" "RNF5P1" "RNU5D-1" "SNORA72" "SNORA73" "SNORA74" "SNORA75" "SNORA70" "SNORA63" "SNORA62" "SNORA59B" "SNORA59A" "U3" "U2" "Y_RNA"]
+Pattern = ["NA" "---" ""];
 
 DATA =  EditVariablesDATA(DATA,DATA.ColId(matches(DATA.ColAnnotation(:,VariableIdColumn),Pattern)),'remove');
 
