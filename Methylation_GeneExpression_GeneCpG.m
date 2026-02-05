@@ -1,4 +1,4 @@
-function [DATA, DATA_ME]= Methylation_GeneExpression_GeneCpG(DATA_M,IdM,GeneCpG,DATA_E,IdE)
+function [DATA, DATA_ME, DATA_ALL]= Methylation_GeneExpression_GeneCpG(DATA_M,IdM,GeneCpG,DATA_E,IdE)
 
 Truncate = false;
 
@@ -81,7 +81,8 @@ X_E = ones(DATA_E.nRow,nGenes) * NaN;
 X_M = ones(DATA_E.nRow,nGenes) * NaN;
 ColId_E = strings(nGenes,1);
 ColId_M = strings(nGenes,1);
-
+AllCorrSpearman = cell(nGenes,1);
+AllMethylationRange = cell(nGenes,1);
 
 parfor i = 1:nGenes
     Gene_Id = GeneCpG.GeneList(i);
@@ -94,6 +95,8 @@ parfor i = 1:nGenes
             RowAnnotation(i,:) = DATA_E.ColAnnotation(gene_indx,:);
             x_methylation = DATA_tmp.X;
             r_Spearman = corr(x_gene,x_methylation,'rows','pairwise','Type','Spearman');
+            AllCorrSpearman{i}  = r_Spearman;
+            AllMethylationRange{i}  = range(x_methylation,1);
             r_Pearson = corr(x_gene,x_methylation,'rows','pairwise','Type','Pearson');
             indx_Spearman = r_Spearman < r_cutoff;
             indx_Pearson = r_Pearson < r_cutoff;
@@ -122,6 +125,9 @@ DATA.RowId = RowId(indx);
 DATA.RowAnnotation = RowAnnotation(indx,:);
 DATA.X = X(indx,:);
 DATA.nRow = length(DATA.RowId);
+
+DATA_ALL.AllCorrSpearman = AllCorrSpearman(indx);
+DATA_ALL.AllMethylationRange = AllMethylationRange(indx);
 
 DATA_ME = CreateDataStructure(DATA_E.nRow,DATA.nRow*2,[],[]);
 DATA_ME.RowId = DATA_E.RowId;
