@@ -56,7 +56,7 @@ TitleTxt = [];
 CalcCorr = false;
 CorrType = 'Spearman';
 CorrLine = false;
-CorrLineWidth = 1;
+CorrLineWidth = 0.5;
 CorrLineColor = [0 0 0];
 CorrLineStyle = '-';
 
