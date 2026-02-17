@@ -355,9 +355,9 @@ if CalcStats
         
         switch lower(StatType)
             case 't-test'
-                [~,p_val] = ttest2(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),0.05,'both','equal');
+                [~,p_val] = ttest2(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),0.05,'both','unequal');
             case 'mw'
-                [p_val] = ranksum(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))));
+                [p_val] = ranksum(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),'method','exact'); % Changed to exact 2026-02-17
             case 'f-test'
                 [~,p_val] = vartest2(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),0.05);
             case 'bartlett'

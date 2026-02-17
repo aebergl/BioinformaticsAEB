@@ -186,7 +186,7 @@ ah.YAxis.TickLabels = YAxisDatalabels;
 
 % Add color bar
 ch = colorbar(ah,'Units','inches','FontSize',FontSize,...
-    'Position',[ah.Position(1) + ah.Position(3)+0.1, ah.Position(2) 0.1, FigSize(2)/5]);
+    'Position',[ah.Position(1) + ah.Position(3)+0.2, ah.Position(2) 0.1, FigSize(2)/5]);
 ch.Label.String=ColorVar;
 ch.FontSize=FontSize;
 
