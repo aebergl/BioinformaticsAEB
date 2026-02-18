@@ -1,4 +1,4 @@
-function fh = PlotBoxPlotDATA(DATA,VariableId,GroupVariableName,GroupsToUse,varargin)
+function fh = PlotBoxPlotDATA(DATA,VariableId,GroupVariableId,GroupsToUse,varargin)
 % USAGE:
 %   fh  = PlotBoxPlotDATA(DATA,VariableId,GroupVariableName,GroupsToUse,varargin)
 %   creates a scatter boxplot plot from DATA structure
@@ -71,7 +71,7 @@ Show_NS=false;
 ShowAllLines=false;
 
 TargetAxes = false;
-XTickAngle = 0;
+XTickAngle = -45;
 SortData=false;
 MultipleY = 'Mean';
 DataTipId = 'RowId';
@@ -146,12 +146,12 @@ if nargin > 4
 end
 
 % Select Samples
-if isempty(GroupVariableName)
+if isempty(GroupVariableId)
     nGroups = 1;
     SampleIndxMat = true(DATA.nRow,nGroups);
     GroupName = [];
 else
-    indx = strcmpi(GroupVariableName,DATA.RowAnnotationFields);
+    indx = strcmpi(GroupVariableId,DATA.RowAnnotationFields);
     if ~any(indx)
         error('Error. \n%s not found in DATA.RowAnnotationFields',SampleIdentifier);
     elseif sum(indx) > 1
@@ -324,7 +324,7 @@ else
     ylabel(YlabelTxt,'FontSize',FontSize)
 end
 
-
+title(ah,GroupVariableId);
 
 % Adjust X-axis
 ah.XLim = [0.3 nGroups+0.7];
@@ -357,7 +357,15 @@ if CalcStats
             case 't-test'
                 [~,p_val] = ttest2(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),0.05,'both','unequal');
             case 'mw'
-                [p_val] = ranksum(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),'method','exact'); % Changed to exact 2026-02-17
+                x = y_var(SampleIndxMat(:,CalcGroup(i,1)));
+                y = y_var(SampleIndxMat(:,CalcGroup(i,2)));
+                if min([length(x), length(y)]) > 50 |  length(x) + length(y) > 100
+                    [p_val] = ranksum(x,y,'method','approximate');
+                else
+                    [p_val] = ranksum(x,y,'method','exact');
+                end
+
+                
             case 'f-test'
                 [~,p_val] = vartest2(y_var(SampleIndxMat(:,CalcGroup(i,1))),y_var(SampleIndxMat(:,CalcGroup(i,2))),0.05);
             case 'bartlett'
