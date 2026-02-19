@@ -79,12 +79,13 @@ try
 catch
     opts = detectImportOptions(FileName,'FileType','text','Delimiter',Delimiter,'VariableNamingRule',VariableNamingRule);
 end
+opts.DataLines(1)=2;
 
 %Select variables to import
  if isempty(ColumnsToAdd)
      ColumnsToAdd = opts.SelectedVariableNames;
  end
-     
+
      % else
 %     [SelectedVariables]  = intersect(ColumnsToAdd,opts.VariableNames,'Stable');
 %     opts.SelectedVariableNames = SelectedVariables;
