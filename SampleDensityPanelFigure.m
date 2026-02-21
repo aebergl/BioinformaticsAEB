@@ -3,7 +3,7 @@ function [fh RESULTS_DATA] = SampleDensityPanelFigure(DATA,IdColumn,Refsample,nR
 FontSize = 10;
 FigSize = [12 12];
 TitleTxt = inputname(1);
-
+TitleTxt = false;
 FileTypeOut = ".png";
 
 ShowFigure = true;
