@@ -4,6 +4,8 @@ FontSize = 10;
 FigSize = [12 12];
 TitleTxt = inputname(1);
 
+FileTypeOut = ".png";
+
 ShowFigure = true;
 FontSize = 10;
 ExportPlot = false;
@@ -213,12 +215,11 @@ for i = 1:nImages
         if nImages > 1
             [~,name,ext] = fileparts(ExportPlot);
             tmpName = sprintf('%s_%u%s',name,i,ext);
-            FullFileExport=fullfile(ExportDir,tmpName);
+            FullFileExport=fullfile(ExportDir,strcat(tmpName,FileTypeOut));
         else
             %FullFileExport=fullfile(ExportDir,ExportPlot);
             FullFileExport=fullfile(ExportDir,strcat(TitleTxt,".png"));
         end
-
         exportgraphics(th,FullFileExport,'Resolution',ResolutionValue)
         close(fh(i))
     end
