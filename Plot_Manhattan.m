@@ -23,6 +23,7 @@ function fh = Plot_Manhattan(DATA,ChrPos,Chrfield,Y_variable,varargin)
 
 sex=0;
 FontSize = 7;
+MarkerSize = 3;
 LineWidth = 0.5;
 GridLines = 'on';
 RightMargin = 0.1;
@@ -75,9 +76,9 @@ if sex==0
     tab2=tab2(tab2(:,1)<23,:); %remove chr23 if not wanting sex chromosomes
 end
 
-fh=figure('Name','GSEA Plot','Color','w','Tag','GSEA Plot figure','Units','inches');
+fh=figure('Name','Manhattan Plot','Color','w','Tag','Manhattan Plot figure','Units','inches');
 fh.Position(3:4) = FigSize;
-ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','on','Layer','top','FontSize',FontSize,'Units','inches',...
+ah = axes(fh,'NextPlot','add','tag','Manhattan Plot','box','on','Layer','top','FontSize',FontSize,'Units','inches',...
     'PositionConstraint','outerposition','Clipping','off');
 
 ah.LineWidth = LineWidth;
@@ -92,7 +93,7 @@ bptrack=0; %variable to track base pairs, this helps the plotting function to kn
 tab2(tab2(:,3)==0,:)=[];
 for i=1:22+sex
     hold on
-    plot(ah,tab2(tab2(:,1)==i,2)+max(bptrack),tab2(tab2(:,1)==i,3),'.'); %a scatterplot. On the x axis, the base pair number + bptrack, which starts at 0. On the y axis, - log 10 p
+    plot(ah,tab2(tab2(:,1)==i,2)+max(bptrack),tab2(tab2(:,1)==i,3),'.','MarkerSize',MarkerSize); %a scatterplot. On the x axis, the base pair number + bptrack, which starts at 0. On the y axis, - log 10 p
     bptrack=[bptrack,max(bptrack)+max(max(tab2(tab2(:,1)==i,:)))]; %this updates bptrack by adding the highest base pair number of the chromosome. At the end, we should get the total number of base pairs in the human genome. All values of bptrack are stored in a vector. They're useful later
 end
 
@@ -102,3 +103,12 @@ M=movmean(bptrack,2); %this calculates the moving average of bptrack and uses th
 xticks(M(2:end));
 xlabel('Chromosome')
 xticklabels( 1:23 );
+
+% Equal 
+maxYLim = max(abs(ah.YLim));
+
+ah.YLim = [-maxYLim maxYLim];
+
+% 
+yline(ah,[-0.005 0.005],'color','r','Linewidth',1,'LineStyle','-.')
+yline(ah,[0],'color','k','Linewidth',1,'LineStyle','-')
