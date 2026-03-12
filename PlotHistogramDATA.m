@@ -1,6 +1,8 @@
 function fh = PlotHistogramDATA(DATA,GroupVariable,GroupsToUse,CMap,LineTypes)
-LineWidth = 1;
-FontSize = 12;
+AxesLineWidth = 0.5
+LineWidth = 0.75;
+FontSize = 8;
+FigSize = [4.3 3;]
 nBins = 100;
 BandwidthValue = 0.05;
 nPoints=1000;
@@ -62,10 +64,10 @@ LineTypes = repmat(LineTypes,ceil(nGroups/size(LineTypes,1)),1);
 LineTypes = LineTypes(1:nGroups,:);
 
 fh = figure('Name','Histogram Plot','Color','w','Tag','Histogram Plot','Units','inches','Colormap',CMap);
-
+fh.Position(3:4) = FigSize;
 ah = axes(fh,'NextPlot','add','tag','Histogram Plot','Box','on','FontSize',FontSize,'Linewidth',0.5,...
     'ActivePositionProperty','outerposition','XGrid','on','YGrid','on');
-
+ah.LineWidth = AxesLineWidth;
 UniqueLineObjects=gobjects(nGroups,1);
 
 for i = 1:nGroups
@@ -90,7 +92,7 @@ for i = 1:nGroups
     end
 end
 if ~isempty(GroupName)
-    lh=legend(UniqueLineObjects,GroupName,'Location','northeastoutside');
+    lh=legend(UniqueLineObjects,GroupName,'Location','northwest');
     lh.Interpreter='none';
     lh.Box='off';
 end

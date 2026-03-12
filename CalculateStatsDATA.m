@@ -1,13 +1,14 @@
 function RESULTS_DATA = CalculateStatsDATA(DATA,Type)
 
 
-VarNames = ["n Values" "n MV" "Mean" "Median" "std" "Min" "Max" "Range" "IQR" "Skewness" "Kurtosis" "BC"]';
+VarNames = ["n Values" "n MV" "Percent MV" "Mean" "Median" "std" "Min" "Max" "Range" "IQR" "Skewness" "Kurtosis" "BC"]';
 nVar = length(VarNames);
 
 switch lower(Type)
     case 'samples'
         X = DATA.X';
         nRow = DATA.nRow;
+        nVal = DATA.nCol;
         Title_txt = "Sample Statistics";
         RowId = DATA.RowId;
         RowAnnotation = DATA.RowAnnotation;
@@ -15,6 +16,7 @@ switch lower(Type)
     case 'variables'
         X = DATA.X;
         nRow = DATA.nCol;
+        nVal = DATA.nRow;
         Title_txt = "Variable Statistics";
         RowId = DATA.ColId;
         RowAnnotation = DATA.ColAnnotation;
@@ -26,6 +28,7 @@ end
 
 nVal_X     = sum(~isnan(X),1)';
 nMV_X      = sum(isnan(X),1)';
+percMV_X   = nMV_X / nVal * 100;
 mean_X     = mean(X,1,'omitnan')';
 median_X   = median(X,1,'omitnan')';
 std_X      = std(X,1,'omitnan')';
@@ -41,7 +44,7 @@ BC_X       = ( (skewness_x.^2) + 1 ) ./ ( kurtosis_x + (3 .* (nVal_X-1) .^ 2 ./ 
 
 RESULTS_DATA = CreateDataStructure(nRow,nVar,[],[]);
 
-RESULTS_DATA.X = [nVal_X, nMV_X, mean_X, median_X, std_X, min_X, max_X, range_X, iqr_X, skewness_x, kurtosis_x, BC_X];
+RESULTS_DATA.X = [nVal_X, nMV_X, percMV_X, mean_X, median_X, std_X, min_X, max_X, range_X, iqr_X, skewness_x, kurtosis_x, BC_X];
 
 % Add Info
 RESULTS_DATA.Title = Title_txt;
