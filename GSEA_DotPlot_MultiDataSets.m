@@ -121,7 +121,7 @@ SizeVal(indx_rem) = [];
 ColorVal(indx_rem) = [];
 nVal = length(ColorVal);
 nXval = length(unique(XAxisData));
-nYval = length(unique(YAxisData));
+nYval = length(unique(YAxisData))
 
 % Make numeric for plotting
 XAxisDataPlot = double(XAxisData);
