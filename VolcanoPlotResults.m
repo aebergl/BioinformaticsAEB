@@ -292,8 +292,8 @@ dist_neg_alpha = dist_alpha(indx_neg);
 
 indx_pos_scatter = x_data_pos > X_CutOff & y_data_pos > Y_CutOff;
 indx_neg_scatter = x_data_neg < -X_CutOff & y_data_neg > Y_CutOff;
-sum(indx_pos_scatter)
-sum(indx_neg_scatter)
+% sum(indx_pos_scatter)
+% sum(indx_neg_scatter)
 
 % cMap=colormap('bone');
 % cMap=flipud(cMap);

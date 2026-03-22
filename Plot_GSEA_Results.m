@@ -1,6 +1,6 @@
 function fh = Plot_GSEA_Results(File_pos,File_neg,X_value_name,Size_value_Name,CollectionType,PvalCutOff,Nmax,fWidth,fHight)
 
-FontSize = 7;
+FontSize = 10;
 minSize = 20;
 maxSize = 100;
 LineWidth = 0.5;
@@ -8,8 +8,8 @@ GridLines = 'on';
 RightMargin = 0.8;
 
 NameField = "NAME";
-SizeCutOffs =[1 0.05 0.01 0.001 0.0001];
-LegendSizeVal = [5 20 40 60 80];
+SizeCutOffs =[1 0.1 0.05 0.01 0.001];
+LegendSizeVal = [5 50 80 120 150];
 % SizeCutOffs =[1 0.2 0.05 0.01 0.001];
 % LegendSizeVal = [5 20 40 60 80];
 
@@ -193,10 +193,12 @@ rangeVal = maxVal - minVal;
 nudgeVal = rangeVal/10;
 
 
-fh=figure('Name','GSEA Plot','Color','w','Tag','GSEA Plot figure','Units','inches');
-fh.Position(3:4) = [fWidth fHight];
-ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','on','Layer','top','FontSize',FontSize,'Units','inches',...
-    'PositionConstraint','outerposition','Clipping','off','YDir','reverse');
+fh=figure('Name','GSEA Plot','Color','w','Tag','GSEA Plot figure');
+%fh.Position(3:4) = [fWidth fHight];
+ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','on','Layer','top','FontSize',FontSize,...
+    'Clipping','off','YDir','reverse');
+% ah = axes(fh,'NextPlot','add','tag','Volcano Plot','box','on','Layer','top','FontSize',FontSize,'Units','inches',...
+%     'PositionConstraint','outerposition','Clipping','off','YDir','reverse');
 
 ah.LineWidth = LineWidth;
 ah.XGrid = GridLines;
@@ -209,7 +211,7 @@ ah.Colormap = Cmap;
 ah.ColorOrder = Cmap;
 %ah.CLim = CLim;
 ah.XLim =[minVal-nudgeVal maxVal+nudgeVal];
-ah.OuterPosition(3:4) = [fWidth-RightMargin fHight];
+%ah.OuterPosition(3:4) = [fWidth-RightMargin fHight];
 ah.TickLength=[ 0.05/nGroups    0.0];
 
 switch lower(X_value_name)
@@ -227,7 +229,7 @@ end
 
 sh = scatter(xVal,1:nGroups,SizeValPlot,ColorVal,'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
 
-StepVal = 1.5;
+StepVal = 1.2;
 
 
 % Add color legend
@@ -263,7 +265,7 @@ switch lower(ColorBy)
         YPos_Color = 1:StepVal:StepVal*(length(ColorValLegend)+1);
         YPos_Color = YPos_Color + YPos_Text(end) ;
         for i=1:length(ColorValLegend)
-            scatter(ah,ah.XLim(2)+nudgeVal*0.9,YPos_Color(i),LegendSizeVal(end-1),ColorValLegend(i,:),'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
+            scatter(ah,ah.XLim(2)+nudgeVal*0.9,YPos_Color(i),LegendSizeVal(end-2),ColorValLegend(i,:),'MarkerFaceColor','flat','MarkerEdgeColor',[0.1 0.1 0.1]);
             text(ah.XLim(2)+1.3*nudgeVal,YPos_Color(i),ColorGroupslegend{i},'HorizontalAlignment','left','VerticalAlignment','middle','FontSize',FontSize)
         end
 end
