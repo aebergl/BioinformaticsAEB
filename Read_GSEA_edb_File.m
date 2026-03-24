@@ -122,11 +122,14 @@ switch lower(GeneSetType)
         DATA_out.RowAnnotation = [DATA_out.RowAnnotation ShortName Group];
 
 
-    case 'reactome'
-        YtickLabelTxt = strrep(YtickLabelTxt,'REACTOME_','');
-        YtickLabelTxt = strrep(YtickLabelTxt,'_',' ');
-        YtickLabelTxt = lower(YtickLabelTxt);
-        YtickLabelTxt = upper(extractBefore(YtickLabelTxt,2)) + extractAfter(YtickLabelTxt,1);
+    case 'gobp'
+        DATA_out.RowAnnotation(:,1) = strrep(DATA_out.RowAnnotation(:,1),'GOBP_','');
+        DATA_out.RowAnnotation(:,1) = strrep(DATA_out.RowAnnotation(:,1),'_',' ');
+        DATA_out.RowAnnotation(:,1) = lower(DATA_out.RowAnnotation(:,1));
+        DATA_out.RowAnnotation(:,1) = upper(extractBefore(DATA_out.RowAnnotation(:,1),2)) + extractAfter(DATA_out.RowAnnotation(:,1),1);
+    otherwise
+
+        
 end
 
 
