@@ -14,9 +14,10 @@ if ~isempty(CompsToAddBack)
 end
 if ScaleX
     PCA_Model.x_weight(PCA_Model.x_weight < 1e-8) = 1e-8;
-    X = bsxfun(@rdivide, X, PCAmodel.x_weight); %same as X = X .* (ones(N,1) * x_weight);
+    %X = bsxfun(@rdivide, X, PCAmodel.x_weight); %same as X = X .* (ones(N,1) * x_weight);
+    X = X ./ PCA_Model.x_weight;
 end
 
-X = bsxfun(@plus, X, PCA_Model.x_mean); %same as X = X - (ones(N,1) * x_mean);
-
+%X = bsxfun(@plus, X, PCA_Model.x_mean); %same as X = X - (ones(N,1) * x_mean);
+X = X + PCA_Model.x_mean;
 DATA.X = X;
