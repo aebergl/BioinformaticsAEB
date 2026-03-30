@@ -18,13 +18,14 @@ if nargin > 5
     [varargin{:}] = convertStringsToChars(varargin{:});
 end
 ResolutionValue = 400;
-LineWidth = 0.5;
+LineWidth = 0.75;
 
 DataType = "GeneExpression";
 if DATA.nCol > 200000
     DataType = "Methylation";
 end
-
+CCC_Only = true;
+BlandAltman = true;
 % Check input
 if nargin > 5
     ArgsList = {'FontSize','FigSize','TitleTxt','DisplayFigure','ExportPlot','ExportDir',...
@@ -143,9 +144,19 @@ for i = 1:nImages
             RefSampleIndx_y = strcmp(MatchedSamplePairs(counter,2),SampleIds);
             x_ref=DATA.X(RefSampleIndx_x,:);
             y_sample=DATA.X(RefSampleIndx_y,:);
-            DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',mSize,'PointsToExclude', PointsToExclude);
-            xlabel(MatchedSamplePairs(counter,1),'FontSize',FontSize+2,'Interpreter','none');
-            ylabel(MatchedSamplePairs(counter,2), 'FontSize',FontSize+2,'Interpreter','none')
+            if BlandAltman
+                DensScat((x_ref+y_sample) ./ 2,x_ref-y_sample, 'TargetAxes',ah,'AxisType','square','mSize',mSize,'PointsToExclude', PointsToExclude,'ColorBar',false);
+                xlabel(sprintf('Average \\beta (%s & %s)',MatchedSamplePairs{counter,1},MatchedSamplePairs{counter,2}),'FontSize',FontSize+2,'Interpreter','tex');
+                ylabel(sprintf('\\beta (%s - %s)',MatchedSamplePairs{counter,1},MatchedSamplePairs{counter,2}), 'FontSize',FontSize+2,'Interpreter','tex');
+
+            else
+                DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',mSize,'PointsToExclude', PointsToExclude);
+                xlabel(MatchedSamplePairs(counter,1),'FontSize',FontSize+2,'Interpreter','none');
+                ylabel(MatchedSamplePairs(counter,2), 'FontSize',FontSize+2,'Interpreter','none');
+
+            end
+
+
             RESULTS_DATA.RowId(counter) = strcat(MatchedSamplePairs(counter,2)," vs. ",MatchedSamplePairs(counter,1));
 
         else
@@ -158,22 +169,37 @@ for i = 1:nImages
         end
         nVal = sum(isreal(x_ref) & isreal(y_sample));
         ah.FontSize = FontSize;
-        ah.XLim = [minX maxX];
-        %ah.XTick = ceil(minX):2:floor(maxX);
-        ah.YLim = [minX maxX];
-        %ah.YTick = ceil(minX):2:floor(maxX);
+        if BlandAltman
+
+            ah.XLim = [0 1];
+            %ah.XTick = ceil(minX):2:floor(maxX);
+            ah.YLim = [-1 1];
+            %ah.YTick = ceil(minX):2:floor(maxX);
+        else
+
+
+            ah.XLim = [minX maxX];
+            %ah.XTick = ceil(minX):2:floor(maxX);
+            ah.YLim = [minX maxX];
+            %ah.YTick = ceil(minX):2:floor(maxX);
+        end
         ah.XGrid ='on';
         ah.YGrid ='on';
         ah.Box='on';
         r_Pearson = corr(x_ref',y_sample','Type','Pearson','rows','pairwise');
         r_Spearman = corr(x_ref',y_sample','Type','Spearman','rows','pairwise');
-        c = f_CCC([x_ref',y_sample'],0.05);
+        ccc = f_CCC([x_ref',y_sample'],0.05);
         switch DataType
             case 'GeneExpression'
 
                 nDiff_1 = sum(abs(x_ref-y_sample) > 1);
                 nDiff_2 = sum(abs(x_ref-y_sample) > 0.585);
-                Str(1) = {[sprintf('rp=%.4f rs=%.4f ccc=%.4f',r_Pearson,r_Spearman,c{1}.est)]};
+                if ~CCC_Only
+                    Str(1) = {[sprintf('rp=%.4f rs=%.4f ccc=%.4f',r_Pearson,r_Spearman,ccc{1}.est)]};
+                else
+                    Str(1) = {[sprintf('CCC=%.4f',ccc{1}.est)]};
+                end
+
                 Str(2) = {[sprintf('n > 2-fold: %u   n > 1.5-fold: %u',nDiff_1,nDiff_2)]};
                 text(ah.XLim(1)+0.2,ah.YLim(2)+0.1,Str,'FontSize',FontSize,'VerticalAlignment','bottom','HorizontalAlignment','Left','Color','k');
                 line([ah.XLim(1) ah.XLim(2)],[ah.YLim(1) ah.YLim(2)],'Linewidth',LineWidth,'LineStyle','-','color','k')
@@ -182,20 +208,35 @@ for i = 1:nImages
             case 'Methylation'
                 nDiff_1 = sum(abs(x_ref-y_sample) > 0.1);
                 nDiff_2 = sum(abs(x_ref-y_sample) > 0.2);
-                Str(1) = {sprintf('rp=%.4f rs=%.4f ccc=%.4f',r_Pearson,r_Spearman,c{1}.est)};
-                Str(2) = {sprintf('n > 0.1: %u   n > 0.2: %u',nDiff_1,nDiff_2)};
-                text(ah.XLim(1)+0.01,ah.YLim(2)+0.01,Str,'FontSize',FontSize,'VerticalAlignment','bottom','HorizontalAlignment','Left','Color','k');
-                line([ah.XLim(1) ah.XLim(2)],[ah.YLim(1) ah.YLim(2)],'Linewidth',LineWidth,'LineStyle','-','color','k')
-                line([ah.XLim(1) ah.XLim(2)-0.1],[ah.YLim(1)+0.1 ah.YLim(2)],'Linewidth',LineWidth,'LineStyle',':','color','k')
-                line([ah.XLim(1)+0.1 ah.XLim(2)],[ah.YLim(1) ah.YLim(2)-0.1],'Linewidth',LineWidth,'LineStyle',':','color','k')
-                line([ah.XLim(1) ah.XLim(2)-0.2],[ah.YLim(1)+0.2 ah.YLim(2)],'Linewidth',LineWidth,'LineStyle','--','color','k')
-                line([ah.XLim(1)+0.2 ah.XLim(2)],[ah.YLim(1) ah.YLim(2)-0.2],'Linewidth',LineWidth,'LineStyle','--','color','k')
+                if BlandAltman
+                    yline(0,'Linewidth',LineWidth,'LineStyle','-','color','r');
+                    MeanVal = mean(x_ref-y_sample, "omitmissing");
+                    StdVal = std(x_ref-y_sample, "omitmissing");
+
+                    lh(1) = yline(MeanVal,'-','Linewidth',LineWidth,'color','k');
+                    lh(2) = yline(MeanVal+(1.96*StdVal),':','Linewidth',LineWidth,'color','k');
+                    yline(MeanVal-(1.96*StdVal),'Linewidth',LineWidth,'LineStyle',':','color','k');
+                    legend(lh,{sprintf('Mean=%.2g',MeanVal),sprintf('1.96*SD(%.2g)',StdVal)},'Location','northwest','IconColumnWidth',10)
+                else
+                    if ~CCC_Only
+                        Str(1) = {sprintf('rp=%.4f rs=%.4f ccc=%.4f',r_Pearson,r_Spearman,ccc{1}.est)};
+                    else
+                        Str(1) = {sprintf('CCC=%.4f',ccc{1}.est)};
+                    end
+                    Str(2) = {sprintf('n > 0.1: %u   n > 0.2: %u',nDiff_1,nDiff_2)};
+                    text(ah.XLim(1)+0.01,ah.YLim(2)+0.01,Str,'FontSize',FontSize,'VerticalAlignment','bottom','HorizontalAlignment','Left','Color','k');
+                    line([ah.XLim(1) ah.XLim(2)],[ah.YLim(1) ah.YLim(2)],'Linewidth',LineWidth,'LineStyle','-','color','k')
+                    line([ah.XLim(1) ah.XLim(2)-0.1],[ah.YLim(1)+0.1 ah.YLim(2)],'Linewidth',LineWidth,'LineStyle',':','color','k')
+                    line([ah.XLim(1)+0.1 ah.XLim(2)],[ah.YLim(1) ah.YLim(2)-0.1],'Linewidth',LineWidth,'LineStyle',':','color','k')
+                    line([ah.XLim(1) ah.XLim(2)-0.2],[ah.YLim(1)+0.2 ah.YLim(2)],'Linewidth',LineWidth,'LineStyle','--','color','k')
+                    line([ah.XLim(1)+0.2 ah.XLim(2)],[ah.YLim(1) ah.YLim(2)-0.2],'Linewidth',LineWidth,'LineStyle','--','color','k')
+                end
 
         end
 
         RESULTS_DATA.X(counter,1) = r_Pearson;
         RESULTS_DATA.X(counter,2) = r_Spearman;
-        RESULTS_DATA.X(counter,3) = c{1}.est;
+        RESULTS_DATA.X(counter,3) = ccc{1}.est;
         RESULTS_DATA.X(counter,4) = nDiff_1;
         RESULTS_DATA.X(counter,5) = nDiff_2;
         RESULTS_DATA.X(counter,4) = nDiff_1/nVal*100;
@@ -218,7 +259,7 @@ for i = 1:nImages
             FullFileExport=fullfile(ExportDir,strcat(tmpName,FileTypeOut));
         else
             %FullFileExport=fullfile(ExportDir,ExportPlot);
-            FullFileExport=fullfile(ExportDir,strcat(TitleTxt,".png"));
+            FullFileExport=fullfile(ExportDir,strcat(ExportPlot,".png"));
         end
         exportgraphics(th,FullFileExport,'Resolution',ResolutionValue)
         close(fh(i))
