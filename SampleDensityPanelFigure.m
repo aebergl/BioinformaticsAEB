@@ -24,12 +24,12 @@ DataType = "GeneExpression";
 if DATA.nCol > 200000
     DataType = "Methylation";
 end
-CCC_Only = true;
-BlandAltman = true;
+CCC_Only = false;
+BlandAltman = false;
 % Check input
 if nargin > 5
     ArgsList = {'FontSize','FigSize','TitleTxt','DisplayFigure','ExportPlot','ExportDir',...
-        'MatchedSamplePairs','ALLvsALL','PointsToExclude'};
+        'MatchedSamplePairs','ALLvsALL','PointsToExclude','BlandAltman','CCC_Only'};
     for j=1:2:numel(varargin)
         ArgType = varargin{j};
         ArgVal = varargin{j+1};
@@ -55,6 +55,11 @@ if nargin > 5
                     ALLvsALL = ArgVal;
                 case 'pointstoexclude'
                     PointsToExclude = ArgVal;
+                case 'blandaltman'
+                    BlandAltman = ArgVal;
+                case 'ccc_only'
+                    CCC_Only = ArgVal;
+
             end
         end
     end
