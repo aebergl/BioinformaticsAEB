@@ -8,7 +8,7 @@ Truncate = false;
 IdM = ConvertStr(IdM,'string');
 IdE = ConvertStr(IdE,'string');
 
-GeneSymbolColumn = strcmp(GeneCpG.GeneIdColumn,DATA_E.ColAnnotationFields);
+GeneSymbolColumn = strcmp(GeneCpG.GeneColumnName,DATA_E.ColAnnotationFields);
 if ~any(GeneSymbolColumn)
     error('Given value for Gene Symbol not found, %s not found in ColAnnotationFields',GeneCpG.GeneIdColumn)
 end
@@ -48,8 +48,8 @@ if Truncate
 end
 [~,M_indx,E_indx] = intersect(M_Id,E_Id,'stable');
 
-DATA_M = EditSamplesDATA(DATA_M,DATA_M.RowId(M_indx),'Keep','Stable');
-DATA_E = EditSamplesDATA(DATA_E,DATA_E.RowId(E_indx),'Keep','Stable');
+DATA_M = EditSamplesDATA(DATA_M,DATA_M.RowId(M_indx),'Keep','Stable')
+DATA_E = EditSamplesDATA(DATA_E,DATA_E.RowId(E_indx),'Keep','Stable')
 
 nGenes = length(GeneCpG.GeneList);
 
@@ -85,6 +85,7 @@ AllCorrSpearman = cell(nGenes,1);
 AllMethylationRange = cell(nGenes,1);
 
 parfor i = 1:nGenes
+
     Gene_Id = GeneCpG.GeneList(i);
     gene_indx = strcmp(Gene_Id,DATA_E.ColAnnotation(:,GeneSymbolColumn));
     if any(gene_indx)

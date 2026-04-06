@@ -90,7 +90,7 @@ switch X_Variable
             XLabel = {'\Delta M-value'};
         elseif strcmpi('Beta-value',DATA.Info.DataType)
             XLabel = {'\Delta \beta-value'};
-            XLabel = {'Log_2 FC'};
+            %XLabel = {'Log_2 FC'};
         else
         XLabel = {'Log_2 FC'};
         end

@@ -45,7 +45,7 @@ RESULTS_DATA.RowId = DATA.ColId;
 RESULTS_DATA.RowAnnotation = DATA.ColAnnotation;
 RESULTS_DATA.RowAnnotationFields = DATA.ColAnnotationFields;
 
-VarNames = {'r Pearson','p Pearson','q Pearson','fdr Pearson','r Spearman','p Spearman','q Spearman','fdr Spearman','Range','Num Values'}';
+VarNames = {'r Pearson','p Pearson','q Pearson','fdr Pearson','r Spearman','p Spearman','q Spearman','fdr Spearman','Range','SD','Num Values'}';
 RESULTS_DATA.ColId=VarNames;
 
 RESULTS_DATA.ColAnnotationFields = {'VarId'};
@@ -64,6 +64,7 @@ p_Pearson = ones(DATA.nCol,1) * NaN;
 r_Spearman = ones(DATA.nCol,1) * NaN;
 p_Spearman = ones(DATA.nCol,1) * NaN;
 RangeVal  = ones(DATA.nCol,1) * NaN;
+SDVal  = ones(DATA.nCol,1) * NaN;
 nVal = ones(DATA.nCol,1) * NaN;
 
 
@@ -72,6 +73,7 @@ parfor i=1:DATA.nCol
     nVal(i) = sum(~isnan(x));
     if nVal(i) > MinNumSampleSize
         RangeVal(i) = range(x);
+        SDVal(i) = std(x,"omitmissing");
         [r_Pearson(i), p_Pearson(i)] = corr(x,Y,'Type','Pearson','Rows','Pairwise');
         try
             [r_Spearman(i), p_Spearman(i)] = corr(x,Y,'Type','Spearman','Rows','Pairwise');
@@ -86,7 +88,8 @@ RESULTS_DATA.X(:,2) = p_Pearson;
 RESULTS_DATA.X(:,5) = r_Spearman;
 RESULTS_DATA.X(:,6) = p_Spearman;
 RESULTS_DATA.X(:,9) = RangeVal;
-RESULTS_DATA.X(:,10) = nVal;
+RESULTS_DATA.X(:,10) = SDVal;
+RESULTS_DATA.X(:,11) = nVal;
 try
     [~, RESULTS_DATA.X(:,3),~] = mafdr(p_Pearson);
 catch
