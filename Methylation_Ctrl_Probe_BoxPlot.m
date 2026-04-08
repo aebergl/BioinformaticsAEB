@@ -1,6 +1,6 @@
 function fh  = Methylation_Ctrl_Probe_BoxPlot(DATA,GroupVariableId, GroupsToUse, MatchedSamples)
-FontSize = 7;
-FigSize = [6.5 8.5]
+FontSize = 7.5;
+FigSize = [7 9];
 
 RefDATA.IDs  = ["Restoration" "Staining.Green" "Staining.Red" "Extension.Green" "Extension.Red" "Hybridization.High.Medium" "Hybridization.Medium.Low" "Target.Removal.1" "Target.Removal.2" "Bisulfite.Conversion.I.Green" "Bisulfite.Conversion.I.Red" "Bisulfite.Conversion.II" "Specificity.I.Green" "Specificity.I.Red" "Specificity.II" "Non.polymorphic.Green" "Non.polymorphic.Red"];
 RefDATA.Name = ["Restoration" "Staining green" "Staining red" "Extension green" "Extension red" "Hybridization high/medium" "Hybridization medium/low" "Target removal 1" "Target removal 2" "Bisulfite conversion I green" "Bisulfite conversion I red" "Bisulfite conversion II" "Specificity I green" "Specificity I red" "Specificity II" "Non-polymorphic green" "Non-polymorphic red"];
