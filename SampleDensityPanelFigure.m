@@ -17,7 +17,7 @@ PointsToExclude = [];
 if nargin > 5
     [varargin{:}] = convertStringsToChars(varargin{:});
 end
-ResolutionValue = 400;
+ResolutionValue = 600;
 LineWidth = 0.75;
 
 DataType = "GeneExpression";
@@ -115,7 +115,7 @@ switch DataType
     case 'Methylation'
         minX=min(DATA.X,[],'all')-0.01;
         maxX=max(DATA.X,[],'all')+0.01;
-        VarNames = ["r Pearson" "r Spearman" "CCC" "n > 0.1" "n > 0.2" "% > 0.1" "% > 0.2"]';
+        VarNames = ["r Pearson" "r Spearman" "CCC" "n > 0.1" "n > 0.2" "% > 0.1" "% > 0.2" "SD"]';
 
 end
 
@@ -194,6 +194,7 @@ for i = 1:nImages
         r_Pearson = corr(x_ref',y_sample','Type','Pearson','rows','pairwise');
         r_Spearman = corr(x_ref',y_sample','Type','Spearman','rows','pairwise');
         ccc = f_CCC([x_ref',y_sample'],0.05);
+        StdVal = std(x_ref-y_sample, "omitmissing");
         switch DataType
             case 'GeneExpression'
 
@@ -216,7 +217,7 @@ for i = 1:nImages
                 if BlandAltman
                     yline(0,'Linewidth',LineWidth,'LineStyle','-','color','r');
                     MeanVal = mean(x_ref-y_sample, "omitmissing");
-                    StdVal = std(x_ref-y_sample, "omitmissing");
+                    
 
                     lh(1) = yline(MeanVal,'-','Linewidth',LineWidth,'color','k');
                     lh(2) = yline(MeanVal+(1.96*StdVal),':','Linewidth',LineWidth,'color','k');
@@ -244,9 +245,9 @@ for i = 1:nImages
         RESULTS_DATA.X(counter,3) = ccc{1}.est;
         RESULTS_DATA.X(counter,4) = nDiff_1;
         RESULTS_DATA.X(counter,5) = nDiff_2;
-        RESULTS_DATA.X(counter,4) = nDiff_1/nVal*100;
-        RESULTS_DATA.X(counter,5) = nDiff_2/nVal*100;
-
+        RESULTS_DATA.X(counter,6) = nDiff_1/nVal*100;
+        RESULTS_DATA.X(counter,7) = nDiff_2/nVal*100;
+        RESULTS_DATA.X(counter,8) = StdVal;
         RESULTS_DATA.RowAnnotation(:,1) = RESULTS_DATA.RowId;
         drawnow
     end
