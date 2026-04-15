@@ -1,7 +1,7 @@
 function fh = Plot_GSEA_Heatmap(DATA,XId,YId,ColorId,PvalId)
 
 
-Pval_cutoff = 0.1;
+Pval_cutoff = 0.01;
 
 indx_Pval = contains(DATA.ColId,PvalId);
 
@@ -17,8 +17,8 @@ indx_ColorId = contains(DATA.ColId,ColorId);
 %DATA.X(Pval>Pval_cutoff,indx_ColorId) = NaN;
 
 
-IDs =  ["metabolic" "proliferation" "signaling" "cellular component" "development" "DNA damage" "immune" "pathway"];
-DATA = EditSamplesDATA(DATA,IDs,'Keep','SampleIdentifier','Group','Stable');
+% IDs =  ["metabolic" "proliferation" "signaling" "cellular component" "development" "DNA damage" "immune" "pathway"];
+% DATA = EditSamplesDATA(DATA,IDs,'Keep','SampleIdentifier','Group','Stable');
 
 ListOfPathways=unique(DATA.RowAnnotation(:,indx_Yid),'stable');
 
