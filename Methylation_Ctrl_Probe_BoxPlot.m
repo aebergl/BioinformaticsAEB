@@ -18,10 +18,16 @@ th = tiledlayout(fh,3,6,'TileSpacing','compact','padding','compact');
 for i=1:nVal
     ah = nexttile(th);
     ah.FontSize = FontSize;
+    if isempty(MatchedSamples)
+     [~, out] = PlotBoxPlotDATA(DATA,RefDATA.IDs{i},GroupVariableId,GroupsToUse,...
+        'CalcStats',true,'PlotStars',true,'MarkerTypes',{'o','^'},...
+        'GroupColors',GetPalette('Tab10'),'MarkerSize',20,'MarkerLineWidth',0.5,'FontSize',FontSize,'TargetAxes',ah);
+       
+    else
     [~, out] = PlotBoxPlotDATA(DATA,RefDATA.IDs{i},GroupVariableId,GroupsToUse,'MatchedSamples',MatchedSamples,...
         'CalcStats',true,'PlotStars',true,'MarkerTypes',{'o','^'},...
         'GroupColors',GetPalette('Tab10'),'MarkerSize',20,'MarkerLineWidth',0.5,'FontSize',FontSize,'TargetAxes',ah);
-
+    end
     if out.Axes.YLim(1) < RefDATA.ThrVal(i)
         yline(ah,RefDATA.ThrVal(i),'color','r','Linewidth',1,'LineStyle','-');
     else
