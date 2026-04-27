@@ -1,0 +1,1 @@
+function DATA_Out = ScoreSignatureFromDATA(DATA,VariableId,Signature,SigId)
