@@ -51,10 +51,17 @@ ChrColumnId     = ["CHR","Chromosome_36","CpG_chrm"];
 ChrX            = ["X","chrX"];
 ChrY            = ["Y","chrY"];
 
+TotalRemoved = 0;
+
+fprintf('\n')
 % Only Keep cg probes
 if KeepCgOnly
     indx_cg = strncmpi("cg",DATA.ColId,2);
-    DATA =  EditVariablesDATA(DATA,DATA.ColId(indx_cg),'Keep');
+    if any(indx_cg)
+        DATA =  EditVariablesDATA(DATA,DATA.ColId(indx_cg),'Keep');
+        fprintf('%u non-cg variables removed\n',sum(~indx_cg))
+    end
+
 end
 
 % Remove chromosome X probes
@@ -63,7 +70,11 @@ if RemoveX
     ChrData = DATA.ColAnnotation(:,indx_ChrCol);
     indx_X = contains(ChrData,ChrX);
     indx_X = any(indx_X,2);
-    DATA =  EditVariablesDATA(DATA,DATA.ColId(indx_X),'Remove');
+    if any(indx_X)
+        DATA =  EditVariablesDATA(DATA,DATA.ColId(indx_X),'Remove');
+        fprintf('%u ChrX  variables removed\n',sum(indx_X))
+        TotalRemoved = TotalRemoved + sum(indx_X);
+    end
 end
 
 % Remove chromosome Y probes
@@ -72,7 +83,11 @@ if RemoveY
     ChrData = DATA.ColAnnotation(:,indx_ChrCol);
     indx_Y = contains(ChrData,ChrY);
     indx_Y = any(indx_Y,2);
-    DATA =  EditVariablesDATA(DATA,DATA.ColId(indx_Y),'Remove');
+    if any(indx_Y)
+        DATA =  EditVariablesDATA(DATA,DATA.ColId(indx_Y),'Remove');
+        fprintf('%u ChrY variables removed\n',sum(indx_Y))
+        TotalRemoved = TotalRemoved + sum(indx_Y);
+    end
 end
 
 % Remove Masked probes
@@ -89,7 +104,11 @@ if RemoveMasked
     indx_M = contains(MASK,"TRUE");
     indx_M = any(indx_M,2);
     CpG_remove = CpgIds(indx_M);
-    DATA =  EditVariablesDATA(DATA,CpG_remove,'Remove');
+    if numel(CpG_remove) > 1
+        DATA =  EditVariablesDATA(DATA,CpG_remove,'Remove');
+        fprintf('%u MASKED variables removed\n',numel(CpG_remove))
+        TotalRemoved = TotalRemoved + numel(CpG_remove);
+    end
 end
 
 if RemoveMV
@@ -97,10 +116,12 @@ if RemoveMV
     indx_MV = PercMV > PercMVtol;
     if any(indx_MV)
         DATA =  EditVariablesDATA(DATA,DATA.ColId(indx_MV),'Remove');
+        fprintf('%u variables removed with more than %u%% Missing Values\n',sum(indx_MV),PercMVtol)
+        TotalRemoved = TotalRemoved + sum(indx_MV)
     end
 end
 
-
+fprintf('%u variables removed in TOTAL\n',TotalRemoved)
 
 end
 
