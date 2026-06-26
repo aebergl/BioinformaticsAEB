@@ -82,6 +82,12 @@ if isempty(ColumnsToUse)
             'Methyl450_Loci','Methyl27_Loci','EPICv1_Loci'...
         	'Manifest_probe_match','SNP_ID','SNP_DISTANCE','SNP_MinorAlleleFrequency'};
     disp('Adding EPICv2 Annotation') 
+    
+    elseif nLoci == 287050 % Mouse
+        ColumnsToUse = {'IlmnID','Name','Probe_Type','Strand','Strand_TB','Strand_CO','Infinium_Design_Type','Rep_Num','CHR','MAPINFO','Species',...
+            'Genome_Build','SourceSeq','Forward_Sequence','Top_Sequence','MFG_Change_Flagged'};
+    disp('Adding Mouse Annotation') 
+    
     end
 end
 

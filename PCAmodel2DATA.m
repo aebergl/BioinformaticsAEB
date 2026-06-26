@@ -21,6 +21,8 @@ switch lower(TypeFlag)
                 end
                 if isfield(DATA,'SURVIVAL')
                     DATA_Out.SURVIVAL.RowId =  DATA.SURVIVAL.RowId(~PCAmodel.row_rem);
+                    DATA_Out.SURVIVAL.SurvivalTypes =  DATA.SURVIVAL.SurvivalTypes;
+                    DATA_Out.SURVIVAL.Units =  DATA.SURVIVAL.Units;
                     DATA_Out.SURVIVAL.SurvEvent =  DATA.SURVIVAL.SurvEvent(~PCAmodel.row_rem,:);
                     DATA_Out.SURVIVAL.SurvTime =  DATA.SURVIVAL.SurvTime(~PCAmodel.row_rem,:);
                 end
