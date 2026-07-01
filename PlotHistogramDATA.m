@@ -1,6 +1,6 @@
 function fh = PlotHistogramDATA(DATA,GroupVariable,GroupsToUse,CMap,LineTypes)
 AxesLineWidth = 0.5;
-LineWidth = 0.1;
+LineWidth = 0.5;
 FontSize = 8;
 FigSize = [3 2];
 nBins = 100;
