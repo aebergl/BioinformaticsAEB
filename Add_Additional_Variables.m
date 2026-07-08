@@ -2,7 +2,7 @@ function DATA = Add_Additional_Variables(DATA,DATA2)
 % DATA = Add_Additional_Variables(DATA,DATA2)
 %
 %   Add additional variables to DATA from DATA2
-
+Truncate = 12;
 
 
 % Check that they are all column vectors
@@ -30,7 +30,15 @@ if length(NewCoLId) ~= length(unique(NewCoLId))
     NewCoLId  = [DATA.ColId; tmp];
 end
 
-[~,ia,ib] = intersect(DATA.RowId,DATA2.RowId,'stable');
+RowId_1 = DATA.RowId;
+RowId_2 = DATA2.RowId;
+
+if Truncate
+    RowId_1 = cellfun(@(x) x(1:Truncate), RowId_1, 'UniformOutput', false);
+    RowId_2 = cellfun(@(x) x(1:Truncate), RowId_2, 'UniformOutput', false);
+end
+
+[~,ia,ib] = intersect(RowId_1,RowId_2,'stable');
 
 X = ones(DATA.nRow,DATA2.nCol) * NaN;
 
