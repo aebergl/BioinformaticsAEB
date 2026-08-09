@@ -1,7 +1,7 @@
 function [fh RESULTS_DATA] = SampleDensityPanelFigure(DATA,IdColumn,Refsample,nRow,nCol,varargin)
 
 FontSize = 10;
-FigSize = [12 12];
+FigSize = [10.5 12];
 TitleTxt = inputname(1);
 TitleTxt = false;
 FileTypeOut = ".png";
@@ -26,6 +26,7 @@ if DATA.nCol > 200000
 end
 CCC_Only = false;
 BlandAltman = false;
+ShowColorBar = false;
 % Check input
 if nargin > 5
     ArgsList = {'FontSize','FigSize','TitleTxt','DisplayFigure','ExportPlot','ExportDir',...
@@ -150,12 +151,12 @@ for i = 1:nImages
             x_ref=DATA.X(RefSampleIndx_x,:);
             y_sample=DATA.X(RefSampleIndx_y,:);
             if BlandAltman
-                DensScat((x_ref+y_sample) ./ 2,x_ref-y_sample, 'TargetAxes',ah,'AxisType','square','mSize',mSize,'PointsToExclude', PointsToExclude,'ColorBar',false);
+                DensScat((x_ref+y_sample) ./ 2,x_ref-y_sample, 'TargetAxes',ah,'AxisType','square','mSize',mSize,'PointsToExclude', PointsToExclude,'ColorBar',ShowColorBar);
                 xlabel(sprintf('Average \\beta (%s & %s)',MatchedSamplePairs{counter,1},MatchedSamplePairs{counter,2}),'FontSize',FontSize+2,'Interpreter','tex');
                 ylabel(sprintf('\\beta (%s - %s)',MatchedSamplePairs{counter,1},MatchedSamplePairs{counter,2}), 'FontSize',FontSize+2,'Interpreter','tex');
 
             else
-                DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',mSize,'PointsToExclude', PointsToExclude);
+                DensScat(x_ref,y_sample, 'TargetAxes',ah,'AxisType','y=x','mSize',mSize,'PointsToExclude', PointsToExclude,'ColorBar',ShowColorBar);
                 xlabel(MatchedSamplePairs(counter,1),'FontSize',FontSize+2,'Interpreter','none');
                 ylabel(MatchedSamplePairs(counter,2), 'FontSize',FontSize+2,'Interpreter','none');
 
