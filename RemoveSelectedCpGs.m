@@ -114,6 +114,7 @@ end
 if RemoveMV
     PercMV = sum(isnan(DATA.X),1) / DATA.nRow * 100;
     indx_MV = PercMV > PercMVtol;
+    sum(indx_MV)
     if any(indx_MV)
         DATA =  EditVariablesDATA(DATA,DATA.ColId(indx_MV),'Remove');
         fprintf('%u variables removed with more than %u%% Missing Values\n',sum(indx_MV),PercMVtol)
