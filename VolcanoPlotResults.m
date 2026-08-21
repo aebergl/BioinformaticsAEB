@@ -16,7 +16,7 @@ YLim = [];
 TitleTxt = false;
 LineWidth = 0.5;
 DataTipVariableName = [];
-XlimCrop = false;
+XlimCrop = true;
 
 MarkerLineWidth = 0.1;
 MarkerEdgeColor = [0 0 0];
