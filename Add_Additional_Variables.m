@@ -2,7 +2,7 @@ function DATA = Add_Additional_Variables(DATA,DATA2)
 % DATA = Add_Additional_Variables(DATA,DATA2)
 %
 %   Add additional variables to DATA from DATA2
-Truncate = 12;
+Truncate = 0
 
 
 % Check that they are all column vectors
