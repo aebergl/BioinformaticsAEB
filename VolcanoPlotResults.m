@@ -9,7 +9,7 @@ SizeRange = [1 75];
 FigureSize = [1.8 1.8];
 TopNValues = 0;
 TopPrctile = 0;
-RowsToHighligh = [];
+RowsToHighlight = [];
 Cmap_UpDn = [1 0 0; 0 0 1];
 XLim = [];
 YLim = [];
@@ -42,9 +42,9 @@ while i<numel(varargin)
     elseif strcmpi(varargin{i},'TopPrctile')
         i = i + 1;
         TopPrctile = varargin{i};
-    elseif strcmpi(varargin{i},'RowsToHighligh')
+    elseif strcmpi(varargin{i},'RowsToHighlight')
         i = i + 1;
-        RowsToHighligh = varargin{i};
+        RowsToHighlight = varargin{i};
     elseif strcmpi(varargin{i},'UpDnColors')
         i = i + 1;
         Cmap_UpDn = varargin{i};
@@ -345,8 +345,8 @@ if any(indx_neg_scatter)
     sh_neg.DataTipTemplate.Interpreter = 'none';
 end
 
-if ~isempty(RowsToHighligh)
-    indx = ismember(DATA.RowId,RowsToHighligh);
+if ~isempty(RowsToHighlight)
+    indx = ismember(DATA.RowId,RowsToHighlight);
 
     scatter(ah,x_data(indx),y_data(indx),3,[0 0 0],'filled');
 
