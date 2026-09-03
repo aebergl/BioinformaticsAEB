@@ -8,7 +8,7 @@ fh.Position(3:4) = FigureSize;
 ah=axes(fh,'NextPlot','add','tag','p-value histogram','Box','off','FontSize',FontSize,'Linewidth',1);
 
 hh=histogram(ah,P_values,nBins,'LineWidth',Linewidth,'Normalization','count','FaceColor',Cmap,...
-    'FaceAlpha',0.9);
+    'FaceAlpha',0.7);
 ah.XLabel.String = {'p-value'};
 ah.XLabel.FontSize = FontSize;
 ah.XLim = [-0.05 1.05];

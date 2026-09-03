@@ -238,6 +238,9 @@ switch Y_Variable
     case 'padj'
         y_data =  -log10(y_data);
         YLabel = {'-log_1_0(p-adjusted)'};
+    case 'pvalue'
+        y_data =  -log10(y_data);
+        YLabel = {'-log_1_0(p-value)'};
 
 end
 
