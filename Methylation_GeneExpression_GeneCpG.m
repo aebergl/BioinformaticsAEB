@@ -1,7 +1,7 @@
-function [DATA, DATA_ME, DATA_ALL]= Methylation_GeneExpression_GeneCpG(DATA_M,IdM,GeneCpG,DATA_E,IdE)
+function [DATA, DATA_ME, DATA_ALL]= Methylation_GeneExpression_GeneCpG(DATA_M,IdM,GeneCpG,DATA_E,IdE,Truncate)
 
-Truncate = false;
-
+%Truncate = false;
+r_cutoff = -0.2;
 %% Align Datasets
 %Get Ids
 
@@ -43,8 +43,8 @@ else
 end
 
 if Truncate
-    File_Id = cellfun(@(x) x(1:Truncate), File_Id, 'UniformOutput', false);
-    DATA_Id = cellfun(@(x) x(1:Truncate), DATA_Id, 'UniformOutput', false);
+    M_Id = cellfun(@(x) x(1:Truncate), M_Id, 'UniformOutput', false);
+    E_Id = cellfun(@(x) x(1:Truncate), E_Id, 'UniformOutput', false);
 end
 [~,M_indx,E_indx] = intersect(M_Id,E_Id,'stable');
 
@@ -75,7 +75,7 @@ x11 = ones(nGenes,1) * NaN;
 x12 = ones(nGenes,1) * NaN;
 x13 = ones(nGenes,1) * NaN;
 
-r_cutoff = -0.5;
+
 
 X_E = ones(DATA_E.nRow,nGenes) * NaN;
 X_M = ones(DATA_E.nRow,nGenes) * NaN;
