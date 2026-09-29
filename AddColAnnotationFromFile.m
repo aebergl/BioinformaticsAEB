@@ -134,7 +134,6 @@ indx_missing = ~cellfun(@(x) ischar(x),File_Id);
 C(indx_missing,:) = [];
 File_Id(indx_missing,:) = [];
 
-
 if Truncate    
     File_Id = cellfun(@(x) x(1:Truncate), File_Id, 'UniformOutput', false);
     DATA_Id = cellfun(@(x) x(1:Truncate), DATA_Id, 'UniformOutput', false);    
