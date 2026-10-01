@@ -2,7 +2,7 @@ function DATA = Add_Additional_Variables(DATA,DATA2)
 % DATA = Add_Additional_Variables(DATA,DATA2)
 %
 %   Add additional variables to DATA from DATA2
-Truncate = 0
+Truncate = 0;
 
 
 % Check that they are all column vectors
@@ -49,3 +49,8 @@ X(ia,:) = DATA2.X(ib,:);
 DATA.X = [DATA.X X];
 DATA.nCol = DATA.nCol + DATA2.nCol;
 DATA.ColId = NewCoLId;
+
+if ~isempty(DATA.ColAnnotation) & isempty(DATA2.ColAnnotation)
+    DATA.ColAnnotation = cat(1,DATA.ColAnnotation,repelem(DATA2.ColId,1,numel(DATA.ColAnnotationFields)));
+end
+
