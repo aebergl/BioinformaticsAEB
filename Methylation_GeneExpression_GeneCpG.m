@@ -1,7 +1,8 @@
 function [DATA, DATA_ME, DATA_ALL]= Methylation_GeneExpression_GeneCpG(DATA_M,IdM,GeneCpG,DATA_E,IdE,Truncate)
 
 %Truncate = false;
-r_cutoff = -0.2;
+r_cutoff = -0.5;
+
 %% Align Datasets
 %Get Ids
 
