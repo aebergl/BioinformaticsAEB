@@ -1,41 +1,42 @@
-function SCREE_Plot(PCAModel,TitleText,Type)
+function fh = SCREE_Plot(PCAModel,Type,FigSize,TitleText)
 
-figure
+Type = 'eig';
+FontSize = 8;
+LineWidth = 1;
+MarkerSize = 6;
+
+fh = figure('Name','Bar Plot','Color','w','Tag','Age Scatter Plot',...
+    'Units','inches');
+fh.Position(3:4) = FigSize;
+ah = axes(fh,'NextPlot','add','tag','Scatter Plot','box','on','Layer','top','FontSize',FontSize,'FontName','Helvetica');
+
+
 numValues = PCAModel.NumComp;
-if Type == 1
-    plot(PCAModel.ExplVar,'o','Linewidth',2,'MarkerSize',10,'Color','k')
-    hold on
-    plot(PCAModel.ExplVar,'-','Linewidth',2,'MarkerSize',10,'Color','r')
-    h=gca;
-    h.LineWidth=1;
-    set(gca,'FontSize',16);
-    set(gca,'Xtick',1:1:numValues)
-    xlabel('PCA component','FontSize',18,'Interpreter','none')
-    ylabel('Explained variation (%)','FontSize',18,'Interpreter','none')
-elseif Type == 2
-        plot([0; PCAModel.ExplVarCum],'o','Linewidth',2,'MarkerSize',10,'Color','k')
-        hold on
-        plot([0; PCAModel.ExplVarCum],'-','Linewidth',2,'MarkerSize',10,'Color','r')
-        h=gca;
-        h.LineWidth=1;
-        set(gca,'FontSize',16);
-        set(gca,'Xtick',0:10:numValues)
-        set(gca,'XLim',[0 numValues])
-        xlabel('PCA component','FontSize',18,'Interpreter','none')
-        ylabel('Explained variation (%)','FontSize',18,'Interpreter','none')
-elseif Type == 3
-        plot(PCAModel.Eig,'o','Linewidth',2,'MarkerSize',10,'Color','k')
-        hold on
-        plot(PCAModel.Eig,'-','Linewidth',2,'MarkerSize',10,'Color','r')
-        h=gca;
-        h.LineWidth=1;
-        set(gca,'FontSize',16);
-        set(gca,'Xtick',1:1:numValues)
-        xlabel('PCA component','FontSize',18,'Interpreter','none')
-        ylabel('Eigenvalue','FontSize',18,'Interpreter','none')
+
+switch lower(Type)
+    case {'eig','eigenvalue'}
+        yVal = PCAModel.Eig;
+        YLblTxt = "Eigenvalue";
+    case {'varcum','vartot','ssxcom','ssxtot','explvarcum'}
+        yVal = [0; PCAModel.ExplVarCum];
+        YLblTxt = "Cumulative explained variance"
+    case {'ssx','explvar'}
+        Val = PCAModel.ExplVar;
+        YLblTxt = "Cumulative explained variance"
+
 
 end
     
-    
-    title(TitleText,'FontSize',18,'Interpreter','none')
+    plot(ah,yVal,'o','Linewidth',LineWidth,'MarkerSize',MarkerSize,'Color','k')
+    hold on
+    plot(ah,yVal,'-','Linewidth',LineWidth,'Color','r')
+    yline(ah,1,'color','b','Linewidth',LineWidth,'LineStyle','-')
+    ah.LineWidth=1;
+    ah.XLim = [0.5 length(yVal) + 0.5];
+    set(ah,'FontSize',FontSize);
+    xlabel('PCA component','FontSize',FontSize,'Interpreter','none')
+    ylabel(YLblTxt,'FontSize',FontSize,'Interpreter','none')
+
+   
+    title(TitleText,'FontSize',FontSize,'Interpreter','none')
     set(gcf, 'Color', 'w');

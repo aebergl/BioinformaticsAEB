@@ -1,7 +1,8 @@
-function [DATA, DATA_ME, DATA_ALL]= Methylation_GeneExpression_GeneCpG(DATA_M,IdM,GeneCpG,DATA_E,IdE,Truncate)
+function [DATA, DATA_ME, DATA_ALL]= Methylation_GeneExpression_GeneCpG(DATA_M,IdM,GeneCpG,DATA_E,IdE,Truncate,r_cutoff,r_Type)
 
 %Truncate = false;
-r_cutoff = -0.5;
+% r_cutoff = -0.5;
+% r_Type = 'Pearson';
 
 %% Align Datasets
 %Get Ids
@@ -54,7 +55,7 @@ DATA_E = EditSamplesDATA(DATA_E,DATA_E.RowId(E_indx),'Keep','Stable')
 
 nGenes = length(GeneCpG.GeneList);
 
-Variables=["nTotal CPGs" "min r Spearman" "min r Pearson" "n <0.5 Spearman" "n <0.5 Pearson" "Average r Spearman" "p Spearman" "Average r Pearson" "p Pearson" "Mean Methylation" "Methylation Range" "Mean Expression" "Expression Range"];
+Variables=["nTotal CPGs" "min r Spearman" "min r Pearson" "n <0.5 Spearman" "n <0.5 Pearson" "Average r Spearman" "p Spearman" "Average r Pearson" "p Pearson" "Mean Methylation" "Methylation Range" "Mean Expression" "Expression Range" "n Samples"];
 DATA = CreateDataStructure(nGenes,length(Variables),[],[]);
 DATA.RowAnnotationFields = DATA_E.ColAnnotationFields;
 DATA.ColId=Variables;
@@ -75,6 +76,7 @@ x10 = ones(nGenes,1) * NaN;
 x11 = ones(nGenes,1) * NaN;
 x12 = ones(nGenes,1) * NaN;
 x13 = ones(nGenes,1) * NaN;
+x14 = ones(nGenes,1) * NaN;
 
 
 
@@ -107,21 +109,30 @@ parfor i = 1:nGenes
             x3(i) = min(r_Pearson);
             x4(i) = sum(indx_Spearman);
             x5(i) = sum(indx_Pearson);
-            x_mean_methylation = mean(x_methylation(:,indx_Spearman),2,'omitnan');
-            [x6(i), x7(i)] = corr(x_gene,x_mean_methylation,'rows','pairwise','Type','Spearman');
-            [x8(i), x9(i)] = corr(x_gene,mean(DATA_tmp.X(:,indx_Pearson),2,'omitnan'),'rows','pairwise','Type','Pearson');
-            x10(i) = mean(x_mean_methylation,'omitnan');
-            x11(i) = range(x_mean_methylation,'omitnan');
+            x_mean_methylation_Pearson = mean(x_methylation(:,indx_Spearman),2,'omitnan');
+            x_mean_methylation_Spearman = mean(x_methylation(:,indx_Spearman),2,'omitnan');
+            [x6(i), x7(i)] = corr(x_gene,x_mean_methylation_Spearman,'rows','pairwise','Type','Spearman');
+            [x8(i), x9(i)] = corr(x_gene,x_mean_methylation_Pearson,'rows','pairwise','Type','Pearson');
+            switch lower(r_Type)
+                case 'pearson'
+                    x10(i) = mean(x_mean_methylation_Pearson,'omitnan');
+                    x11(i) = range(x_mean_methylation_Pearson,'omitnan');
+                    X_M(:,i)  = x_mean_methylation_Pearson;
+                case 'spearman'
+                    x10(i) = mean(x_mean_methylation_Spearman,'omitnan');
+                    x11(i) = range(x_mean_methylation_Spearman,'omitnan');
+                    X_M(:,i)  = x_mean_methylation_Spearman;
+            end
             x12(i) = mean(x_gene,'omitnan');
             x13(i) = range(x_gene,'omitnan');
+            x14(i) = length(x_gene);
             X_E(:,i)  = x_gene;
-            X_M(:,i)  = x_mean_methylation;
             ColId_E(i) = append(Gene_Id, " Expression");
             ColId_M(i) = append(Gene_Id, " Methylation");
         end
     end
 end
-X = [x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13];
+X = [x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14];
 indx = ~matches(RowId,"");
 DATA.RowId = RowId(indx);
 DATA.RowAnnotation = RowAnnotation(indx,:);
