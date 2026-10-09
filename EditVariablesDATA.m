@@ -19,6 +19,7 @@ function DATA  = EditVariablesDATA(DATA,InputIds,KeepRemove,varargin)
 Truncate = 0;
 VariableIdentifier = false;
 Stable = false;
+ReturnEmpty = false;
 
 if ischar(InputIds) | isstring(InputIds)
     InputIds = cellstr(InputIds);
@@ -35,6 +36,9 @@ while i<numel(varargin)
         Truncate = varargin{i};
     elseif strcmpi(varargin{i},'Stable')
         Stable = true;
+    elseif strcmpi(varargin{i},'ReturnEmpty')
+        ReturnEmpty = true;
+
     end
 end
 
@@ -105,7 +109,13 @@ if Stable
             end
 
         else
-            warning('WARNING! No matching Ids found, returning original DATA')
+            switch lower(KeepRemove)
+                case 'keep'
+                    warning('WARNING! No matching Ids found, returning DATA = []')
+                    DATA = [];
+                case 'remove'
+                    warning('WARNING! No matching Ids found, returning original DATA')
+            end
         end
     end
 
@@ -132,7 +142,13 @@ else
         end
 
     else
-        warning('WARNING! No matching Ids found, returning original DATA')
+        switch lower(KeepRemove)
+            case 'keep'
+                warning('WARNING! No matching Ids found, returning DATA = []')
+                DATA = [];
+            case 'remove'
+                warning('WARNING! No matching Ids found, returning original DATA')
+        end
     end
 end
 
