@@ -2,8 +2,8 @@ function [fh] = Display_Matrix(C,FigSize,TickLabels,XLabelTxt, YLabelTxt)
 
 p.LineWidth = 0.5;
 p.LineStyle = '-';
-p.MatrixFontSize = 10;
-p.FontSize = 10;
+p.MatrixFontSize = 8;
+p.FontSize = 8;
 
 fh=figure('Name','HeatMap','Color','w','Tag','HeatMap figure','Units','inches');
 fh.Position(3:4) = FigSize;
