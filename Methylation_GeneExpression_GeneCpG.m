@@ -49,7 +49,8 @@ if Truncate
     E_Id = cellfun(@(x) x(1:Truncate), E_Id, 'UniformOutput', false);
 end
 [~,M_indx,E_indx] = intersect(M_Id,E_Id,'stable');
-
+DATA_M
+DATA_E
 DATA_M = EditSamplesDATA(DATA_M,DATA_M.RowId(M_indx),'Keep','Stable')
 DATA_E = EditSamplesDATA(DATA_E,DATA_E.RowId(E_indx),'Keep','Stable')
 

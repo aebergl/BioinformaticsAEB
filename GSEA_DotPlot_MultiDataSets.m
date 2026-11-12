@@ -119,6 +119,13 @@ XAxisData(indx_rem) = [];
 YAxisData(indx_rem) = [];
 SizeVal(indx_rem) = [];
 ColorVal(indx_rem) = [];
+
+% indx_rem  = SizeVal > 0.01;
+% XAxisData(indx_rem) = [];
+% YAxisData(indx_rem) = [];
+% SizeVal(indx_rem) = [];
+% ColorVal(indx_rem) = [];
+
 nVal = length(ColorVal);
 nXval = length(unique(XAxisData));
 nYval = length(unique(YAxisData));
